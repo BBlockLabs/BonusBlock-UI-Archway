@@ -1,0 +1,14 @@
+@use 'sass:map';
+@use 'element-plus/theme-chalk/src/mixins/mixins' as EPMixins;
+@use '@/design/theme.scss' as theme;
+
+:root {
+  @include EPMixins.set-component-css-var('icon-size', theme.$icon-size);
+
+  @each $type in (primary, success, warning, danger, error, info) {
+    @include EPMixins.set-css-var-value(
+      ('color', $type, 'contrast-text'),
+      map.get(theme.$colors, $type, 'contrast-text')
+    );
+  }
+}

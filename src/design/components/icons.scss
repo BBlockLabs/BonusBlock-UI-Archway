@@ -1,0 +1,12 @@
+@use '@/design/theme.scss' as theme;
+@use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+
+svg	{
+	height: EPFunctions.getCssVar('icon-size', 'base');
+
+  @each $name, $size in theme.$icon-size {
+    &.icon-#{$name} {
+      height: EPFunctions.getCssVar('icon-size', $name);
+    }
+  }
+}

@@ -1,0 +1,69 @@
+@use 'element-plus/theme-chalk/src/mixins/mixins' as EPMixins;
+@use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+@use '@/design/theme.scss' as theme;
+
+@mixin box-variant($type) {
+  $box-color-types: (
+    '': (
+      'bg-color': (
+        'color',
+        $type,
+      ),
+      'text-color': (
+        'color',
+        $type,
+        'contrast-text'
+      ),
+    ),
+    'hover': (
+      'bg-color': (
+        'color',
+        $type,
+        'light-3',
+      ),
+    ),
+  );
+
+  @each $type, $typeMap in $box-color-types {
+    @each $typeColor, $list in $typeMap {
+      @include EPMixins.css-var-from-global(('box', $type, $typeColor), $list);
+    }
+  }
+}
+
+@include EPMixins.b(box) {
+  @include EPMixins.set-component-css-var('box', theme.$box);
+}
+
+@include EPMixins.b(box) {
+  border: 1px solid EPFunctions.getCssVar('box', 'border-color');
+  background-color: EPFunctions.getCssVar('box', 'bg-color');
+  border-radius: EPFunctions.getCssVar('box', 'border-radius');
+  color: EPFunctions.getCssVar('box', 'text-color');
+
+  @each $type in (primary, success, warning, danger, info, "white", "black") {
+    @include EPMixins.m($type) {
+      @include box-variant($type);
+    }
+  }
+
+  @include EPMixins.when(hoverable) {
+    &:hover,
+    &:focus {
+      background-color: EPFunctions.getCssVar('box', 'hover', 'bg-color');
+      box-shadow: EPFunctions.getCssVar('box-shadow', 'light');
+    }
+  }
+
+  @include EPMixins.when(round) {
+    border-radius: EPFunctions.getCssVar('box', 'border-radius-round');
+  }
+
+  @include EPMixins.when(circular) {
+    border-radius: EPFunctions.getCssVar('border-radius', 'circle');
+  }
+
+  @include EPMixins.when(shadow) {
+    box-shadow: 3px 3px 0px #F5BF5B, 4px 4px 0px #000000;
+  }
+}

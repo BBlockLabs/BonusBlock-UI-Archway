@@ -1,0 +1,47 @@
+@use 'element-plus/theme-chalk/src/mixins/mixins' as EPMixins;
+@use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+
+@mixin card-variant($type) {
+  $card-color-types: (
+    '': (
+      'bg-color': (
+        'color',
+        $type,
+      ),
+    ),
+    'hover': (
+      'bg-color': (
+        'color',
+        $type,
+        'light-3',
+      ),
+    ),
+  );
+
+  @each $type, $typeMap in $card-color-types {
+    @each $typeColor, $list in $typeMap {
+      @include EPMixins.css-var-from-global(('card', $type, $typeColor), $list);
+    }
+  }
+}
+
+@include EPMixins.b(card) {
+  border: 2px solid EPFunctions.getCssVar('card', 'border-color');
+
+  @include EPMixins.when(always-shadow) {
+    box-shadow: EPFunctions.getCssVar('box-shadow', 'dark');
+  }
+
+  @include EPMixins.when(hover-shadow) {
+    &:hover,
+    &:focus {
+      box-shadow: EPFunctions.getCssVar('box-shadow', 'dark');
+    }
+  }
+
+  @each $type in (primary, success, warning, danger, info) {
+    @include EPMixins.m($type) {
+      @include card-variant($type);
+    }
+  }
+}

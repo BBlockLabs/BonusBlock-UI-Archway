@@ -1,0 +1,39 @@
+@use 'element-plus/theme-chalk/src/mixins/mixins' as EPMixins;
+@use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+@use 'element-plus/theme-chalk/src/mixins/config' as EPConfig;
+@use 'element-plus/theme-chalk/src/common/var' as EPVar;
+
+@include EPMixins.b(dialog) {
+  @include EPMixins.res(xs, EPVar.$breakpoints) {
+    width: 100%;
+  }
+  @include EPMixins.res(sm, EPVar.$breakpoints) {
+    width: 75%;
+  }
+  @include EPMixins.res(md, EPVar.$breakpoints) {
+    width: 75%;
+  }
+
+  @include EPMixins.e(body) {
+    padding-top: 0;
+  }
+
+  @include EPMixins.e(header) {
+    padding-bottom: 0;
+  }
+
+  @include EPMixins.e(headerbtn) {
+    // Weird that i can't just use @include EPMixins.e(close)
+    .#{EPConfig.$namespace}-dialog__close {
+      color: EPFunctions.getCssVar('text-color', 'primary');
+    }
+
+    &:focus,
+    &:hover {
+      // Weird that i can't just use @include EPMixins.e(close)
+      .#{EPConfig.$namespace}-dialog__close {
+        color: EPFunctions.getCssVar('color', 'secondary');
+      }
+    }
+  }
+}

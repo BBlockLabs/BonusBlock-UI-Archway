@@ -1,0 +1,16 @@
+@use 'element-plus/theme-chalk/src/mixins/mixins' as EPMixins;
+@use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+
+@include EPMixins.b(message-box) {
+  box-shadow: EPFunctions.getCssVar('messagebox', 'box-shadow');
+
+  @include EPMixins.when(wide) {
+    max-width: 50%;
+  }
+
+  @include EPMixins.when(non-center) {
+    @include EPMixins.e(content) {
+      text-align: left;
+    }
+  }
+}

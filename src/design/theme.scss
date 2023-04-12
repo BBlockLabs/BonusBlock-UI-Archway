@@ -1,0 +1,171 @@
+@use "sass:map";
+@use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+
+$base-font-size: () !default;
+$base-font-size: map.merge(
+  (
+    'xs': 10px,
+    'sm': 12px,
+    'md': 14px,
+    'lg': 14px,
+    'xl': 14px,
+  ),
+  $base-font-size
+);
+
+
+$icon-size: () !default;
+$icon-size: map.merge(
+  (
+    'extra-large': 4.714, //66px
+    'large': 3.429em, //48px
+    'medium': 2.286em, // 32px
+    'base': 1.714em, //24px
+    'small': 1.143em, //16px
+    'extra-small': 0.857em, //12px
+  ),
+  $icon-size
+);
+
+$space: () !default;
+$space: map.merge(
+  (
+    'extra-large': 2.714em, //38px
+    'large': 1.714em, //24px
+    'medium': 1.143em, //16px
+    'base': 0.857em, //12px
+    'small': 0.571em, //8px
+    'extra-small': 0.429em, //6px
+    'auto': auto,
+    '0': 0,
+  ),
+  $space
+);
+
+$box: () !default;
+$box: map.merge(
+  (
+    'border-color': EPFunctions.getCssVar('border-color'),
+    'border-radius': EPFunctions.getCssVar('border-radius-base'),
+    'border-radius-round': 12px,
+    'bg-color': transparent,
+  ),
+  $box
+);
+
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  $colors: (
+    'white': #ffffff,
+    'black': #000000,
+    'primary': (
+      'base': #060612,
+      'contrast-text': #FFFFFF,
+    ),
+    'success': (
+      'base': #67c23a,
+      'contrast-text': EPFunctions.getCssVar('text-color', 'primary'),
+    ),
+    'warning': (
+      'base': #F5BF5B,
+      'contrast-text': EPFunctions.getCssVar('text-color', 'primary'),
+    ),
+    'danger': (
+      'base': #f56c6c,
+      'contrast-text': EPFunctions.getCssVar('text-color', 'primary'),
+    ),
+    'error': (
+      'base': #f56c6c,
+      'contrast-text': EPFunctions.getCssVar('text-color', 'primary'),
+    ),
+    'info': (
+      'base': #606266,
+      'contrast-text': EPFunctions.getCssVar('text-color', 'primary'),
+    ),
+  ),
+  $border-color: (
+    '': #060612,
+  ),
+  $border-radius: (
+    'base': 8px,
+  ),
+  $font-family: (
+    '': "'Noto Sans', Arial, sans-serif"
+  ),
+  $avatar: (
+    'border-radius': EPFunctions.getCssVar('border-radius-base'),
+    'border-color': EPFunctions.getCssVar('border-color'),
+  ),
+  $button-border-radius: (
+    'default': 8px,
+  ),
+  $card: (
+    'border-color': EPFunctions.getCssVar('border-color'),
+    'border-radius': 8px,
+    'padding': map.get($space, 'large'),
+  ),
+  $dialog: (
+    'border-radius': 8px,
+  ),
+  $font-size: (
+    'extra-large': 2.286rem, // 32px
+    'large': 1.429rem, // 20px
+    'medium': 1.286rem, // 18px
+    'base': 1rem, // 14px
+    'small': 0.929rem, // 13px
+    'extra-small': 0.857rem, //12px
+  ),
+  $footer: (
+    'padding': 0,
+    'height': 4em, //56px
+    'bg-color': EPFunctions.getCssVar('color', 'warning'),
+  ),
+  $menu: (
+    'border-color': EPFunctions.getCssVar('border-color', 'darker'),
+    'bg-color': transparent,
+  ),
+  $main: (
+    'padding': 1.428em, //20px
+  ),
+  $messagebox: (
+    'box-shadow': 4px 4px 0px #000000,
+    'border-radius': 8px,
+    'width': 240px,
+  ),
+  $common-component-size: (
+    'large': 64px,
+    'default': 32px,
+    'small': 24px,
+  ),
+  $button-padding-vertical: (
+    'large': 16px,
+    'default': 9px,
+    'small': 6px,
+  ),
+  $button-padding-horizontal: (
+    'large': 32px,
+    'default': 16px,
+    'small': 12px,
+  ),
+  $text-color: (
+    'primary': #060612,
+    'regular': #060612,
+    'secondary': #909399,
+    'placeholder': #a8abb2,
+    'disabled': #c0c4cc,
+  ),// Box-shadow
+  $box-shadow: (
+    '': (
+      0px 12px 32px 4px rgba(0, 0, 0, 0.04),
+      0px 8px 20px rgba(0, 0, 0, 0.08),
+    ),
+    'light': (
+      2px 2px 0px #000000,
+    ),
+    'lighter': (
+      4px 4px 0px rgba(30, 28, 78, 0.5),
+    ),
+    'dark': (
+      8px 8px 0px rgba(30, 28, 78, 0.5),
+    ),
+  ),
+);

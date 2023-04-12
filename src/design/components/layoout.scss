@@ -1,0 +1,198 @@
+@use 'sass:math';
+@use '@/design/theme.scss' as theme;
+@use 'element-plus/theme-chalk/src/mixins/mixins' as EPMixins;
+@use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+
+$directions: (
+  'l': left,
+  'r': right,
+  't': top,
+  'b': bottom,
+);
+
+body {
+  margin: 0;
+}
+
+@each $size, $space in theme.$space {
+  .m-#{$size} {
+    margin: $space;
+  }
+
+  @each $directionName, $direction in $directions {
+    .m#{$directionName}-#{$size} {
+      margin-#{$direction}: $space;
+    }
+  }
+
+  .mx-#{$size} {
+    margin-left: $space;
+    margin-right: $space;
+  }
+
+  .my-#{$size} {
+    margin-top: $space;
+    margin-bottom: $space;
+  }
+
+  .p-#{$size} {
+    padding: $space;
+  }
+
+  @each $directionName, $direction in $directions {
+    .p#{$directionName}-#{$size} {
+      padding-#{$direction}: $space;
+    }
+  }
+
+  .px-#{$size} {
+    padding-left: $space;
+    padding-right: $space;
+  }
+
+  .py-#{$size} {
+    padding-top: $space;
+    padding-bottom: $space;
+  }
+
+  .gap-#{$size} {
+    gap: $space !important;
+  }
+}
+
+html .b {
+  border-width: EPFunctions.getCssVar('border-width');
+  border-color: EPFunctions.getCssVar('border-color');
+
+  $borderStyles: (
+    '0': none,
+    'solid': solid,
+  );
+
+  @each $type in (primary, success, warning, danger, info, "white", "black") {
+    &-#{$type} {
+      border-color: EPFunctions.getCssVar('color', $type);
+    }
+  }
+
+  @each $borderStyleName, $borderStyle in $borderStyles {
+    @each $directionName, $direction in $directions {
+      &#{$directionName}-#{$borderStyleName} {
+        @extend .b;
+        border-#{$direction}-style: $borderStyle;
+      }
+    }
+
+    &-#{$borderStyleName} {
+      @extend .b;
+      border-style: $borderStyle;
+    }
+
+    &x-#{$borderStyleName} {
+      @extend .b;
+      border-left-style: $borderStyle;
+      border-right-style: $borderStyle;
+    }
+
+    &y-#{$borderStyleName} {
+      @extend .b;
+      border-top-style: $borderStyle;
+      border-bottom-style: $borderStyle;
+    }
+  }
+}
+
+html .d {
+  $displays: (
+    'flex': flex,
+    'block': block,
+    'none': none,
+  );
+
+  @each $displayName, $displayStyle in $displays {
+    &-#{$displayName} {
+      display: $displayStyle;
+    }
+  }
+}
+
+.flex {
+  $directions: (
+    'column': column,
+    'row': row,
+  );
+
+  &-center>* {
+    @extend .mx-auto;
+    @extend .my-auto;
+  }
+
+  &-center-x>* {
+    @extend .mx-auto;
+  }
+
+  &-center-y>* {
+    @extend .my-auto;
+  }
+
+  &-row {
+    flex-direction: row;
+    flex-wrap: inherit;
+  }
+
+  &-column {
+    flex-direction: column;
+    flex-wrap: inherit;
+  }
+
+  &-noshrink {
+    flex-shrink: 0 !important;
+  }
+
+  &-grow {
+    flex-grow: 1;
+  }
+}
+
+.float {
+  float: none;
+
+  @each $direction, $directionStyle in $directions {
+    &-#{$direction} {
+      float: $directionStyle;
+    }
+  }
+}
+
+@each $size in (10,20,30,40,50,60,70,80,90,100) {
+  .h-#{$size} {
+    height: math.percentage(math.div($size, 100));
+  }
+  .mh-#{$size} {
+    min-height: math.percentage(math.div($size, 100));
+  }
+  .w-#{$size} {
+    width: math.percentage(math.div($size, 100));
+  }
+  .mw-#{$size} {
+    max-width: math.percentage(math.div($size, 100));
+  }
+}
+
+.h-auto {
+  height: auto;
+}
+.w-auto {
+  width: auto;
+}
+
+@each $name, $size in theme.$border-radius {
+  .br-#{$name} {
+    border-radius: EPFunctions.getCssVar('border-radius', $name);
+  }
+}
+
+.of-hidden {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

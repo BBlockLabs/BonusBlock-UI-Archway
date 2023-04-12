@@ -1,0 +1,11 @@
+@use 'element-plus/theme-chalk/src/mixins/mixins' as EPMixins;
+@use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+@use '@/design/theme.scss' as theme;
+
+@include EPMixins.b(footer) {
+  @include EPMixins.set-component-css-var('footer', theme.$footer);
+
+  @include EPMixins.when(colored) {
+    background-color: EPFunctions.getCssVar('footer', 'bg-color');
+  }
+}

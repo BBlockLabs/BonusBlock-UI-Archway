@@ -1,0 +1,7 @@
+@use 'element-plus/theme-chalk/src/mixins/mixins' as EPMixins;
+@use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+
+@include EPMixins.b(avatar) {
+  border: 1px solid EPFunctions.getCssVar('avatar', 'border-color');
+  flex-shrink: 0;
+}

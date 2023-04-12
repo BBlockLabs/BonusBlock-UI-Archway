@@ -1,0 +1,24 @@
+fullnameOverride: "bonusblock-dashboard"
+replicaCount: 3
+logFormat: nginx_ssl_reqid_upstream_time
+
+ingress:
+  enabled: true
+  hosts:
+    - host: app.office.bonusblock.io
+      paths:
+        - path: /
+# Uncomment 3 lines before for maintenance mode
+#          backend:
+#            service:
+#              name: bonusblock-dashboard-maintenance
+  tls:
+    - hosts:
+        - app.office.bonusblock.io
+      secretName: bonusblock-dashboard-ssl
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt"
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    external-dns.alpha.kubernetes.io/target: office.altermail.lv
+    external-dns.alpha.kubernetes.io/ttl: "300"
+    traefik.ingress.kubernetes.io/router.middlewares: default-add-reqid@kubernetescrd,default-revalidate-cache@kubernetescrd

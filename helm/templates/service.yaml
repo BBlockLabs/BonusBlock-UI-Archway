@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bonusblock-dashboard.fullname" . }}
+  labels:
+    {{- include "bonusblock-dashboard.labels" . | nindent 4 }}
+    app.alter.network/route: app
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "bonusblock-dashboard.selectorLabels" . | nindent 4 }}
+    app.alter.network/route: app
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bonusblock-dashboard.fullname" . }}-maintenance
+  labels:
+    {{- include "bonusblock-dashboard.labels" . | nindent 4 }}
+    app.alter.network/route: maintenance
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "bonusblock-dashboard.selectorLabels" . | nindent 4 }}
+    app.alter.network/route: maintenance

@@ -1,0 +1,33 @@
+@use 'sass:map';
+@use '@/design/theme.scss' as theme;
+@use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+@use 'element-plus/theme-chalk/src/mixins/mixins' as EPMixins;
+@use 'element-plus/theme-chalk/src/common/var' as EPVar;
+
+@each $name, $size in theme.$font-size {
+  .fs-#{$name} {
+    font-size: EPFunctions.getCssVar('font-size', $name);
+  }
+}
+
+.tc {
+  text-align: center;
+}
+
+:root {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: EPFunctions.getCssVar('font-size', 'base');
+
+
+  @each $break-point-name, $value in EPVar.$breakpoints {
+    @include EPMixins.res($break-point-name, EPVar.$breakpoints) {
+      font-size: map.get(theme.$base-font-size, $break-point-name)
+    }
+  }
+}
+
+@each $type in (primary, success, warning, danger, info, "white", "black") {
+  .t-#{$type} {
+    color: EPFunctions.getCssVar('color', $type);
+  }
+}

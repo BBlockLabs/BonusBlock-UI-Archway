@@ -1,0 +1,22 @@
+@use 'element-plus/theme-chalk/src/mixins/mixins' as EPMixins;
+@use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+
+html {
+  @include EPMixins.b(col) {
+    &--1 {
+      max-width: 100%;
+      width: auto;
+      flex: unset;
+    }
+
+    @each $size in (xs, sm, md, lg, xl) {
+      @include EPMixins.res($size) {
+        &-#{$size}--1 {
+          max-width: 100%;
+          width: auto;
+          flex: unset;
+        }
+      }
+    }
+  }
+}

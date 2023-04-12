@@ -1,0 +1,31 @@
+@use '@/design/theme.scss' as theme;
+@use '@/design/theme-dark.scss' as themeDark;
+@use "element-plus/theme-chalk/src/index.scss" as *;
+@use 'element-plus/theme-chalk/src/dark/css-vars.scss' as *;
+@use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+@use 'element-plus/theme-chalk/display.css';
+@use "@/design/var.scss";
+
+@use "@/design/components/avatar.scss";
+@use "@/design/components/box.scss";
+@use "@/design/components/button.scss";
+@use "@/design/components/card.scss";
+@use "@/design/components/col.scss";
+@use "@/design/components/dialog.scss";
+@use "@/design/components/fonts.scss";
+@use "@/design/components/footer.scss";
+@use "@/design/components/icons.scss";
+@use "@/design/components/layoout.scss";
+@use "@/design/components/message-box.scss";
+
+body {
+  background:
+    linear-gradient(
+        243.18deg,
+        rgba(193, 155, 80, 0.25) 8.88%,
+        rgba(124, 144, 115, 0.25) 35.3%,
+        rgba(76, 69, 163, 0.25) 71.76%,
+        rgba(143, 11, 122, 0.25) 100%
+    ),
+    EPFunctions.getCssVar('bg-color')
+}
