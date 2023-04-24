@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{{ include "bonusblock-dashboard.fullname" . }}-test-connection"
+  name: "{{ include "bonusblock-user-dashboard.fullname" . }}-test-connection"
   labels:
-    {{- include "bonusblock-dashboard.labels" . | nindent 4 }}
+    {{- include "bonusblock-user-dashboard.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": test
 spec:
@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "bonusblock-dashboard.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "bonusblock-user-dashboard.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never

@@ -1,4 +1,4 @@
-fullnameOverride: "bonusblock-dashboard"
+fullnameOverride: "bonusblock-user-dashboard"
 
 replicaCount: 3
 
@@ -12,11 +12,11 @@ ingress:
         - path: /
           backend:
             service:
-              name: bonusblock-dashboard
+              name: bonusblock-user-dashboard
   tls:
    - hosts:
        - app.bonusblock.io
-     secretName: bonusblock-dashboard-prod-ssl
+     secretName: bonusblock-user-dashboard-prod-ssl
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt"
     traefik.ingress.kubernetes.io/router.tls: "true"

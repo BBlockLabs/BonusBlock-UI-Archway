@@ -1,4 +1,4 @@
-fullnameOverride: "bonusblock-dashboard-staging"
+fullnameOverride: "bonusblock-user-dashboard-staging"
 replicaCount: 1
 logFormat: nginx_ssl_reqid_upstream_time
 
@@ -11,11 +11,11 @@ ingress:
 # Uncomment 3 lines before for maintenance mode
 #          backend:
 #            service:
-#              name: bonusblock-dashboard-maintenance
+#              name: bonusblock-user-dashboard-maintenance
   tls:
     - hosts:
         - ui3.staging.alter.network
-      secretName: bonusblock-dashboard-staging-ssl
+      secretName: bonusblock-user-dashboard-staging-ssl
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt"
     traefik.ingress.kubernetes.io/router.tls: "true"

@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "bonusblock-dashboard.fullname" . }}
+  name: {{ include "bonusblock-user-dashboard.fullname" . }}
   labels:
-    {{- include "bonusblock-dashboard.labels" . | nindent 4 }}
+    {{- include "bonusblock-user-dashboard.labels" . | nindent 4 }}
     app.alter.network/route: app
 spec:
   {{- if not .Values.autoscaling.enabled }}
@@ -11,7 +11,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "bonusblock-dashboard.selectorLabels" . | nindent 6 }}
+      {{- include "bonusblock-user-dashboard.selectorLabels" . | nindent 6 }}
       app.alter.network/route: app
   template:
     metadata:
@@ -20,7 +20,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "bonusblock-dashboard.selectorLabels" . | nindent 8 }}
+        {{- include "bonusblock-user-dashboard.selectorLabels" . | nindent 8 }}
         app.alter.network/route: app
         {{- if .Values.logFormat }}
         alter.network/log-format: {{ .Values.logFormat }}
@@ -30,7 +30,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "bonusblock-dashboard.serviceAccountName" . }}
+      serviceAccountName: {{ include "bonusblock-user-dashboard.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- with .Values.initContainers }}
