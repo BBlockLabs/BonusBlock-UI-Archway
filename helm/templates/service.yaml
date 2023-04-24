@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "bonusblock-dashboard.fullname" . }}
+  name: {{ include "bonusblock-user-dashboard.fullname" . }}
   labels:
-    {{- include "bonusblock-dashboard.labels" . | nindent 4 }}
+    {{- include "bonusblock-user-dashboard.labels" . | nindent 4 }}
     app.alter.network/route: app
 spec:
   type: {{ .Values.service.type }}
@@ -13,15 +13,15 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "bonusblock-dashboard.selectorLabels" . | nindent 4 }}
+    {{- include "bonusblock-user-dashboard.selectorLabels" . | nindent 4 }}
     app.alter.network/route: app
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "bonusblock-dashboard.fullname" . }}-maintenance
+  name: {{ include "bonusblock-user-dashboard.fullname" . }}-maintenance
   labels:
-    {{- include "bonusblock-dashboard.labels" . | nindent 4 }}
+    {{- include "bonusblock-user-dashboard.labels" . | nindent 4 }}
     app.alter.network/route: maintenance
 spec:
   type: {{ .Values.service.type }}
@@ -31,5 +31,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "bonusblock-dashboard.selectorLabels" . | nindent 4 }}
+    {{- include "bonusblock-user-dashboard.selectorLabels" . | nindent 4 }}
     app.alter.network/route: maintenance

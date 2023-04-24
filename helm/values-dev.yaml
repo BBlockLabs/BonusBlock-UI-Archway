@@ -1,4 +1,4 @@
-fullnameOverride: "bonusblock-dashboard"
+fullnameOverride: "bonusblock-user-dashboard"
 replicaCount: 3
 logFormat: nginx_ssl_reqid_upstream_time
 
@@ -11,11 +11,11 @@ ingress:
 # Uncomment 3 lines before for maintenance mode
 #          backend:
 #            service:
-#              name: bonusblock-dashboard-maintenance
+#              name: bonusblock-user-dashboard-maintenance
   tls:
     - hosts:
         - app.office.bonusblock.io
-      secretName: bonusblock-dashboard-ssl
+      secretName: bonusblock-user-dashboard-ssl
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt"
     traefik.ingress.kubernetes.io/router.tls: "true"

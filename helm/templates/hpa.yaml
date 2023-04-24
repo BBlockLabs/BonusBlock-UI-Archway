@@ -2,14 +2,14 @@
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "bonusblock-dashboard.fullname" . }}
+  name: {{ include "bonusblock-user-dashboard.fullname" . }}
   labels:
-    {{- include "bonusblock-dashboard.labels" . | nindent 4 }}
+    {{- include "bonusblock-user-dashboard.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "bonusblock-dashboard.fullname" . }}
+    name: {{ include "bonusblock-user-dashboard.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:
