@@ -307,7 +307,7 @@ export default class Actions implements ActionsInterface {
         headers: {
           "Content-Type": "application/json",
           "X-Auth-Token": context.rootState.UserModule?.token || "",
-        }
+        },
       }
     );
 
@@ -315,7 +315,9 @@ export default class Actions implements ActionsInterface {
       throw Actions.getBadResponseError(response.status);
     }
 
-    const responseData = await HttpResponse.fromResponse<Array<CalculationResultDto>>(response);
+    const responseData = await HttpResponse.fromResponse<
+      Array<CalculationResultDto>
+    >(response);
 
     if (!responseData.success) {
       console.error(responseData);
@@ -334,7 +336,7 @@ export default class Actions implements ActionsInterface {
         headers: {
           "Content-Type": "application/json",
           "X-Auth-Token": context.rootState.UserModule?.token || "",
-        }
+        },
       }
     );
 
@@ -342,11 +344,20 @@ export default class Actions implements ActionsInterface {
       throw Actions.getBadResponseError(response.status);
     }
 
-    const responseData = await HttpResponse.fromResponse<Array<AnnouncementsDto>>(response);
+    const responseData = await HttpResponse.fromResponse<
+      Array<AnnouncementsDto>
+    >(response);
 
     responseData.payload.map((row) => {
-      row.bannerImg = 'data:image/png;base64,' + row.bannerImg;
-    })
+      row.socials = JSON.parse(row.socials);
+      for (const r of row.socials) {
+        if (r.type === "main") {
+          row.mainLink = r.link;
+          row.mainLinkTitle = r.title;
+        }
+      }
+      row.image = "data:" + row.imageType + ";base64," + row.image;
+    });
 
     if (!responseData.success) {
       console.error(responseData);

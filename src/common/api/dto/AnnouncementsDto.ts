@@ -1,11 +1,9 @@
 export default class AnnouncementsDto {
   title: string = "";
-  content: string = "";
+  description: string = "";
+  image: string = "";
+  imageType: string = "";
+  socials: any = "";
   mainLink: string = "";
-  twitterLink: string = "";
-  telegramLink: string = "";
-  youtubeLink: string = "";
-  redditLink: string = "";
-  discordLink: string = "";
-  bannerImg: string = "";
+  mainLinkTitle: string = "";
 }
