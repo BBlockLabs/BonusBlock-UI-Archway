@@ -13,14 +13,14 @@
               {{ announcement.title }}
             </h4>
             <span v-html="announcement.description" />
-            <el-row class="pt-medium">
+            <el-row class="pt-medium socials">
               <el-col :span="18">
                 <template
                   v-for="social in announcement.socials"
                   :key="social.type"
                 >
                   <el-link
-                    :href="social.link"
+                    :href="social.link || social.url"
                     target="_blank"
                     :underline="false"
                     class="mr-small mt-small"
@@ -50,9 +50,13 @@
                       icon="fa-brands fa-reddit"
                       size="xl"
                     />
+                    <FontAwesomeIcon
+                      v-else-if="social.type === 'icon'"
+                      :icon="social.icon"
+                      size="xl"
+                    />
                   </el-link>
                 </template>
-
                 <social-links
                   :twitter="announcement.twitterLink"
                   :discord="announcement.discordLink"
@@ -95,6 +99,7 @@ onMounted(async () => {
     announcements.value = await store.dispatch(
       "HttpModule/getAnnouncementsList"
     );
+    console.log(announcements.value);
   } catch (e) {
     console.error(e);
   }
@@ -117,6 +122,9 @@ onMounted(async () => {
 
     .el-row {
       width: 100%;
+      &.socials {
+        height: 4em;
+      }
     }
 
     .align-right {

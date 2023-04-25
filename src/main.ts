@@ -6,13 +6,8 @@ import ElementPlus from "element-plus";
 import type Chain from "@/common/Chain";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import {
-  faTwitter,
-  faTelegram,
-  faReddit,
-  faDiscord,
-  faYoutube,
-} from "@fortawesome/free-brands-svg-icons";
+import { fab } from "@fortawesome/free-brands-svg-icons";
+import { fas } from "@fortawesome/free-solid-svg-icons";
 
 import "@/design/index.scss";
 import "@/../types/window.d.ts";
@@ -20,7 +15,7 @@ import "@/../types/svg.d.ts";
 import "@/../types/typings.d.ts";
 import "@/../types/identicons.d.ts";
 
-library.add(faTwitter, faTelegram, faReddit, faDiscord, faYoutube);
+library.add(fab, fas);
 
 const app = createApp(App);
 

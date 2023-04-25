@@ -6,4 +6,5 @@ export default class AnnouncementsDto {
   socials: any = "";
   mainLink: string = "";
   mainLinkTitle: string = "";
+  createdOn: string = "";
 }
