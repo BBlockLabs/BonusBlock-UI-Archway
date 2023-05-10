@@ -1,115 +1,142 @@
 <template>
-  <el-col
-    v-for="announcement in announcements"
-    :key="announcement.title"
-    ref="announcementBox"
-    :span="12"
-    :xl="24 / 3"
-    :xs="24"
-    class="announcement-card"
-  >
-    <el-card shadow="never">
-      <img :src="announcement.image" class="image" :alt="announcement.title" />
+  <el-row v-infinite-scroll="loadAnnouncements" :gutter="10" class="w-100">
+    <el-col
+      v-for="announcement in announcements"
+      :key="announcement.title"
+      ref="announcementBox"
+      :span="12"
+      :xl="24 / 3"
+      :xs="24"
+      class="announcement-card"
+    >
+      <el-card shadow="never">
+        <img
+          v-if="announcement.image"
+          :src="announcement.image"
+          class="image"
+          :alt="announcement.title"
+        />
 
-      <div class="announcement-text pr-medium pl-medium pt-small">
-        <h3 class="m-0 pb-small">
-          {{ announcement.title }}
-        </h3>
+        <div class="announcement-text pr-medium pl-medium pt-small">
+          <h3 class="m-0 pb-small">
+            {{ announcement.title }}
+          </h3>
 
-        <span v-html="announcement.description" />
-      </div>
-      <el-row class="socials pr-medium pl-medium">
-        <el-col :span="18">
-          <template v-for="social in announcement.socials" :key="social.type">
+          <span v-html="announcement.description" />
+        </div>
+        <el-row class="socials pr-medium pl-medium">
+          <el-col :span="18">
+            <template v-for="social in announcement.socials" :key="social.type">
+              <el-link
+                :href="social.link || social.url"
+                target="_blank"
+                :underline="false"
+                class="mr-small mt-small"
+              >
+                <FontAwesomeIcon
+                  v-if="social.type === 'twitter'"
+                  icon="fa-brands fa-twitter"
+                  size="xl"
+                />
+                <FontAwesomeIcon
+                  v-else-if="social.type === 'telegram'"
+                  icon="fa-brands fa-telegram"
+                  size="xl"
+                />
+                <FontAwesomeIcon
+                  v-else-if="social.type === 'youtube'"
+                  icon="fa-brands fa-youtube"
+                  size="xl"
+                />
+                <FontAwesomeIcon
+                  v-else-if="social.type === 'discord'"
+                  icon="fa-brands fa-discord"
+                  size="xl"
+                />
+                <FontAwesomeIcon
+                  v-else-if="social.type === 'reddit'"
+                  icon="fa-brands fa-reddit"
+                  size="xl"
+                />
+                <FontAwesomeIcon
+                  v-else-if="social.type === 'icon'"
+                  :icon="social.icon"
+                  size="xl"
+                />
+              </el-link>
+            </template>
+          </el-col>
+          <el-col :span="6" class="align-right">
             <el-link
-              :href="social.link || social.url"
               target="_blank"
+              :href="announcement.mainLink"
               :underline="false"
-              class="mr-small mt-small"
             >
-              <FontAwesomeIcon
-                v-if="social.type === 'twitter'"
-                icon="fa-brands fa-twitter"
-                size="xl"
-              />
-              <FontAwesomeIcon
-                v-else-if="social.type === 'telegram'"
-                icon="fa-brands fa-telegram"
-                size="xl"
-              />
-              <FontAwesomeIcon
-                v-else-if="social.type === 'youtube'"
-                icon="fa-brands fa-youtube"
-                size="xl"
-              />
-              <FontAwesomeIcon
-                v-else-if="social.type === 'discord'"
-                icon="fa-brands fa-discord"
-                size="xl"
-              />
-              <FontAwesomeIcon
-                v-else-if="social.type === 'reddit'"
-                icon="fa-brands fa-reddit"
-                size="xl"
-              />
-              <FontAwesomeIcon
-                v-else-if="social.type === 'icon'"
-                :icon="social.icon"
-                size="xl"
-              />
+              <el-button v-if="announcement.mainLink" type="primary">
+                {{ announcement.mainLinkTitle }}
+              </el-button>
             </el-link>
-          </template>
-        </el-col>
-        <el-col :span="6" class="align-right">
-          <el-link
-            target="_blank"
-            :href="announcement.mainLink"
-            :underline="false"
-          >
-            <el-button v-if="announcement.mainLink" type="primary">
-              {{ announcement.mainLinkTitle }}
-            </el-button>
-          </el-link>
-        </el-col>
-      </el-row>
-    </el-card>
-  </el-col>
+          </el-col>
+        </el-row>
+      </el-card>
+    </el-col>
+  </el-row>
+  <el-row v-loading="loading"></el-row>
 </template>
 <script>
 import { ref } from "vue";
-import { useStore } from "@/store";
 
 export default {
   setup() {
-    const announcements = ref({});
-    const announcementBox = ref(null);
-
     return {
-      announcements,
-      announcementBox,
+      announcements: ref([]),
+      announcementBox: ref(null),
     };
   },
-  async created() {
-    const store = useStore();
-    this.announcements = await store.dispatch(
-      "HttpModule/getAnnouncementsList"
-    );
+  data() {
+    return {
+      page: 1,
+      loading: false,
+      stop: false,
+    };
+  },
+  methods: {
+    loadAnnouncements: async function () {
+      if (this.loading || this.stop) {
+        return;
+      }
 
-    this.$nextTick(() => {
-      let maxH = 0;
-      for (const elem in this.announcementBox) {
-        maxH = Math.max(
-          maxH,
-          this.announcementBox[elem].$el.querySelector(".announcement-text")
-            .clientHeight
-        );
+      this.loading = true;
+      const newAnnouncements = await this.$store.dispatch(
+        "HttpModule/getAnnouncementsList",
+        { page: this.page, perPage: 12 }
+      );
+
+      this.announcements = this.announcements.concat(newAnnouncements);
+      this.page++;
+
+      this.$nextTick(() => {
+        let maxH = 0;
+        for (const elem in this.announcementBox) {
+          maxH = Math.max(
+            maxH,
+            this.announcementBox[elem].$el.querySelector(".announcement-text")
+              .clientHeight
+          );
+        }
+        for (const elem in this.announcementBox) {
+          this.announcementBox[elem].$el.querySelector(
+            ".announcement-text"
+          ).style.height = maxH + "px";
+        }
+      });
+
+      if (newAnnouncements.length < 12) {
+        this.stop = true;
       }
-      for (const elem in this.announcementBox) {
-        this.announcementBox[elem].$el.querySelector(
-          ".announcement-text"
-        ).style.height = maxH + "px";
-      }
-    });
+
+      this.loading = false;
+    },
   },
 };
 </script>
@@ -143,6 +170,10 @@ export default {
       text-align: right;
     }
   }
+}
+
+.announcements-row {
+  flex-direction: column;
 }
 
 @media only screen and (max-width: 700px) {

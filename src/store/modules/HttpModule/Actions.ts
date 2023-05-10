@@ -10,6 +10,7 @@ import type MetamaskConnectRequest from "@/common/api/MetamaskConnectRequest";
 import type CalculationResultDto from "@/common/api/dto/CalculationResultDto";
 import HttpUnauthorizedError from "@/common/errors/HttpUnauthorizedError";
 import type AnnouncementsDto from "@/common/api/dto/AnnouncementsDto";
+import type AnnouncementsRequest from "@/common/api/AnnouncementsRequest";
 
 export type Context = ActionContext<{}, RootStateInterface>;
 export type HttpAction = Action<{}, RootStateInterface>;
@@ -60,7 +61,8 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
   getAnnouncementsList: HttpAction &
     ((
       this: Store<RootStateInterface>,
-      context: Context
+      context: Context,
+      payload: AnnouncementsRequest
     ) => Promise<Array<AnnouncementsDto>>);
 }
 
@@ -328,15 +330,18 @@ export default class Actions implements ActionsInterface {
   };
 
   getAnnouncementsList = async (
-    context: Context
+    context: Context,
+    payload: AnnouncementsRequest
   ): Promise<Array<AnnouncementsDto>> => {
     const response: Response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/announcements`,
       {
+        body: JSON.stringify(payload),
         headers: {
           "Content-Type": "application/json",
           "X-Auth-Token": context.rootState.UserModule?.token || "",
         },
+        method: "POST",
       }
     );
 
@@ -356,7 +361,9 @@ export default class Actions implements ActionsInterface {
           row.mainLinkTitle = r.title;
         }
       }
-      row.image = "data:" + row.imageType + ";base64," + row.image;
+      if (row.image) {
+        row.image = "data:" + row.imageType + ";base64," + row.image;
+      }
     });
 
     if (!responseData.success) {
