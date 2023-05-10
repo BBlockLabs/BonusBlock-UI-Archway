@@ -356,9 +356,9 @@ export default class Actions implements ActionsInterface {
     responseData.payload.map((row) => {
       row.socials = JSON.parse(row.socials);
       for (const r of row.socials) {
-        if (r.type === "main") {
+        if (r.type === "main" || r.type == "main-link") {
           row.mainLink = r.link;
-          row.mainLinkTitle = r.title;
+          row.mainLinkTitle = r.title || "Visit";
         }
       }
       if (row.image) {
