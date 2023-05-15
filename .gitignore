@@ -15,6 +15,7 @@ coverage
 *.local
 .env
 package-lock.json
+vite.config.ts.timestamp-*
 
 /cypress/videos/
 /cypress/screenshots/

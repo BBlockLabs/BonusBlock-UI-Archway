@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import SocialLinks from "@/components/SocialLinks.vue";
-import { defineProps, normalizeClass, unref, withDefaults } from "vue";
+import { normalizeClass, unref } from "vue";
 import { useNamespace } from "element-plus";
 
 const LinkGithub: string = import.meta.env.VITE_LINK_GITHUB;

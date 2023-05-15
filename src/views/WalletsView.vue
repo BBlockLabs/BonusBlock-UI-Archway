@@ -35,24 +35,21 @@
     </el-row>
     <el-row :gutter="10">
       <el-col :span="12" class="my-small">
-        <wallet-box-keplr/>
+        <wallet-box-keplr />
       </el-col>
 
       <el-col :span="12" class="my-small">
-        <wallet-box-metamask/>
+        <wallet-box-metamask />
       </el-col>
     </el-row>
 
     <el-row>
       <h2>Announcements</h2>
     </el-row>
-    <el-row
-      :gutter="10"
-      class="announcements-row"
-    >
-      <announcements />
+    <el-row :gutter="10" class="announcements-row">
+      <announcement-list />
     </el-row>
-<!--    <template #footer>
+    <!--    <template #footer>
       <el-footer height="unset" class="px-large pb-medium">
         <box-wrapper class="p-medium t-info b-info">
           <el-row :gutter="14" class="flex-row">
@@ -83,7 +80,7 @@ import PageWrapper from "@/components/PageWrapper.vue";
 import WalletBoxKeplr from "@/components/WalletBoxKeplr.vue";
 import WalletBoxMetamask from "@/components/WalletBoxMetamask.vue";
 import SvgInfo from "@/assets/icons/info.svg?component";
-import Announcements from "@/components/Announcements.vue";
+import AnnouncementList from "@/components/AnnouncementList.vue";
 </script>
 
 <style lang="scss">

@@ -1,17 +1,12 @@
 <template>
-  <el-avatar
-    class="w-100 qr"
-    shape="square"
-    :src="url"
-    :alt="$props.text"
-  />
+  <el-avatar class="w-100 qr" shape="square" :src="url" :alt="$props.text" />
 </template>
 
 <script setup lang="ts">
 import { ref, watch, Ref } from "vue";
 import { AwesomeQR } from "awesome-qr";
 import Logo from "@/assets/logo/logo.png";
-import type { Buffer } from "buffer";
+import type Buffer from "buffer";
 
 export interface Props {
   text: string;

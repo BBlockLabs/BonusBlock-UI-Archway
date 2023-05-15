@@ -22,6 +22,7 @@
             {{ announcement.title }}
           </h3>
 
+          <!-- eslint-disable-next-line vue/no-v-html -->
           <span v-html="announcement.description" />
         </div>
         <el-row class="socials pr-medium pl-medium">
@@ -31,38 +32,13 @@
                 :href="social.link || social.url"
                 target="_blank"
                 :underline="false"
-                class="mr-small mt-small"
+                class="mr-small mt-small fs-extra-small"
               >
-                <FontAwesomeIcon
-                  v-if="social.type === 'twitter'"
-                  icon="fa-brands fa-twitter"
-                  size="xl"
-                />
-                <FontAwesomeIcon
-                  v-else-if="social.type === 'telegram'"
-                  icon="fa-brands fa-telegram"
-                  size="xl"
-                />
-                <FontAwesomeIcon
-                  v-else-if="social.type === 'youtube'"
-                  icon="fa-brands fa-youtube"
-                  size="xl"
-                />
-                <FontAwesomeIcon
-                  v-else-if="social.type === 'discord'"
-                  icon="fa-brands fa-discord"
-                  size="xl"
-                />
-                <FontAwesomeIcon
-                  v-else-if="social.type === 'reddit'"
-                  icon="fa-brands fa-reddit"
-                  size="xl"
-                />
-                <FontAwesomeIcon
-                  v-else-if="social.type === 'icon'"
-                  :icon="social.icon"
-                  size="xl"
-                />
+                <SvgTwitter v-if="social.type === 'twitter'" />
+                <SvgTelegram v-else-if="social.type === 'telegram'" />
+                <SvgYoutube v-else-if="social.type === 'youtube'" />
+                <SvgDiscord v-else-if="social.type === 'discord'" />
+                <SvgReddit v-else-if="social.type === 'reddit'" />
               </el-link>
             </template>
           </el-col>
@@ -84,9 +60,21 @@
   <el-row v-loading="loading"></el-row>
 </template>
 <script>
+import SvgTwitter from "@/assets/icons/twitter.svg?component";
+import SvgTelegram from "@/assets/icons/telegram.svg?component";
+import SvgReddit from "@/assets/icons/reddit.svg?component";
+import SvgDiscord from "@/assets/icons/discord.svg?component";
+import SvgYoutube from "@/assets/icons/youtube.svg?component";
 import { ref } from "vue";
 
 export default {
+  components: {
+    SvgTwitter,
+    SvgTelegram,
+    SvgReddit,
+    SvgDiscord,
+    SvgYoutube,
+  },
   setup() {
     return {
       announcements: ref([]),

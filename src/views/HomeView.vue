@@ -34,10 +34,7 @@
 
             <el-col :md="6" :xl="5" class="my-small">
               <el-button size="large" class="w-100" @click="keplrDialog = true">
-                <svg-keplr
-                  types="vite-svg-loader"
-                  class="mr-medium icon-medium"
-                />
+                <svg-keplr class="mr-medium icon-medium" />
                 <b>Continue with Keplr</b>
               </el-button>
             </el-col>

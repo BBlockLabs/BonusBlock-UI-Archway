@@ -1,4 +1,4 @@
-  import KeplrCheckResponseRequest from "@/common/api/KeplrCheckResponseRequest";
+import KeplrCheckResponseRequest from "@/common/api/KeplrCheckResponseRequest";
 import KeplrLoginSignDoc, {
   LoginSignOptions,
 } from "@/common/KeplrLoginSignDoc";

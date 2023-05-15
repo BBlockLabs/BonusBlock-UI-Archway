@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, normalizeClass, unref, withDefaults } from "vue";
+import { normalizeClass, unref } from "vue";
 import { useNamespace } from "element-plus";
 
 export interface Props {
