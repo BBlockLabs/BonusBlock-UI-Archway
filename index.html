@@ -32,8 +32,21 @@
   <!-- WHIP-002 App Icon -->
   <link rel="icon" type="image/svg+xml" href="/logo.svg"/>
   <!--  @formatter:on -->
+
+  <!-- cookie3 analytics -->
+  <script>
+    const cookie3Options = {"siteId": 47, "additionalTracking": true, "cookielessEnabled": false};
+    window._paq = window._paq || [];
+    (function () {
+      let d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+      g.async = true;
+      g.src = 'https://cdn.staging.cookie3.co/scripts/analytics/latest/cookie3.analytics.min.js';
+      s.parentNode.insertBefore(g, s);
+    })();
+  </script>
+  <!-- End cookie3 analytics -->
 </head>
-<body>
+<body id="body">
 <div id="app"></div>
 </body>
 </html>

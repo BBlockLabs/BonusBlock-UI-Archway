@@ -52,6 +52,7 @@
   </el-main>
 
   <footer-component />
+  <div id="cookie-consent"></div>
 </template>
 
 <script setup lang="ts">
@@ -66,12 +67,19 @@ import { Router, useRoute, useRouter } from "vue-router";
 import { StoreType, useStore } from "@/store";
 import { ref, onMounted } from "vue";
 import MetamaskClient from "@/common/MetamaskClient";
+import cookieConsentTools from 'cookie-consent-tools';
 
 const store: StoreType = useStore();
 const router: Router = useRouter();
 const route = useRoute();
 
 const keplrDialog: Ref<boolean> = ref(false);
+
+setTimeout(() => {
+  cookieConsentTools.initialize({
+    consentBox: { container: "cookie-consent" },
+  });
+}, 1000);
 
 async function onMetamaskLogin(): Promise<void> {
   try {

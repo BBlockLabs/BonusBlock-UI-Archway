@@ -21,6 +21,7 @@
     "@whi/identicons": "^0.1.1",
     "awesome-qr": "^2.1.5-rc.0",
     "buffer": "^6.0.3",
+    "cookie-consent-tools": "0.1.6",
     "element-plus": "^2.2.32",
     "moment": "^2.29.4",
     "vue": "^3.2.45",
