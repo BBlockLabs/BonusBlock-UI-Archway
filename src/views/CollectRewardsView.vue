@@ -1,5 +1,32 @@
 <template>
   <PageWrapper>
+    <el-dialog v-model="claimModal.open" class="claim-modal">
+      <div v-if="claimModal.loading">
+        <div class="el-loading-spinner mb-small">
+          <svg class="circular" viewBox="0 0 50 50">
+            <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
+          </svg>
+        </div>
+        Continue in your wallet
+      </div>
+      <div v-else>
+        <h1 class="fs-large my-small">Congrats!</h1>
+        <div>
+          You have claimed
+          <b
+            >{{ claimModal.campaign.amount }}
+            {{ claimModal.campaign.currency }}!</b
+          >
+        </div>
+        <div class="fs-small mt-large">
+          Share your win rate with your network and get referral bonus!
+        </div>
+        <el-button class="mt-large" @click="claimModal.open = false"
+          >Close</el-button
+        >
+      </div>
+    </el-dialog>
+
     <el-row>
       <h2>Collect Rewards</h2>
     </el-row>
@@ -12,34 +39,89 @@
         <div class="top-half">
           <el-row justify="space-between" align="middle">
             <h3 class="fs-slightly-larger">{{ campaign.name }}</h3>
-            <svg-link class="card-link" @click="openCampaignDetails(campaign)"/>
+            <svg-link
+              class="card-link"
+              @click="openCampaignDetails(campaign)"
+            />
           </el-row>
           <el-progress
             :percentage="getCampaignProgressPercent(campaign)"
-            :status="elProgressStatusFromTimeRemaining(campaign.expiring - now)"
+            :status="
+              elProgressStatusFromTimeRemaining(campaignTimeLeft(campaign))
+            "
             stroke-width="5"
           >
             <svg-clock />&nbsp;<b class="fs-extra-small">{{
-              now > campaign.expiring
+              campaignTimeLeft(campaign) <= 0
                 ? "Ended"
-                : humanTimeLeft(campaign.expiring - now) + " left"
+                : humanTimeLeft(campaignTimeLeft(campaign)) + " left"
             }}</b>
           </el-progress>
         </div>
         <div class="bottom-half">
-          <el-row justify="space-between" align="middle" class="pt-medium pb-medium">
+          <el-row
+            justify="space-between"
+            align="middle"
+            class="pt-medium pb-medium"
+          >
             <b>Your Reward</b>
-            <div class="text-link text-muted" @click="openCampaignDetails(campaign)">
+            <div
+              class="text-link text-muted"
+              @click="openCampaignDetails(campaign)"
+            >
               See more <svg-chevron-right />
             </div>
           </el-row>
           <el-row justify="space-between" align="middle">
-            <div>{{ campaign.amount }} {{ campaign.currency }}</div>
-            <button :disabled="now > campaign.expiring" @click="claimCampaign(campaign)">
-              <svg-lock v-if="now > campaign.expiring" />
-              Claim
-            </button>
+            <component
+              :is="currencyIcons[campaign.currency] ?? 'div'"
+              class="currency-icon"
+            />
+            <div v-if="campaign.amount" class="flex-grow ml-small">
+              {{ campaign.amount }} {{ campaign.currency }}
+            </div>
+            <div v-else-if="campaign.unlockDate" class="flex-grow ml-small text-muted">
+              Unlocks on {{ campaign.unlockDate }}
+            </div>
+            <el-tooltip :content="campaign.amount ? 'Claim your rewards' : 'Unlocks on ' + campaign.unlockDate" placement="top">
+              <div>
+                <el-button
+                  type="primary"
+                  class="yellow-button"
+                  :disabled="!campaign.amount"
+                  @click="claimCampaign(campaign)"
+                >
+                  <svg-lock v-if="!campaign.amount" />
+                  Claim
+                </el-button>
+              </div>
+            </el-tooltip>
           </el-row>
+        </div>
+      </div>
+    </div>
+
+    <el-divider />
+
+    <el-row>
+      <h2>Keep Earning</h2>
+    </el-row>
+    <div class="campaign-container mb-base">
+      <div v-for="project in projects" :key="project.id" class="project-card">
+        <div class="card-image" :style="{ backgroundImage: 'url(' + project.image + ')' }"></div>
+        <div class="card-content">
+          <h3 class="fs-large my-base">{{ project.name }}</h3>
+          {{ project.description }}
+          <div class="d-flex mt-large mb-base">
+            <social-links
+              :twitter="LinkTwitter"
+              :github="LinkGithub"
+              :telegram="LinkTelegram"
+              :reddit="LinkReddit"
+              class="social-links"
+            />
+            <el-button type="primary" class="ml-auto" @click="openProject(project)">Visit</el-button>
+          </div>
         </div>
       </div>
     </div>
@@ -47,13 +129,38 @@
 </template>
 
 <script setup lang="ts">
-import { onUnmounted, ref } from "vue";
+import { onUnmounted, reactive, ref } from "vue";
 import { ElMessageBox } from "element-plus";
 import PageWrapper from "@/components/PageWrapper.vue";
+import SocialLinks from "@/components/SocialLinks.vue";
 import SvgLock from "@/assets/icons/lock.svg?component";
 import SvgLink from "@/assets/icons/open-new-window.svg?component";
 import SvgClock from "@/assets/icons/clock.svg?component";
 import SvgChevronRight from "@/assets/icons/nav-arrow-right.svg?component";
+import SvgAry from "@/assets/currencies/ary.svg?component";
+import SvgBab from "@/assets/currencies/bab.svg?component";
+import SvgBeam from "@/assets/currencies/beam.svg?component";
+import SvgEth from "@/assets/currencies/eth.svg?component";
+import SvgEvx from "@/assets/currencies/evx.svg?component";
+import SvgLuna from "@/assets/currencies/luna.svg?component";
+import SvgPowr from "@/assets/currencies/powr.svg?component";
+import SvgUni from "@/assets/currencies/uni.svg?component";
+
+const LinkGithub: string = import.meta.env.VITE_LINK_GITHUB;
+const LinkTwitter: string = import.meta.env.VITE_LINK_TWITTER;
+const LinkTelegram: string = import.meta.env.VITE_LINK_TELEGRAM;
+const LinkReddit: string = import.meta.env.VITE_LINK_REDDIT;
+
+const currencyIcons = {
+  ARY: SvgAry,
+  BAB: SvgBab,
+  BEAM: SvgBeam,
+  ETH: SvgEth,
+  EVX: SvgEvx,
+  LUNA: SvgLuna,
+  POWR: SvgPowr,
+  UNI: SvgUni,
+};
 
 const now = ref(Math.ceil(new Date().valueOf() / 1000));
 const timer = setInterval(() => {
@@ -63,13 +170,28 @@ onUnmounted(() => {
   clearInterval(timer);
 });
 
+let claimModal = reactive({
+  campaign: {},
+  open: false,
+  loading: false,
+});
+
 type Campaign = {
   id: number;
   name: string;
   amount: number;
   currency: string;
+  unlockDate?: string;
   started: number;
   expiring: number;
+};
+
+type Project = {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+  link: string;
 };
 
 let campaigns: Array<Campaign> = [
@@ -92,8 +214,9 @@ let campaigns: Array<Campaign> = [
   {
     id: 3,
     name: "ETH Campaign",
-    amount: 2,
+    amount: 0,
     currency: "ETH",
+    unlockDate: "Apr 9",
     started: now.value - 24 * 60 * 60,
     expiring: now.value + 3 * 7 * 24 * 60 * 60,
   },
@@ -139,16 +262,67 @@ let campaigns: Array<Campaign> = [
   },
 ];
 
+let projects: Array<Project> = [
+  {
+    id: 1,
+    name: "Project Name 1",
+    description: "Lorem 1 ipsum dolor sit amet, consectetur adipiscing elit. Sed lacinia augue eget nisl euismod, quis pulvinar massa pharetra. Sed vestibulum tortor et magna sodales, nec cursus sapien eleifend. In hac habitasse platea dictumst.",
+    image: "https://derpicdn.net/img/2012/1/2/3/large.png",
+    link: "https://derpibooru.org/images/3",
+  },
+  {
+    id: 2,
+    name: "Project Name 2",
+    description: "Lorem 2 ipsum dolor sit amet, consectetur adipiscing elit. Sed lacinia augue eget nisl euismod, quis pulvinar massa pharetra. Sed vestibulum tortor et magna sodales, nec cursus sapien eleifend. In hac habitasse platea dictumst.",
+    image: "https://derpicdn.net/img/view/2021/5/31/2625576.png",
+    link: "https://derpibooru.org/images/2625576",
+  },
+  {
+    id: 3,
+    name: "Project Name 3",
+    description: "Lorem 3 ipsum dolor sit amet, consectetur adipiscing elit. Sed lacinia augue eget nisl euismod, quis pulvinar massa pharetra. Sed vestibulum tortor et magna sodales, nec cursus sapien eleifend. In hac habitasse platea dictumst.",
+    image: "https://derpicdn.net/img/2022/5/23/2871156/large.jpg",
+    link: "https://derpibooru.org/images/2871156",
+  },
+];
+
 function openCampaignDetails(campaign: Campaign): void {
+  // todo: actual implementation
   ElMessageBox.alert("openCampaignDetails " + campaign.id, "Todo");
 }
 
 function claimCampaign(campaign: Campaign): void {
-  ElMessageBox.alert("claimCampaign " + campaign.id, "Todo");
+  // todo: actual implementation
+  claimModal.campaign = campaign;
+  claimModal.open = true;
+  claimModal.loading = true;
+  setTimeout(() => {
+    claimModal.loading = false;
+  }, 1500);
+}
+
+function openProject(project: Project): void {
+  // todo: actual implementation
+  window.open(project.link, "_blank");
+}
+
+function campaignTimeLeft(campaign: Campaign): number {
+  return campaign.expiring - now.value;
 }
 
 function getCampaignProgressPercent(campaign: Campaign): number {
-  return Math.round(Math.min(Math.max((now.value - campaign.started) / (campaign.expiring - campaign.started), 0), 1) * 1000) / 10;
+  return (
+    Math.round(
+      Math.min(
+        Math.max(
+          (now.value - campaign.started) /
+            (campaign.expiring - campaign.started),
+          0
+        ),
+        1
+      ) * 1000
+    ) / 10
+  );
 }
 
 function elProgressStatusFromTimeRemaining(seconds: number): string {
@@ -164,22 +338,22 @@ function elProgressStatusFromTimeRemaining(seconds: number): string {
 
 function humanTimeLeft(seconds: number): string {
   if (seconds < 60) {
-    return seconds + " second" + (seconds === 1 ? "" : "s");
+    return seconds + " s";
   }
   let minutes = Math.floor(seconds / 60);
   if (minutes < 60) {
-    return minutes + " minute" + (minutes === 1 ? "" : "s");
+    return minutes + " m";
   }
   let hours = Math.floor(minutes / 60);
   if (hours < 60) {
-    return hours + " hour" + (hours === 1 ? "" : "s");
+    return hours + " h";
   }
   let days = Math.floor(hours / 24);
   if (days < 7) {
-    return days + " day" + (days === 1 ? "" : "s");
+    return days + " d";
   }
   let weeks = Math.floor(days / 7);
-  return weeks + " week" + (weeks === 1 ? "" : "s");
+  return weeks + " w";
 }
 
 /*
@@ -240,14 +414,26 @@ onMounted(async () => {
 */
 </script>
 <style lang="scss">
+.claim-modal {
+  text-align: center;
+  max-width: 19.93em;
+
+  .el-loading-spinner {
+    position: static;
+    margin-top: 0;
+  }
+}
+
 .campaign-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(22em, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(22em, 1fr));
   gap: 1em;
 }
 
 .campaign-card {
-  position: relative;
+  h3 {
+    margin: 1.1em 0;
+  }
 
   svg {
     height: 1em;
@@ -271,12 +457,25 @@ onMounted(async () => {
     opacity: 0.64;
   }
 
+  .currency-icon {
+    font-size: 2em;
+  }
+
+  div.currency-icon {
+    width: 1em;
+  }
+
   .el-progress .el-progress-bar__outer {
     border: 1px solid #000;
   }
 
-  .el-progress .el-progress__text svg {
-    vertical-align: -0.142em;
+  .el-progress .el-progress__text {
+    min-width: 4.75em;
+    text-align: right;
+
+    svg {
+      vertical-align: -0.142em;
+    }
   }
 
   .el-progress.is-success .el-progress__text,
@@ -301,6 +500,31 @@ onMounted(async () => {
     color: #fff;
     border-bottom-left-radius: 0.75em;
     border-bottom-right-radius: 0.75em;
+  }
+}
+
+.project-card {
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 0.75em;
+  overflow: hidden;
+
+  .card-image {
+    border-bottom: 1px solid #000;
+    height: 14.286em;
+    background-size: cover;
+  }
+
+  .card-content {
+    padding: 0 1.25em 1.25em 1.25em;
+
+    .social-links {
+      gap: 0.5em;
+    }
+
+    .el-button {
+      box-shadow: none;
+    }
   }
 }
 </style>

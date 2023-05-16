@@ -176,7 +176,12 @@ export default class Actions implements ActionsInterface {
       );
     }
 
-    const nonce: string = crypto.randomUUID();
+    let nonce: string;
+    try {
+      nonce = crypto.randomUUID();
+    } catch (e) {
+      nonce = new Date().valueOf() + "-" + Math.random();
+    }
 
     const ticket: string = await context.dispatch(
       "HttpModule/getAuthTicket",
@@ -260,7 +265,12 @@ export default class Actions implements ActionsInterface {
       throw new NoKeplrAccountsError();
     }
 
-    const nonce: string = crypto.randomUUID();
+    let nonce: string;
+    try {
+      nonce = crypto.randomUUID();
+    } catch (e) {
+      nonce = new Date().valueOf() + "-" + Math.random();
+    }
 
     const ticket: string = await context.dispatch(
       "HttpModule/getAuthTicket",

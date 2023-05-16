@@ -12,4 +12,9 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
   },
+  rules: {
+    "vue/html-indent": ["off"], // conflicts with IDEA formatting style
+    "vue/max-attributes-per-line": ["off"],
+    "vue/html-closing-bracket-spacing": ["off"],
+  },
 };

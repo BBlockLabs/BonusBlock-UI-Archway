@@ -26,7 +26,9 @@ async function checkLogin() {
   await store.dispatch("UserModule/getStatus");
 
   if (store.getters["UserModule/loggedIn"]) {
-    await router.push("/wallets");
+    if (document.location.pathname === "/") {
+      await router.push("/wallets");
+    }
   } else if (route.path !== "/") {
     await router.push("/");
   }

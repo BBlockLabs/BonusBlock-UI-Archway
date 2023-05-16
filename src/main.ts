@@ -4,6 +4,7 @@ import router from "@/router";
 import { store, key } from "@/store";
 import ElementPlus from "element-plus";
 import type Chain from "@/common/Chain";
+import VueCommonMixin from "@/common/Mixin";
 
 import "@/design/index.scss";
 import "@/../types/window.d.ts";
@@ -13,6 +14,7 @@ import "@/../types/identicons.d.ts";
 
 const app = createApp(App);
 
+app.mixin(VueCommonMixin);
 app.use(router);
 app.use(store, key);
 app.use(ElementPlus);

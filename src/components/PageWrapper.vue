@@ -66,7 +66,9 @@
     </el-header>
 
     <el-main class="px-large pt-small">
-      <slot />
+      <div class="limit-width">
+        <slot />
+      </div>
     </el-main>
 
     <slot name="footer" />
@@ -97,6 +99,11 @@ const store: StoreType = useStore();
 </script>
 
 <style scoped lang="scss">
+.limit-width {
+  max-width: 1600px;
+  margin: auto;
+}
+
 .bg-light {
   background: rgba(255, 255, 255, 0.6);
 }

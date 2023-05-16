@@ -8,3 +8,36 @@
     box-shadow: none;
   }
 }
+
+.yellow-button {
+  width: 7.71em;
+  font-weight: bold;
+  background: #fad366;
+  color: #000;
+
+  &:hover {
+    background: #ffde83;
+    color: #000;
+  }
+
+  &:focus {
+    background: #fad366;
+    color: #000;
+  }
+
+  &:active {
+    background: #e5bf57;
+    color: #000;
+  }
+
+  &.is-disabled,
+  &.is-disabled:hover {
+    background: #a8abb2;
+    color: #000;
+  }
+
+  svg {
+    margin-right: 0.75em;
+    font-size: 0.75em;
+  }
+}
