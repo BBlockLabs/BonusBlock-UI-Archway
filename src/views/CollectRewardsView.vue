@@ -10,6 +10,7 @@
         Continue in your wallet
       </div>
       <div v-else>
+        <svg-medal class="medal-image" />
         <h1 class="fs-large my-small">Congrats!</h1>
         <div>
           You have claimed
@@ -20,6 +21,14 @@
         </div>
         <div class="fs-small mt-large">
           Share your win rate with your network and get referral bonus!
+        </div>
+        <div class="mt-small">
+          <el-button
+            type="primary"
+            round
+            @click="generateAndCopyClaimImage(claimModal.campaign)"
+            >Share<svg-share class="ml-small"
+          /></el-button>
         </div>
         <el-button class="mt-large" @click="claimModal.open = false"
           >Close</el-button
@@ -129,14 +138,16 @@
 </template>
 
 <script setup lang="ts">
-import { onUnmounted, reactive, ref } from "vue";
-import { ElMessageBox } from "element-plus";
+import {onUnmounted, reactive, ref} from "vue";
+import {ElMessage, ElMessageBox} from "element-plus";
+import VueCommonMixin from "@/common/Mixin";
 import PageWrapper from "@/components/PageWrapper.vue";
 import SocialLinks from "@/components/SocialLinks.vue";
 import SvgLock from "@/assets/icons/lock.svg?component";
 import SvgLink from "@/assets/icons/open-new-window.svg?component";
 import SvgClock from "@/assets/icons/clock.svg?component";
 import SvgChevronRight from "@/assets/icons/nav-arrow-right.svg?component";
+import SvgShare from "@/assets/icons/share.svg?component";
 import SvgAry from "@/assets/currencies/ary.svg?component";
 import SvgBab from "@/assets/currencies/bab.svg?component";
 import SvgBeam from "@/assets/currencies/beam.svg?component";
@@ -145,6 +156,8 @@ import SvgEvx from "@/assets/currencies/evx.svg?component";
 import SvgLuna from "@/assets/currencies/luna.svg?component";
 import SvgPowr from "@/assets/currencies/powr.svg?component";
 import SvgUni from "@/assets/currencies/uni.svg?component";
+import SvgMedal from "@/assets/images/congratulations_medal.svg?component";
+import ClaimSharingBackground from "@/assets/images/claim-sharing-image-template.svg?raw";
 
 const LinkGithub: string = import.meta.env.VITE_LINK_GITHUB;
 const LinkTwitter: string = import.meta.env.VITE_LINK_TWITTER;
@@ -179,11 +192,13 @@ let claimModal = reactive({
 type Campaign = {
   id: number;
   name: string;
+  networkName: string;
   amount: number;
   currency: string;
   unlockDate?: string;
   started: number;
   expiring: number;
+  weekNumber: number;
 };
 
 type Project = {
@@ -198,67 +213,83 @@ let campaigns: Array<Campaign> = [
   {
     id: 1,
     name: "UniSwap Amazing Campaign",
+    networkName: "Idk",
     amount: 35,
     currency: "UNI",
     started: now.value - 24 * 60 * 60,
     expiring: now.value + 2 * 7 * 24 * 60 * 60,
+    weekNumber: 1,
   },
   {
     id: 2,
     name: "Power 404",
+    networkName: "Idk",
     amount: 938.98,
     currency: "POWR",
     started: now.value - 24 * 60 * 60,
     expiring: now.value + 6 * 24 * 60 * 60,
+    weekNumber: 1,
   },
   {
     id: 3,
     name: "ETH Campaign",
+    networkName: "Etherium",
     amount: 0,
     currency: "ETH",
     unlockDate: "Apr 9",
     started: now.value - 24 * 60 * 60,
     expiring: now.value + 3 * 7 * 24 * 60 * 60,
+    weekNumber: 1,
   },
   {
     id: 4,
     name: "Random Campaign",
+    networkName: "Idk",
     amount: 7,
     currency: "ARY",
     started: now.value - 24 * 60 * 60,
     expiring: now.value + 2 * 7 * 24 * 60 * 60,
+    weekNumber: 1,
   },
   {
     id: 5,
     name: "Luna campaign",
+    networkName: "Idk",
     amount: 80,
     currency: "LUNA",
     started: now.value - 24 * 60 * 60,
     expiring: now.value + 13 * 60 * 60,
+    weekNumber: 1,
   },
   {
     id: 6,
     name: "Yet Another Campaign",
+    networkName: "Idk",
     amount: 8.38,
     currency: "BAB",
     started: now.value - 24 * 60 * 60,
     expiring: now.value + 3 * 24 * 60 * 60,
+    weekNumber: 1,
   },
   {
     id: 7,
     name: "BEAM BEANS",
+    networkName: "Idk",
     amount: 5342.53,
     currency: "BEAM",
     started: now.value - 60,
     expiring: now.value + 60,
+    weekNumber: 1,
   },
   {
     id: 8,
     name: "Get rich as hecc boi",
+    networkName: "Idk",
     amount: 93939494,
     currency: "EVX",
     started: now.value - 24 * 60 * 60,
     expiring: now.value + 0,
+    weekNumber: 1,
   },
 ];
 
@@ -356,6 +387,55 @@ function humanTimeLeft(seconds: number): string {
   return weeks + " w";
 }
 
+function generateAndCopyClaimImage(campaign: Campaign): void {
+  let svgData, svgBase46, img: HTMLImageElement;
+  try {
+    svgData = ClaimSharingBackground
+      .replace(/\{campaign_name}/g, campaign.name)
+      .replace(/\{campaign_week}/g, "Week " + campaign.weekNumber)
+      .replace(/\{currency}/g, campaign.currency)
+      .replace(/\{amount}/g, campaign.amount.toString())
+      .replace(/\{network}/g, campaign.networkName);
+    svgBase46 = "data:image/svg+xml;base64," + btoa(svgData);
+    img = new Image();
+  } catch (e) {
+    console.error(e);
+    ElMessage({ message: "Failed to generate image", type: "error" });
+    return;
+  }
+  img.onload = function () {
+    try {
+      let width = img.width;
+      let height = img.height;
+      let canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      let ctx = canvas.getContext("2d");
+      if (ctx === null) {
+        throw new TypeError("canvas.getContext failed");
+      }
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob(function (blob) {
+        try {
+          if (blob === null) {
+            throw new TypeError("canvas.toBlob failed");
+          }
+          const item = new ClipboardItem({ "image/png": blob });
+          VueCommonMixin.methods.copyToClipboard(item);
+        } catch (e) {
+          console.error(e);
+          ElMessage({ message: "Failed to copy image", type: "error" });
+        }
+      });
+    } catch (e) {
+      console.error(e);
+      ElMessage({ message: "Failed to generate image", type: "error" });
+    }
+  };
+  img.onerror = function () {};
+  img.src = svgBase46;
+}
+
 /*
 import { onMounted, ref } from "vue";
 import { StoreType, useStore } from "@/store";
@@ -421,6 +501,11 @@ onMounted(async () => {
   .el-loading-spinner {
     position: static;
     margin-top: 0;
+  }
+
+  .medal-image {
+    width: 200px;
+    height: 200px;
   }
 }
 

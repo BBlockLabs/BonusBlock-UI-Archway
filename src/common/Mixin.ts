@@ -2,14 +2,19 @@ import { ElMessage } from "element-plus";
 
 const VueCommonMixin = {
   methods: {
-    copyToClipboard(text: string) {
-      navigator.clipboard
-        .writeText(text)
+    copyToClipboard(data: string | ClipboardItem) {
+      const isText = (typeof data === "string");
+      const promise = isText
+        ? navigator.clipboard.writeText(data)
+        : navigator.clipboard.write([data]);
+      promise
         .then(() => {
-          ElMessage({ message: "Text copied to clipboard", type: "success" });
+          const message = (isText ? "Text" : "Image") + " copied to clipboard";
+          ElMessage({ message: message, type: "success" });
         })
         .catch(() => {
-          ElMessage({ message: "Failed to copy text", type: "error" });
+          const message = "Failed to copy " + (isText ? "text" : "image") + " to clipboard";
+          ElMessage({ message: message, type: "error" });
         });
     },
   },
