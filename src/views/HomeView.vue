@@ -63,11 +63,11 @@ import SvgKeplr from "@/assets/icons/keplr.svg?component";
 import SvgLogo from "@/assets/logo/logo-yellow.svg?component";
 import SvgMetamaskFox from "@/assets/icons/metamask-fox.svg?component";
 import type { Ref } from "vue";
+import { onMounted, ref } from "vue";
 import { Router, useRoute, useRouter } from "vue-router";
 import { StoreType, useStore } from "@/store";
-import { ref, onMounted } from "vue";
 import MetamaskClient from "@/common/MetamaskClient";
-import cookieConsentTools from 'cookie-consent-tools';
+import cookieConsentTools from "cookie-consent-tools";
 
 const store: StoreType = useStore();
 const router: Router = useRouter();
@@ -77,7 +77,22 @@ const keplrDialog: Ref<boolean> = ref(false);
 
 setTimeout(() => {
   cookieConsentTools.initialize({
-    consentBox: { container: "cookie-consent" },
+    consentBox: {
+      container: "cookie-consent",
+      messages: {
+        message:
+          "We use Cookie3 Analytics for analytical and marketing purposes. " +
+          "Cookie3 Analytics is a tool used to collect information about user behaviour " +
+          "on the website. It is used to create a user profile. To learn more about the " +
+          "processing of data by Cookie3 Analytics, please read the",
+        seeMoreLabel: "Cookie3 Analytics Privacy Policy",
+        okButton: "Got it",
+      },
+      seeMoreLink: {
+        href: "https://app.cookie3.co/privacy",
+        target: "_blank",
+      },
+    },
   });
 }, 1000);
 
