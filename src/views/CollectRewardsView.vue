@@ -138,9 +138,12 @@
 </template>
 
 <script setup lang="ts">
-import {onUnmounted, reactive, ref} from "vue";
-import {ElMessage, ElMessageBox} from "element-plus";
+import { onUnmounted, reactive, ref } from "vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { store } from "@/store";
+import { AwesomeQR } from "awesome-qr";
 import VueCommonMixin from "@/common/Mixin";
+import Logo from "@/assets/logo/logo.png";
 import PageWrapper from "@/components/PageWrapper.vue";
 import SocialLinks from "@/components/SocialLinks.vue";
 import SvgLock from "@/assets/icons/lock.svg?component";
@@ -387,22 +390,33 @@ function humanTimeLeft(seconds: number): string {
   return weeks + " w";
 }
 
+function getReferralQrData(): Promise<string> {
+  let referralLink = store.getters["UserModule/refLink"];
+  return new AwesomeQR({
+    colorDark: "#1E1C4E",
+    correctLevel: 3,
+    logoImage: Logo,
+    margin: 14, //px
+    size: 35 * 14, // px
+    text: referralLink,
+    whiteMargin: false,
+    // ...this.options,
+  })
+    .draw()
+    .then((data) => {
+      if (typeof data !== "string") {
+        return "";
+      }
+      return data.substring(data.indexOf(",") + 1);
+    })
+    .catch((e) => {
+      console.error(e);
+      return "";
+    });
+}
+
 function generateAndCopyClaimImage(campaign: Campaign): void {
-  let svgData, svgBase46, img: HTMLImageElement;
-  try {
-    svgData = ClaimSharingBackground
-      .replace(/\{campaign_name}/g, campaign.name)
-      .replace(/\{campaign_week}/g, "Week " + campaign.weekNumber)
-      .replace(/\{currency}/g, campaign.currency)
-      .replace(/\{amount}/g, campaign.amount.toString())
-      .replace(/\{network}/g, campaign.networkName);
-    svgBase46 = "data:image/svg+xml;base64," + btoa(svgData);
-    img = new Image();
-  } catch (e) {
-    console.error(e);
-    ElMessage({ message: "Failed to generate image", type: "error" });
-    return;
-  }
+  let img = new Image();
   img.onload = function () {
     try {
       let width = img.width;
@@ -432,66 +446,29 @@ function generateAndCopyClaimImage(campaign: Campaign): void {
       ElMessage({ message: "Failed to generate image", type: "error" });
     }
   };
-  img.onerror = function () {};
-  img.src = svgBase46;
-}
-
-/*
-import { onMounted, ref } from "vue";
-import { StoreType, useStore } from "@/store";
-import FormattedError from "@/common/errors/FormattedError";
-import { ElMessageBox } from "element-plus";
-import HttpUnauthorizedError from "@/common/errors/HttpUnauthorizedError";
-import { Router, useRouter } from "vue-router";
-import type CalculationResultDto from "@/common/api/dto/CalculationResultDto";
-import SocialLinks from "@/components/SocialLinks.vue";
-
-const store: StoreType = useStore();
-const router: Router = useRouter();
-
-let calculationResults = ref(Array<CalculationResultDto>());
-let bonusBlockWallet = ref(null);
-
-async function bonusBlockKeplrLogin(): Promise<void> {
-  store.commit("setLoading", true);
-
-  try {
-    await store.dispatch("UserModule/keplrBonusBlockLogin");
-    bonusBlockWallet.value = store.getters["UserModule/bonusBlockWallet"];
-  } catch (error: any) {
-    if (error instanceof FormattedError) {
-      await ElMessageBox.alert(error.message, error.name, {});
-    } else if (error instanceof HttpUnauthorizedError) {
-      await store.dispatch("UserModule/removeSession");
-      await router.push("/");
-    } else {
-      console.error(error);
-      await ElMessageBox.alert(
-        "There was an error connecting your wallet, please try again.",
-        "Error",
-        {
-          center: true,
-        }
-      );
+  img.onerror = function () {
+    console.error("img.onerror");
+    ElMessage({ message: "Failed to generate image", type: "error" });
+  };
+  getReferralQrData().then((qrData) => {
+    let svgData, svgBase46;
+    try {
+      svgData = ClaimSharingBackground
+        .replace(/\{campaign_name}/g, campaign.name)
+        .replace(/\{campaign_week}/g, "Week " + campaign.weekNumber)
+        .replace(/\{currency}/g, campaign.currency)
+        .replace(/\{amount}/g, campaign.amount.toString())
+        .replace(/\{network}/g, campaign.networkName)
+        .replace(/\{qr_data}/g, qrData);
+      svgBase46 = "data:image/svg+xml;base64," + btoa(svgData);
+      img.src = svgBase46;
+    } catch (e) {
+      console.error(e);
+      ElMessage({ message: "Failed to generate image", type: "error" });
+      return;
     }
-  } finally {
-    store.commit("setLoading", false);
-  }
+  });
 }
-
-onMounted(async () => {
-  try {
-    const response: Array<CalculationResultDto> = await store.dispatch(
-      "HttpModule/getCalculationResults"
-    );
-    calculationResults.value = response;
-  } catch (e) {
-    console.error(e);
-  }
-
-  bonusBlockWallet.value = store.getters["UserModule/bonusBlockWallet"];
-});
-*/
 </script>
 <style lang="scss">
 .claim-modal {
