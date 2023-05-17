@@ -15,7 +15,7 @@
         <div>
           You have claimed
           <b
-            >{{ claimModal.campaign.amount }}
+            >{{ getHumanAmount(claimModal.campaign) }}
             {{ claimModal.campaign.currency }}!</b
           >
         </div>
@@ -87,12 +87,12 @@
               class="currency-icon"
             />
             <div v-if="campaign.amount" class="flex-grow ml-small">
-              {{ campaign.amount }} {{ campaign.currency }}
+              {{ getHumanAmount(campaign) }} {{ campaign.currency }}
             </div>
-            <div v-else-if="campaign.unlockDate" class="flex-grow ml-small text-muted">
-              Unlocks on {{ campaign.unlockDate }}
+            <div v-else class="flex-grow ml-small text-muted">
+              Unlocks on {{ nextCampaignCalculationDate(campaign) }}
             </div>
-            <el-tooltip :content="campaign.amount ? 'Claim your rewards' : 'Unlocks on ' + campaign.unlockDate" placement="top">
+            <el-tooltip :content="campaign.amount ? 'Claim your rewards' : 'Unlocks on ' + nextCampaignCalculationDate(campaign)" placement="top">
               <div>
                 <el-button
                   type="primary"
@@ -192,19 +192,18 @@ let claimModal = reactive({
   loading: false,
 });
 
-type Campaign = {
+type CampaignWithReward = {
   id: number;
   name: string;
   networkName: string;
-  amount: number;
+  amount: string;
+  decimal: number;
   currency: string;
-  unlockDate?: string;
-  started: number;
-  expiring: number;
-  weekNumber: number;
+  periodFrom: number;
+  periodTill: number;
 };
 
-type Project = {
+type Campaign = {
   id: number;
   name: string;
   description: string;
@@ -212,91 +211,90 @@ type Project = {
   link: string;
 };
 
-let campaigns: Array<Campaign> = [
+let campaigns: Array<CampaignWithReward> = [
   {
     id: 1,
     name: "UniSwap Amazing Campaign",
     networkName: "Idk",
-    amount: 35,
+    amount: "35",
+    decimal: 0,
     currency: "UNI",
-    started: now.value - 24 * 60 * 60,
-    expiring: now.value + 2 * 7 * 24 * 60 * 60,
-    weekNumber: 1,
+    periodFrom: now.value - 7 * 24 * 60 * 60,
+    periodTill: now.value + 2 * 7 * 24 * 60 * 60,
   },
   {
     id: 2,
     name: "Power 404",
     networkName: "Idk",
-    amount: 938.98,
+    amount: "93898",
+    decimal: 2,
     currency: "POWR",
-    started: now.value - 24 * 60 * 60,
-    expiring: now.value + 6 * 24 * 60 * 60,
-    weekNumber: 1,
+    periodFrom: now.value - 24 * 60 * 60,
+    periodTill: now.value + 6 * 24 * 60 * 60,
   },
   {
     id: 3,
     name: "ETH Campaign",
     networkName: "Etherium",
-    amount: 0,
+    amount: "",
+    decimal: 0,
     currency: "ETH",
-    unlockDate: "Apr 9",
-    started: now.value - 24 * 60 * 60,
-    expiring: now.value + 3 * 7 * 24 * 60 * 60,
-    weekNumber: 1,
+    periodFrom: now.value - 24 * 60 * 60,
+    periodTill: now.value + 3 * 7 * 24 * 60 * 60,
   },
   {
     id: 4,
     name: "Random Campaign",
     networkName: "Idk",
-    amount: 7,
+    amount: "7",
+    decimal: 0,
     currency: "ARY",
-    started: now.value - 24 * 60 * 60,
-    expiring: now.value + 2 * 7 * 24 * 60 * 60,
-    weekNumber: 1,
+    periodFrom: now.value - 24 * 60 * 60,
+    periodTill: now.value + 2 * 7 * 24 * 60 * 60,
   },
   {
     id: 5,
     name: "Luna campaign",
     networkName: "Idk",
-    amount: 80,
+    amount: "80",
+    decimal: 0,
     currency: "LUNA",
-    started: now.value - 24 * 60 * 60,
-    expiring: now.value + 13 * 60 * 60,
-    weekNumber: 1,
+    periodFrom: now.value - 24 * 60 * 60,
+    periodTill: now.value + 13 * 60 * 60,
   },
   {
     id: 6,
     name: "Yet Another Campaign",
     networkName: "Idk",
-    amount: 8.38,
+    amount: "838",
+    decimal: 2,
     currency: "BAB",
-    started: now.value - 24 * 60 * 60,
-    expiring: now.value + 3 * 24 * 60 * 60,
-    weekNumber: 1,
+    periodFrom: now.value - 24 * 60 * 60,
+    periodTill: now.value + 3 * 24 * 60 * 60,
   },
   {
     id: 7,
     name: "BEAM BEANS",
     networkName: "Idk",
-    amount: 5342.53,
+    amount: "534253",
+    decimal: 2,
     currency: "BEAM",
-    started: now.value - 60,
-    expiring: now.value + 60,
-    weekNumber: 1,
+    periodFrom: now.value - 60,
+    periodTill: now.value + 60,
   },
   {
     id: 8,
     name: "Get rich as hecc boi",
     networkName: "Idk",
-    amount: 93939494,
+    amount: "93939494",
+    decimal: 0,
     currency: "EVX",
-    started: now.value - 24 * 60 * 60,
-    expiring: now.value + 0,
-    weekNumber: 1,
+    periodFrom: now.value - 24 * 60 * 60,
+    periodTill: now.value + 0,
   },
 ];
 
-let projects: Array<Project> = [
+let projects: Array<Campaign> = [
   {
     id: 1,
     name: "Project Name 1",
@@ -320,12 +318,12 @@ let projects: Array<Project> = [
   },
 ];
 
-function openCampaignDetails(campaign: Campaign): void {
+function openCampaignDetails(campaign: CampaignWithReward): void {
   // todo: actual implementation
   ElMessageBox.alert("openCampaignDetails " + campaign.id, "Todo");
 }
 
-function claimCampaign(campaign: Campaign): void {
+function claimCampaign(campaign: CampaignWithReward): void {
   // todo: actual implementation
   claimModal.campaign = campaign;
   claimModal.open = true;
@@ -335,22 +333,46 @@ function claimCampaign(campaign: Campaign): void {
   }, 1500);
 }
 
-function openProject(project: Project): void {
+function openProject(project: Campaign): void {
   // todo: actual implementation
   window.open(project.link, "_blank");
 }
 
-function campaignTimeLeft(campaign: Campaign): number {
-  return campaign.expiring - now.value;
+function getHumanAmount(campaign: CampaignWithReward): string {
+  let integerPart = (campaign.amount.length > campaign.decimal) ? campaign.amount.substring(0, campaign.amount.length - campaign.decimal) : "0";
+  let fractionalPart = (campaign.amount.length > campaign.decimal) ? campaign.amount.substring(campaign.amount.length - campaign.decimal) : campaign.amount;
+  if (fractionalPart !== "0") {
+    while (fractionalPart.length < campaign.decimal) {
+      fractionalPart = "0" + fractionalPart;
+    }
+  }
+  fractionalPart = fractionalPart.replace(/0+$/, "");
+  return (fractionalPart === "") ? integerPart : integerPart + "." + fractionalPart;
 }
 
-function getCampaignProgressPercent(campaign: Campaign): number {
+function getCampaignWeekNumber(campaign: CampaignWithReward): number {
+  return Math.floor((new Date().valueOf() / 1000 - campaign.periodFrom) / 60 / 60 / 24 / 7);
+}
+
+function nextCampaignCalculationDate(campaign: CampaignWithReward): string {
+  const secondsInPeriod = 60 * 60 * 24 * 7;
+  let remainingSeconds = secondsInPeriod - (new Date().valueOf() / 1000 - campaign.periodFrom) % secondsInPeriod;
+  let date = new Date(new Date().valueOf() + remainingSeconds * 1000);
+  const month_names_short = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",];
+  return month_names_short[date.getMonth()] + " " + date.getDate();
+}
+
+function campaignTimeLeft(campaign: CampaignWithReward): number {
+  return campaign.periodTill - now.value;
+}
+
+function getCampaignProgressPercent(campaign: CampaignWithReward): number {
   return (
     Math.round(
       Math.min(
         Math.max(
-          (now.value - campaign.started) /
-            (campaign.expiring - campaign.started),
+          (now.value - campaign.periodFrom) /
+            (campaign.periodTill - campaign.periodFrom),
           0
         ),
         1
@@ -415,7 +437,7 @@ function getReferralQrData(): Promise<string> {
     });
 }
 
-function generateAndCopyClaimImage(campaign: Campaign): void {
+function generateAndCopyClaimImage(campaign: CampaignWithReward): void {
   let img = new Image();
   img.onload = function () {
     try {
@@ -455,9 +477,9 @@ function generateAndCopyClaimImage(campaign: Campaign): void {
     try {
       svgData = ClaimSharingBackground
         .replace(/\{campaign_name}/g, campaign.name)
-        .replace(/\{campaign_week}/g, "Week " + campaign.weekNumber)
+        .replace(/\{campaign_week}/g, "Week " + (getCampaignWeekNumber(campaign) + 1))
         .replace(/\{currency}/g, campaign.currency)
-        .replace(/\{amount}/g, campaign.amount.toString())
+        .replace(/\{amount}/g, getHumanAmount(campaign))
         .replace(/\{network}/g, campaign.networkName)
         .replace(/\{qr_data}/g, qrData);
       svgBase46 = "data:image/svg+xml;base64," + btoa(svgData);
