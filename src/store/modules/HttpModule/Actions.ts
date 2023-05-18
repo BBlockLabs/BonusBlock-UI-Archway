@@ -362,11 +362,12 @@ export default class Actions implements ActionsInterface {
     >(response);
 
     responseData.payload.map((row) => {
-      row.socials = JSON.parse(row.socials);
-      for (const r of row.socials) {
-        if (r.type === "main" || r.type == "main-link") {
-          row.mainLink = r.link;
-          row.mainLinkTitle = r.title || "Visit";
+      if (row.socials) {
+        for (const r of row.socials) {
+          if (r.type === "main" || r.type == "main-link") {
+            row.mainLink = r.link;
+            row.mainLinkTitle = r.title || "Visit";
+          }
         }
       }
       if (row.image) {
@@ -404,6 +405,14 @@ export default class Actions implements ActionsInterface {
 
     if (responseData.payload) {
       responseData.payload.map((campaign) => {
+        if (campaign.socials) {
+          for (const r of campaign.socials) {
+            if (r.type === "main" || r.type == "main-link") {
+              campaign.mainLink = r.link;
+              campaign.mainLinkTitle = r.title || "Visit";
+            }
+          }
+        }
         campaign.periodFromParsed = Math.round(moment(campaign.periodFrom).valueOf() / 1000);
         campaign.periodTillParsed = Math.round(moment(campaign.periodTill).valueOf() / 1000);
       });

@@ -9,4 +9,7 @@ export default class CampaignWithRewardDto {
   periodTill: any;
   periodFromParsed: number = NaN;
   periodTillParsed: number = NaN;
+  socials: Array<{ type: string; link: string; title: string }> | null = [];
+  mainLink: string = "";
+  mainLinkTitle: string = "";
 }

@@ -49,6 +49,7 @@
           <el-row justify="space-between" align="middle">
             <h3 class="fs-slightly-larger">{{ campaign.name }}</h3>
             <svg-link
+              v-if="campaign.mainLink"
               class="card-link"
               @click="openCampaignDetails(campaign)"
             />
@@ -76,12 +77,12 @@
             class="pt-medium pb-medium"
           >
             <b>Your Reward</b>
-            <div
+            <!--div
               class="text-link text-muted"
               @click="openCampaignDetails(campaign)"
             >
               See more <svg-chevron-right />
-            </div>
+            </div-->
           </el-row>
           <el-row justify="space-between" align="middle">
             <component
@@ -130,13 +131,20 @@
           <h3 class="fs-large my-base">{{ announcement.title }}</h3>
           {{ announcement.description }}
           <div class="d-flex mt-large mb-base">
-            <social-links
-              :twitter="LinkTwitter"
-              :github="LinkGithub"
-              :telegram="LinkTelegram"
-              :reddit="LinkReddit"
-              class="social-links"
-            />
+            <template v-for="social in announcement.socials" :key="social.type">
+              <el-link
+                :href="social.link || social.url"
+                target="_blank"
+                :underline="false"
+                class="mr-small mt-small fs-extra-small"
+              >
+                <SvgTwitter v-if="social.type === 'twitter'" />
+                <SvgTelegram v-else-if="social.type === 'telegram'" />
+                <SvgYoutube v-else-if="social.type === 'youtube'" />
+                <SvgDiscord v-else-if="social.type === 'discord'" />
+                <SvgReddit v-else-if="social.type === 'reddit'" />
+              </el-link>
+            </template>
             <el-button type="primary" class="ml-auto" @click="openAnnouncement(announcement)">Visit</el-button>
           </div>
         </div>
@@ -147,17 +155,21 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, reactive, ref } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessage } from "element-plus";
 import { store } from "@/store";
 import { AwesomeQR } from "awesome-qr";
 import VueCommonMixin from "@/common/Mixin";
 import Logo from "@/assets/logo/logo.png";
 import PageWrapper from "@/components/PageWrapper.vue";
-import SocialLinks from "@/components/SocialLinks.vue";
+import SvgTwitter from "@/assets/icons/twitter.svg?component";
+import SvgTelegram from "@/assets/icons/telegram.svg?component";
+import SvgReddit from "@/assets/icons/reddit.svg?component";
+import SvgDiscord from "@/assets/icons/discord.svg?component";
+import SvgYoutube from "@/assets/icons/youtube.svg?component";
 import SvgLock from "@/assets/icons/lock.svg?component";
 import SvgLink from "@/assets/icons/open-new-window.svg?component";
 import SvgClock from "@/assets/icons/clock.svg?component";
-import SvgChevronRight from "@/assets/icons/nav-arrow-right.svg?component";
+//import SvgChevronRight from "@/assets/icons/nav-arrow-right.svg?component";
 import SvgShare from "@/assets/icons/share.svg?component";
 import SvgAry from "@/assets/currencies/ary.svg?component";
 import SvgBab from "@/assets/currencies/bab.svg?component";
@@ -172,11 +184,6 @@ import ClaimSharingBackground from "@/assets/images/claim-sharing-image-template
 import moment from "moment";
 import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
 import type AnnouncementsDto from "@/common/api/dto/AnnouncementsDto";
-
-const LinkGithub: string = import.meta.env.VITE_LINK_GITHUB;
-const LinkTwitter: string = import.meta.env.VITE_LINK_TWITTER;
-const LinkTelegram: string = import.meta.env.VITE_LINK_TELEGRAM;
-const LinkReddit: string = import.meta.env.VITE_LINK_REDDIT;
 
 const currencyIcons = {
   ARY: SvgAry,
@@ -238,7 +245,7 @@ onMounted(() => {
 
 function openCampaignDetails(campaign: CampaignWithRewardDto): void {
   // todo: actual implementation
-  ElMessageBox.alert("openCampaignDetails " + campaign.id, "Todo");
+  window.open(campaign.mainLink, "_blank");
 }
 
 function claimCampaign(campaign: CampaignWithRewardDto): void {
