@@ -10,7 +10,9 @@ import type MetamaskConnectRequest from "@/common/api/MetamaskConnectRequest";
 import type CalculationResultDto from "@/common/api/dto/CalculationResultDto";
 import HttpUnauthorizedError from "@/common/errors/HttpUnauthorizedError";
 import type AnnouncementsDto from "@/common/api/dto/AnnouncementsDto";
+import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
 import type AnnouncementsRequest from "@/common/api/AnnouncementsRequest";
+import moment from "moment";
 
 export type Context = ActionContext<{}, RootStateInterface>;
 export type HttpAction = Action<{}, RootStateInterface>;
@@ -64,6 +66,12 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
       context: Context,
       payload: AnnouncementsRequest
     ) => Promise<Array<AnnouncementsDto>>);
+
+  getCampaignsWithReward: HttpAction &
+    ((
+      this: Store<RootStateInterface>,
+      context: Context
+    ) => Promise<HttpResponse<Array<CampaignWithRewardDto>>>);
 }
 
 export default class Actions implements ActionsInterface {
@@ -372,5 +380,40 @@ export default class Actions implements ActionsInterface {
     }
 
     return responseData.payload;
+  };
+
+  getCampaignsWithReward = async (
+    context: Context
+  ): Promise<HttpResponse<Array<CampaignWithRewardDto>>> => {
+    const response: Response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/campaigns-with-reward`,
+      {
+        headers: {
+          "X-Auth-Token": context.rootState.UserModule?.token || "",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw Actions.getBadResponseError(response.status);
+    }
+
+    const responseData = await HttpResponse.fromResponse<
+      Array<CampaignWithRewardDto>
+    >(response);
+
+    if (responseData.payload) {
+      responseData.payload.map((campaign) => {
+        campaign.periodFromParsed = Math.round(moment(campaign.periodFrom).valueOf() / 1000);
+        campaign.periodTillParsed = Math.round(moment(campaign.periodTill).valueOf() / 1000);
+      });
+    }
+
+    if (!responseData.success) {
+      console.error(responseData);
+      throw new HttpCallNotSuccessfulError();
+    }
+
+    return responseData;
   };
 }

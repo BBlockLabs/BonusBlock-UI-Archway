@@ -60,11 +60,13 @@
             "
             stroke-width="5"
           >
-            <svg-clock />&nbsp;<b class="fs-extra-small">{{
-              campaignTimeLeft(campaign) <= 0
-                ? "Ended"
-                : humanTimeLeft(campaignTimeLeft(campaign)) + " left"
-            }}</b>
+            <svg-clock class="mr-extra-small" />
+            <el-tooltip v-if="campaignTimeLeft(campaign) <= 0" :content="humanTimeLeft(Math.abs(campaignTimeLeft(campaign)), 3) + ' ago'" placement="top">
+              <b class="fs-extra-small">Ended</b>
+            </el-tooltip>
+            <el-tooltip v-else :content="humanTimeLeft(campaignTimeLeft(campaign), 3)" placement="top">
+              <b class="fs-extra-small">{{ humanTimeLeft(campaignTimeLeft(campaign)) }} left</b>
+            </el-tooltip>
           </el-progress>
         </div>
         <div class="bottom-half">
@@ -87,7 +89,7 @@
               class="currency-icon"
             />
             <div v-if="campaign.amount" class="flex-grow ml-small">
-              {{ getHumanAmount(campaign) }} {{ campaign.currency }}
+              {{ getHumanAmount(campaign).substring(0, 17) }} {{ campaign.currency }}
             </div>
             <div v-else class="flex-grow ml-small text-muted">
               Unlocks on {{ nextCampaignCalculationDate(campaign) }}
@@ -108,6 +110,12 @@
           </el-row>
         </div>
       </div>
+      <div v-if="campaignsLoading">
+        Loading
+      </div>
+      <div v-if="campaigns.length < 1">
+        No rewards yet
+      </div>
     </div>
 
     <el-divider />
@@ -116,11 +124,11 @@
       <h2>Keep Earning</h2>
     </el-row>
     <div class="campaign-container mb-base">
-      <div v-for="project in projects" :key="project.id" class="project-card">
-        <div class="card-image" :style="{ backgroundImage: 'url(' + project.image + ')' }"></div>
+      <div v-for="announcement in announcements" :key="announcement.id" class="project-card">
+        <div class="card-image" :style="{ backgroundImage: 'url(' + announcement.image + ')' }"></div>
         <div class="card-content">
-          <h3 class="fs-large my-base">{{ project.name }}</h3>
-          {{ project.description }}
+          <h3 class="fs-large my-base">{{ announcement.title }}</h3>
+          {{ announcement.description }}
           <div class="d-flex mt-large mb-base">
             <social-links
               :twitter="LinkTwitter"
@@ -129,7 +137,7 @@
               :reddit="LinkReddit"
               class="social-links"
             />
-            <el-button type="primary" class="ml-auto" @click="openProject(project)">Visit</el-button>
+            <el-button type="primary" class="ml-auto" @click="openAnnouncement(announcement)">Visit</el-button>
           </div>
         </div>
       </div>
@@ -138,7 +146,7 @@
 </template>
 
 <script setup lang="ts">
-import { onUnmounted, reactive, ref } from "vue";
+import { onMounted, onUnmounted, reactive, ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { store } from "@/store";
 import { AwesomeQR } from "awesome-qr";
@@ -161,6 +169,9 @@ import SvgPowr from "@/assets/currencies/powr.svg?component";
 import SvgUni from "@/assets/currencies/uni.svg?component";
 import SvgMedal from "@/assets/images/congratulations_medal.svg?component";
 import ClaimSharingBackground from "@/assets/images/claim-sharing-image-template.svg?raw";
+import moment from "moment";
+import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
+import type AnnouncementsDto from "@/common/api/dto/AnnouncementsDto";
 
 const LinkGithub: string = import.meta.env.VITE_LINK_GITHUB;
 const LinkTwitter: string = import.meta.env.VITE_LINK_TWITTER;
@@ -178,9 +189,10 @@ const currencyIcons = {
   UNI: SvgUni,
 };
 
-const now = ref(Math.ceil(new Date().valueOf() / 1000));
+let localTimeOffsetMs: number = 0;
+const now = ref(Math.ceil((new Date().valueOf() - localTimeOffsetMs) / 1000));
 const timer = setInterval(() => {
-  now.value = Math.ceil(new Date().valueOf() / 1000);
+  now.value = Math.ceil((new Date().valueOf() - localTimeOffsetMs) / 1000);
 }, 1000);
 onUnmounted(() => {
   clearInterval(timer);
@@ -192,138 +204,44 @@ let claimModal = reactive({
   loading: false,
 });
 
-type CampaignWithReward = {
-  id: number;
-  name: string;
-  networkName: string;
-  amount: string;
-  decimal: number;
-  currency: string;
-  periodFrom: number;
-  periodTill: number;
-};
+const campaignsLoading = ref(true);
+const campaigns: Array<CampaignWithRewardDto> = reactive([]);
+const announcements: Array<AnnouncementsDto> = reactive([]);
 
-type Campaign = {
-  id: number;
-  name: string;
-  description: string;
-  image: string;
-  link: string;
-};
+onMounted(() => {
+  // load rewards
+  store.dispatch(
+      "HttpModule/getCampaignsWithReward"
+  ).then((data) => {
+    campaigns.length = 0;
+    if (data.payload) {
+      for (let campaign of data.payload) {
+        campaigns.push(campaign);
+      }
+    }
+    localTimeOffsetMs = moment().diff(data.now);
+    campaignsLoading.value = false;
+  });
+  // load announcements
+  store.dispatch(
+      "HttpModule/getAnnouncementsList",
+      { page: 1, perPage: 3, sort: "HIGHEST_POOL", activeCampaignsOnly: true }
+    ).then((newAnnouncements) => {
+      announcements.length = 0;
+      if (newAnnouncements) {
+        for (let newAnnouncement of newAnnouncements) {
+          announcements.push(newAnnouncement);
+        }
+      }
+    });
+});
 
-let campaigns: Array<CampaignWithReward> = [
-  {
-    id: 1,
-    name: "UniSwap Amazing Campaign",
-    networkName: "Idk",
-    amount: "35",
-    decimal: 0,
-    currency: "UNI",
-    periodFrom: now.value - 7 * 24 * 60 * 60,
-    periodTill: now.value + 2 * 7 * 24 * 60 * 60,
-  },
-  {
-    id: 2,
-    name: "Power 404",
-    networkName: "Idk",
-    amount: "93898",
-    decimal: 2,
-    currency: "POWR",
-    periodFrom: now.value - 24 * 60 * 60,
-    periodTill: now.value + 6 * 24 * 60 * 60,
-  },
-  {
-    id: 3,
-    name: "ETH Campaign",
-    networkName: "Etherium",
-    amount: "1111111111111111111",
-    decimal: 18,
-    currency: "ETH",
-    periodFrom: now.value - 24 * 60 * 60,
-    periodTill: now.value + 3 * 7 * 24 * 60 * 60,
-  },
-  {
-    id: 4,
-    name: "Random Campaign",
-    networkName: "Idk",
-    amount: "",
-    decimal: 0,
-    currency: "ARY",
-    periodFrom: now.value - 24 * 60 * 60,
-    periodTill: now.value + 2 * 7 * 24 * 60 * 60,
-  },
-  {
-    id: 5,
-    name: "Luna campaign",
-    networkName: "Idk",
-    amount: "80",
-    decimal: 0,
-    currency: "LUNA",
-    periodFrom: now.value - 24 * 60 * 60,
-    periodTill: now.value + 13 * 60 * 60,
-  },
-  {
-    id: 6,
-    name: "Yet Another Campaign",
-    networkName: "Idk",
-    amount: "838",
-    decimal: 2,
-    currency: "BAB",
-    periodFrom: now.value - 24 * 60 * 60,
-    periodTill: now.value + 3 * 24 * 60 * 60,
-  },
-  {
-    id: 7,
-    name: "BEAM BEANS",
-    networkName: "Idk",
-    amount: "534253",
-    decimal: 2,
-    currency: "BEAM",
-    periodFrom: now.value - 60,
-    periodTill: now.value + 60,
-  },
-  {
-    id: 8,
-    name: "Get rich as hecc boi",
-    networkName: "Idk",
-    amount: "93939494",
-    decimal: 0,
-    currency: "EVX",
-    periodFrom: now.value - 24 * 60 * 60,
-    periodTill: now.value + 0,
-  },
-];
-
-let projects: Array<Campaign> = [
-  {
-    id: 1,
-    name: "Project Name 1",
-    description: "Lorem 1 ipsum dolor sit amet, consectetur adipiscing elit. Sed lacinia augue eget nisl euismod, quis pulvinar massa pharetra. Sed vestibulum tortor et magna sodales, nec cursus sapien eleifend. In hac habitasse platea dictumst.",
-    image: "https://derpicdn.net/img/2012/1/2/3/large.png",
-    link: "https://derpibooru.org/images/3",
-  },
-  {
-    id: 2,
-    name: "Project Name 2",
-    description: "Lorem 2 ipsum dolor sit amet, consectetur adipiscing elit. Sed lacinia augue eget nisl euismod, quis pulvinar massa pharetra. Sed vestibulum tortor et magna sodales, nec cursus sapien eleifend. In hac habitasse platea dictumst.",
-    image: "https://derpicdn.net/img/view/2021/5/31/2625576.png",
-    link: "https://derpibooru.org/images/2625576",
-  },
-  {
-    id: 3,
-    name: "Project Name 3",
-    description: "Lorem 3 ipsum dolor sit amet, consectetur adipiscing elit. Sed lacinia augue eget nisl euismod, quis pulvinar massa pharetra. Sed vestibulum tortor et magna sodales, nec cursus sapien eleifend. In hac habitasse platea dictumst.",
-    image: "https://derpicdn.net/img/2022/5/23/2871156/large.jpg",
-    link: "https://derpibooru.org/images/2871156",
-  },
-];
-
-function openCampaignDetails(campaign: CampaignWithReward): void {
+function openCampaignDetails(campaign: CampaignWithRewardDto): void {
   // todo: actual implementation
   ElMessageBox.alert("openCampaignDetails " + campaign.id, "Todo");
 }
 
-function claimCampaign(campaign: CampaignWithReward): void {
+function claimCampaign(campaign: CampaignWithRewardDto): void {
   // todo: actual implementation
   claimModal.campaign = campaign;
   claimModal.open = true;
@@ -333,12 +251,12 @@ function claimCampaign(campaign: CampaignWithReward): void {
   }, 1500);
 }
 
-function openProject(project: Campaign): void {
+function openAnnouncement(announcement: AnnouncementsDto): void {
   // todo: actual implementation
-  window.open(project.link, "_blank");
+  window.open(announcement.mainLink, "_blank");
 }
 
-function getHumanAmount(campaign: CampaignWithReward): string {
+function getHumanAmount(campaign: CampaignWithRewardDto): string {
   let integerPart = (campaign.amount.length > campaign.decimal) ? campaign.amount.substring(0, campaign.amount.length - campaign.decimal) : "0";
   let fractionalPart = (campaign.amount.length > campaign.decimal) ? campaign.amount.substring(campaign.amount.length - campaign.decimal) : campaign.amount;
   if (fractionalPart !== "0") {
@@ -350,29 +268,29 @@ function getHumanAmount(campaign: CampaignWithReward): string {
   return (fractionalPart === "") ? integerPart : integerPart + "." + fractionalPart;
 }
 
-function getCampaignWeekNumber(campaign: CampaignWithReward): number {
-  return Math.floor((new Date().valueOf() / 1000 - campaign.periodFrom) / 60 / 60 / 24 / 7);
+function getCampaignWeekNumber(campaign: CampaignWithRewardDto): number {
+  return Math.floor((now.value - campaign.periodFromParsed) / 60 / 60 / 24 / 7);
 }
 
-function nextCampaignCalculationDate(campaign: CampaignWithReward): string {
+function nextCampaignCalculationDate(campaign: CampaignWithRewardDto): string {
   const secondsInPeriod = 60 * 60 * 24 * 7;
-  let remainingSeconds = secondsInPeriod - (new Date().valueOf() / 1000 - campaign.periodFrom) % secondsInPeriod;
-  let date = new Date(new Date().valueOf() + remainingSeconds * 1000);
+  let remainingSeconds = secondsInPeriod - (now.value - campaign.periodFromParsed) % secondsInPeriod;
+  let date = new Date(now.value + remainingSeconds * 1000);
   const month_names_short = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",];
   return month_names_short[date.getMonth()] + " " + date.getDate();
 }
 
-function campaignTimeLeft(campaign: CampaignWithReward): number {
-  return campaign.periodTill - now.value;
+function campaignTimeLeft(campaign: CampaignWithRewardDto): number {
+  return campaign.periodTillParsed - now.value;
 }
 
-function getCampaignProgressPercent(campaign: CampaignWithReward): number {
+function getCampaignProgressPercent(campaign: CampaignWithRewardDto): number {
   return (
     Math.round(
       Math.min(
         Math.max(
-          (now.value - campaign.periodFrom) /
-            (campaign.periodTill - campaign.periodFrom),
+          (now.value - campaign.periodFromParsed) /
+            (campaign.periodTillParsed - campaign.periodFromParsed),
           0
         ),
         1
@@ -392,24 +310,29 @@ function elProgressStatusFromTimeRemaining(seconds: number): string {
   return "";
 }
 
-function humanTimeLeft(seconds: number): string {
+function humanTimeLeft(seconds: number, numberOfParts: number = 1): string {
   if (seconds < 60) {
     return seconds + " s";
   }
+  let parts = [(seconds % 60) + " s"];
   let minutes = Math.floor(seconds / 60);
+  parts.unshift((minutes % 60) + " m");
   if (minutes < 60) {
-    return minutes + " m";
+    return parts.slice(0, numberOfParts).join(" ");
   }
   let hours = Math.floor(minutes / 60);
+  parts.unshift((hours % 24) + " h");
   if (hours < 60) {
-    return hours + " h";
+    return parts.slice(0, numberOfParts).join(" ");
   }
   let days = Math.floor(hours / 24);
+  parts.unshift((days % 7) + " d");
   if (days < 7) {
-    return days + " d";
+    return parts.slice(0, numberOfParts).join(" ");
   }
   let weeks = Math.floor(days / 7);
-  return weeks + " w";
+  parts.unshift(weeks + " w");
+  return parts.slice(0, numberOfParts).join(" ");
 }
 
 function getReferralQrData(): Promise<string> {
@@ -437,7 +360,7 @@ function getReferralQrData(): Promise<string> {
     });
 }
 
-function generateAndCopyClaimImage(campaign: CampaignWithReward): void {
+function generateAndCopyClaimImage(campaign: CampaignWithRewardDto): void {
   let img = new Image();
   img.onload = function () {
     try {
@@ -479,7 +402,7 @@ function generateAndCopyClaimImage(campaign: CampaignWithReward): void {
         .replace(/\{campaign_name}/g, campaign.name)
         .replace(/\{campaign_week}/g, "Week " + (getCampaignWeekNumber(campaign) + 1))
         .replace(/\{currency}/g, campaign.currency)
-        .replace(/\{amount}/g, getHumanAmount(campaign))
+        .replace(/\{amount}/g, getHumanAmount(campaign).substring(0, 9))
         .replace(/\{network}/g, campaign.networkName)
         .replace(/\{qr_data}/g, qrData);
       svgBase46 = "data:image/svg+xml;base64," + btoa(svgData);
