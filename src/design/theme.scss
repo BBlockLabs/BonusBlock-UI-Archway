@@ -123,6 +123,7 @@ $box: map.merge(
   $menu: (
     'border-color': EPFunctions.getCssVar('border-color', 'darker'),
     'bg-color': transparent,
+    'item-font-size': 1.1em
   ),
   $main: (
     'padding': 1.428em, //20px
