@@ -1,5 +1,8 @@
 import HttpUnauthorizedError from "@/common/errors/HttpUnauthorizedError";
 import FormattedError from "@/common/errors/FormattedError";
+import { store } from "@/store";
+import router from "@/router";
+import Toast from "@/common/Toast";
 
 // in case if server response was successfully parsed as JSON, try to see if there's an error
 function parseErrorMessage<TPayload>(data: HttpResponse<TPayload>): string {
@@ -40,6 +43,12 @@ export default class HttpResponse<TPayload> {
     }
     if (errorMessage) {
       console.error(errorMessage);
+      if (response.status === 401) {
+        Toast.make("Unauthorized", errorMessage, "error", false, 0, "not-logged-in");
+        store.dispatch("UserModule/removeSession").then(() => {
+          router.push("/");
+        });
+      }
       throw response.status === 401
         ? new HttpUnauthorizedError(errorMessage)
         : new FormattedError(errorMessage);

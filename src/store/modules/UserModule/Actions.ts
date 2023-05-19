@@ -25,6 +25,7 @@ import MetamaskConnectRequest from "@/common/api/MetamaskConnectRequest";
 import { Plugins } from "@/common/Plugins";
 import MetamaskClient from "@/common/MetamaskClient";
 import Chain from "@/common/Chain";
+import Toast from "@/common/Toast";
 
 export type Context = ActionContext<StateInterface, RootStateInterface>;
 export type UserAction = Action<StateInterface, RootStateInterface>;
@@ -142,6 +143,8 @@ export default class Actions implements ActionsInterface {
     context.commit("setToken", loginResponse.session.token);
     context.commit("setTokenExpire", moment(loginResponse.session.expiresOn));
     context.commit("setActiveWallet", wallets[0]);
+
+    Toast.dismiss("not-logged-in");
   };
 
   metamaskLogin = async (
