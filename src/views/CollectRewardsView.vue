@@ -114,7 +114,7 @@
       <div v-if="campaignsLoading">
         Loading
       </div>
-      <div v-if="campaigns.length < 1">
+      <div v-else-if="campaigns.length < 1">
         No rewards yet
       </div>
     </div>
@@ -149,6 +149,12 @@
           </div>
         </div>
       </div>
+    </div>
+    <div v-if="announcementsLoading">
+      Loading
+    </div>
+    <div v-else-if="announcements.length < 1">
+      No announcements yet
     </div>
   </PageWrapper>
 </template>
@@ -213,6 +219,7 @@ let claimModal = reactive({
 
 const campaignsLoading = ref(true);
 const campaigns: Array<CampaignWithRewardDto> = reactive([]);
+const announcementsLoading = ref(true);
 const announcements: Array<AnnouncementsDto> = reactive([]);
 
 onMounted(() => {
@@ -240,6 +247,7 @@ onMounted(() => {
           announcements.push(newAnnouncement);
         }
       }
+    announcementsLoading.value = false;
     });
 });
 
