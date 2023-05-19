@@ -138,7 +138,7 @@ export default class MetamaskClient {
           {
             from: accounts[0],
             to: to,
-            value: value.toString(16),
+            value: value,
             data: data,
           },
         ],
