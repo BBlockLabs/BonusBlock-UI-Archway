@@ -38,7 +38,7 @@
 
   <el-aside
     width="25.2857142857em"
-    class="hidden-sm-and-down bg-light br-solid b-info"
+    class="hidden-sm-and-down br-solid b-info"
   >
     <el-container class="h-100" direction="vertical">
       <el-main>
@@ -62,7 +62,7 @@
 
   <el-container>
     <el-header class="p-0">
-      <navigation-bar class="bg-light" />
+      <navigation-bar />
     </el-header>
 
     <el-main class="px-large pt-small">
@@ -102,9 +102,5 @@ const store: StoreType = useStore();
 .limit-width {
   max-width: 1600px;
   margin: auto;
-}
-
-.bg-light {
-  background: rgba(255, 255, 255, 0.6);
 }
 </style>

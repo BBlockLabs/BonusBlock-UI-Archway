@@ -16,19 +16,12 @@
 @use "@/design/components/footer.scss";
 @use "@/design/components/icons.scss";
 @use "@/design/components/layoout.scss";
+@use "@/design/components/menu.scss";
 @use "@/design/components/message-box.scss";
 @use "@/design/components/tooltip.scss";
 @use "@/design/components/cookie-consent.scss";
 @use "@/design/components/rewards-and-announcements.scss";
 
 body {
-  background:
-    linear-gradient(
-        243.18deg,
-        rgba(193, 155, 80, 0.25) 8.88%,
-        rgba(124, 144, 115, 0.25) 35.3%,
-        rgba(76, 69, 163, 0.25) 71.76%,
-        rgba(143, 11, 122, 0.25) 100%
-    ),
-    EPFunctions.getCssVar('bg-color')
+  background: #FFF7EA
 }

@@ -1,0 +1,24 @@
+.br-solid.b-info {
+  border-right: 2px solid #060612;
+}
+
+.el-divider--horizontal {
+  border-top: 2px solid #060612;
+}
+
+.el-menu--horizontal {
+  border-bottom: 2px solid #060612;
+
+  .el-menu-item:not(.is-disabled):hover,
+  .el-menu-item:not(.is-disabled):focus {
+    background: rgba(6, 6, 18, 0.1);
+  }
+
+  & > .el-menu-item.is-active,
+  & > .el-menu-item.is-active:hover,
+  & > .el-menu-item.is-active:focus {
+    border-bottom-color: #060612;
+    background: #060612;
+    color: #fff !important;
+  }
+}

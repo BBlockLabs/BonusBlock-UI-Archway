@@ -19,6 +19,14 @@
   gap: 1em;
 }
 
+.text-muted {
+  opacity: 0.64;
+}
+
+.text-muted-more {
+  opacity: 0.5;
+}
+
 .campaign-card {
   h3 {
     margin: 1.1em 0;
@@ -40,10 +48,6 @@
       font-size: 0.8em;
       vertical-align: -0.05em;
     }
-  }
-
-  .text-muted {
-    opacity: 0.64;
   }
 
   .currency-icon {

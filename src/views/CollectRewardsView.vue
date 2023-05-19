@@ -39,7 +39,21 @@
     <el-row>
       <h2>Collect Rewards</h2>
     </el-row>
-    <div class="campaign-container">
+    <div v-if="campaigns.length < 1" class="fullscreen-empty-list text-muted-more" style="height: 20em">
+      <template v-if="campaignsLoading">
+        <div class="el-loading-spinner static-spinner mb-small">
+          <svg class="circular" viewBox="0 0 50 50">
+            <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
+          </svg>
+        </div>
+        <b class="slightly-larger">Loading...</b>
+      </template>
+      <template v-else>
+        <svg-cube-top class="splash-image" />
+        <b class="slightly-larger">Nothing to collect yet</b>
+      </template>
+    </div>
+    <div v-else class="campaign-container">
       <div
         v-for="campaign in campaigns"
         :key="campaign.id"
@@ -111,14 +125,6 @@
           </el-row>
         </div>
       </div>
-      <div v-if="campaignsLoading" class="el-loading-spinner static-spinner mb-small">
-        <svg class="circular" viewBox="0 0 50 50">
-          <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
-        </svg>
-      </div>
-      <div v-else-if="campaigns.length < 1">
-        No rewards yet
-      </div>
     </div>
 
     <el-divider />
@@ -152,6 +158,7 @@ import SvgLuna from "@/assets/currencies/luna.svg?component";
 import SvgPowr from "@/assets/currencies/powr.svg?component";
 import SvgUni from "@/assets/currencies/uni.svg?component";
 import SvgMedal from "@/assets/images/congratulations_medal.svg?component";
+import SvgCubeTop from "@/assets/icons/cube-top.svg?component";
 import ClaimSharingBackground from "@/assets/images/claim-sharing-image-template.svg?raw";
 import moment from "moment";
 import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
@@ -190,6 +197,7 @@ const campaigns: Array<CampaignWithRewardDto> = reactive([]);
 
 function updateRewards() {
   // load rewards
+  campaignsLoading.value = true;
   store.dispatch(
       "HttpModule/getCampaignsWithReward"
   ).then((data) => {
