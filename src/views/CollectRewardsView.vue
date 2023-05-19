@@ -126,43 +126,7 @@
     <el-row>
       <h2>Keep Earning</h2>
     </el-row>
-    <div class="campaign-container mb-base">
-      <div v-for="announcement in announcements" :key="announcement.id" class="project-card">
-        <div class="card-image"
-             :class="announcement.image ? '' : 'random-cube'"
-             :style="{ backgroundImage: 'url(' + (announcement.image ?? randomCube()) + ')', backgroundColor: randomBackgroundColor() }"
-        ></div>
-        <div class="card-content">
-          <h3 class="fs-large my-base">{{ announcement.title }}</h3>
-          {{ announcement.description }}
-          <div class="d-flex mt-large mb-base">
-            <template v-for="social in announcement.socials" :key="social.type">
-              <el-link
-                :href="social.link || social.url"
-                target="_blank"
-                :underline="false"
-                class="mr-small mt-small fs-extra-small"
-              >
-                <SvgTwitter v-if="social.type === 'twitter'" />
-                <SvgTelegram v-else-if="social.type === 'telegram'" />
-                <SvgYoutube v-else-if="social.type === 'youtube'" />
-                <SvgDiscord v-else-if="social.type === 'discord'" />
-                <SvgReddit v-else-if="social.type === 'reddit'" />
-              </el-link>
-            </template>
-            <el-button type="primary" class="ml-auto" @click="openAnnouncement(announcement)">Visit</el-button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div v-if="announcementsLoading" class="el-loading-spinner static-spinner mb-small">
-      <svg class="circular" viewBox="0 0 50 50">
-        <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
-      </svg>
-    </div>
-    <div v-else-if="announcements.length < 1">
-      No announcements yet
-    </div>
+    <announcement-list :top-three="true" />
   </PageWrapper>
 </template>
 
@@ -174,11 +138,6 @@ import { AwesomeQR } from "awesome-qr";
 import VueCommonMixin from "@/common/Mixin";
 import Logo from "@/assets/logo/logo.png";
 import PageWrapper from "@/components/PageWrapper.vue";
-import SvgTwitter from "@/assets/icons/twitter.svg?component";
-import SvgTelegram from "@/assets/icons/telegram.svg?component";
-import SvgReddit from "@/assets/icons/reddit.svg?component";
-import SvgDiscord from "@/assets/icons/discord.svg?component";
-import SvgYoutube from "@/assets/icons/youtube.svg?component";
 import SvgLock from "@/assets/icons/lock.svg?component";
 import SvgLink from "@/assets/icons/open-new-window.svg?component";
 import SvgClock from "@/assets/icons/clock.svg?component";
@@ -193,33 +152,12 @@ import SvgLuna from "@/assets/currencies/luna.svg?component";
 import SvgPowr from "@/assets/currencies/powr.svg?component";
 import SvgUni from "@/assets/currencies/uni.svg?component";
 import SvgMedal from "@/assets/images/congratulations_medal.svg?component";
-import RawCubeLeft from "@/assets/icons/cube-left.svg?raw";
-import RawCubeRight from "@/assets/icons/cube-right.svg?raw";
-import RawCubeTop from "@/assets/icons/cube-top.svg?raw";
 import ClaimSharingBackground from "@/assets/images/claim-sharing-image-template.svg?raw";
 import moment from "moment";
 import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
-import type AnnouncementsDto from "@/common/api/dto/AnnouncementsDto";
 import MetamaskClient from "@/common/MetamaskClient";
 import detectEthereumProvider from "@metamask/detect-provider";
-
-function randomCube(): string {
-  const cubes = [RawCubeLeft, RawCubeRight, RawCubeTop];
-  const cube = cubes[Math.floor(Math.random() * cubes.length)];
-  return "data:image/svg+xml;base64," + btoa(cube);
-}
-
-function randomBackgroundColor(): string {
-  const colors = [
-    "#ffeac3",
-    "#d4e68c",
-    "#b3dbd5",
-    "#c3d0ff",
-    "#efbeff",
-    "#ffb4b4",
-  ];
-  return colors[Math.floor(Math.random() * colors.length)];
-}
+import AnnouncementList from "@/components/AnnouncementList.vue";
 
 const currencyIcons = {
   ARY: SvgAry,
@@ -249,8 +187,6 @@ let claimModal = reactive({
 
 const campaignsLoading = ref(true);
 const campaigns: Array<CampaignWithRewardDto> = reactive([]);
-const announcementsLoading = ref(true);
-const announcements: Array<AnnouncementsDto> = reactive([]);
 
 function updateRewards() {
   // load rewards
@@ -268,25 +204,8 @@ function updateRewards() {
   });
 }
 
-function updateAnnouncments() {
-  // load announcements
-  store.dispatch(
-      "HttpModule/getAnnouncementsList",
-      { page: 1, perPage: 3, sort: "HIGHEST_POOL", activeCampaignsOnly: true }
-    ).then((newAnnouncements) => {
-      announcements.length = 0;
-      if (newAnnouncements) {
-        for (let newAnnouncement of newAnnouncements) {
-          announcements.push(newAnnouncement);
-        }
-      }
-      announcementsLoading.value = false;
-    });
-}
-
 onMounted(() => {
   updateRewards();
-  updateAnnouncments();
 });
 
 function openCampaignDetails(campaign: CampaignWithRewardDto): void {
@@ -321,11 +240,6 @@ async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
     claimModal.open = false;
     ElMessage({ message: "Failed to claim:\n" + e.message, type: "error", duration: 0, showClose: true });
   }
-}
-
-function openAnnouncement(announcement: AnnouncementsDto): void {
-  // todo: actual implementation
-  window.open(announcement.mainLink, "_blank");
 }
 
 function getHumanAmount(campaign: CampaignWithRewardDto): string {
@@ -487,129 +401,3 @@ function generateAndCopyClaimImage(campaign: CampaignWithRewardDto): void {
   });
 }
 </script>
-<style lang="scss">
-.static-spinner {
-  position: static;
-  margin-top: 0;
-}
-
-.claim-modal {
-  text-align: center;
-  max-width: 19.93em;
-
-  .medal-image {
-    width: 200px;
-    height: 200px;
-  }
-}
-
-.campaign-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(22em, 1fr));
-  gap: 1em;
-}
-
-.campaign-card {
-  h3 {
-    margin: 1.1em 0;
-  }
-
-  svg {
-    height: 1em;
-  }
-
-  .card-link {
-    cursor: pointer;
-    font-size: 1.75em;
-  }
-
-  .text-link {
-    cursor: pointer;
-
-    svg {
-      font-size: 0.8em;
-      vertical-align: -0.05em;
-    }
-  }
-
-  .text-muted {
-    opacity: 0.64;
-  }
-
-  .currency-icon {
-    font-size: 2em;
-  }
-
-  div.currency-icon {
-    width: 1em;
-  }
-
-  .el-progress .el-progress-bar__outer {
-    border: 1px solid #000;
-  }
-
-  .el-progress .el-progress__text {
-    min-width: 4.75em;
-    text-align: right;
-
-    svg {
-      vertical-align: -0.142em;
-    }
-  }
-
-  .el-progress.is-success .el-progress__text,
-  .el-progress.is-warning .el-progress__text,
-  .el-progress.is-exception .el-progress__text {
-    color: #000;
-  }
-
-  .top-half,
-  .bottom-half {
-    border: 1px solid #000;
-    padding: 0 1.25em;
-  }
-  .top-half {
-    height: 6.3em;
-    border-top-left-radius: 0.75em;
-    border-top-right-radius: 0.75em;
-  }
-  .bottom-half {
-    height: 6.8em;
-    background: #000;
-    color: #fff;
-    border-bottom-left-radius: 0.75em;
-    border-bottom-right-radius: 0.75em;
-  }
-}
-
-.project-card {
-  background: #fff;
-  border: 1px solid #000;
-  border-radius: 0.75em;
-  overflow: hidden;
-
-  .card-image {
-    border-bottom: 1px solid #000;
-    height: 14.286em;
-    background-size: cover;
-
-    &.random-cube {
-      background-size: 50% 65%;
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-  }
-
-  .card-content {
-    padding: 0 1.25em 1.25em 1.25em;
-
-    .social-links {
-      gap: 0.5em;
-    }
-
-    .el-button {
-      box-shadow: none;
-    }
-  }
-}
-</style>

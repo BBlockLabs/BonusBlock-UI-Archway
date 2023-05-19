@@ -46,9 +46,7 @@
     <el-row>
       <h2>Announcements</h2>
     </el-row>
-    <el-row :gutter="10" class="announcements-row">
-      <announcement-list />
-    </el-row>
+    <announcement-list />
     <!--    <template #footer>
       <el-footer height="unset" class="px-large pb-medium">
         <box-wrapper class="p-medium t-info b-info">
