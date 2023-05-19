@@ -103,22 +103,6 @@ export default {
       this.announcements = this.announcements.concat(newAnnouncements);
       this.page++;
 
-      this.$nextTick(() => {
-        let maxH = 0;
-        for (const elem in this.announcementBox) {
-          maxH = Math.max(
-            maxH,
-            this.announcementBox[elem].$el.querySelector(".announcement-text")
-              .clientHeight
-          );
-        }
-        for (const elem in this.announcementBox) {
-          this.announcementBox[elem].$el.querySelector(
-            ".announcement-text"
-          ).style.height = maxH + "px";
-        }
-      });
-
       if (newAnnouncements.length < 12) {
         this.stop = true;
       }

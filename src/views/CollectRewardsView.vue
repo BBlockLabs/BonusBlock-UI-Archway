@@ -2,7 +2,7 @@
   <PageWrapper>
     <el-dialog v-model="claimModal.open" class="claim-modal">
       <div v-if="claimModal.loading">
-        <div class="el-loading-spinner mb-small">
+        <div class="el-loading-spinner static-spinner mb-small">
           <svg class="circular" viewBox="0 0 50 50">
             <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
           </svg>
@@ -111,8 +111,10 @@
           </el-row>
         </div>
       </div>
-      <div v-if="campaignsLoading">
-        Loading
+      <div v-if="campaignsLoading" class="el-loading-spinner static-spinner mb-small">
+        <svg class="circular" viewBox="0 0 50 50">
+          <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
+        </svg>
       </div>
       <div v-else-if="campaigns.length < 1">
         No rewards yet
@@ -126,7 +128,10 @@
     </el-row>
     <div class="campaign-container mb-base">
       <div v-for="announcement in announcements" :key="announcement.id" class="project-card">
-        <div class="card-image" :style="{ backgroundImage: 'url(' + announcement.image + ')' }"></div>
+        <div class="card-image"
+             :class="announcement.image ? '' : 'random-cube'"
+             :style="{ backgroundImage: 'url(' + (announcement.image ?? randomCube()) + ')', backgroundColor: randomBackgroundColor() }"
+        ></div>
         <div class="card-content">
           <h3 class="fs-large my-base">{{ announcement.title }}</h3>
           {{ announcement.description }}
@@ -150,8 +155,10 @@
         </div>
       </div>
     </div>
-    <div v-if="announcementsLoading">
-      Loading
+    <div v-if="announcementsLoading" class="el-loading-spinner static-spinner mb-small">
+      <svg class="circular" viewBox="0 0 50 50">
+        <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
+      </svg>
     </div>
     <div v-else-if="announcements.length < 1">
       No announcements yet
@@ -186,12 +193,33 @@ import SvgLuna from "@/assets/currencies/luna.svg?component";
 import SvgPowr from "@/assets/currencies/powr.svg?component";
 import SvgUni from "@/assets/currencies/uni.svg?component";
 import SvgMedal from "@/assets/images/congratulations_medal.svg?component";
+import RawCubeLeft from "@/assets/icons/cube-left.svg?raw";
+import RawCubeRight from "@/assets/icons/cube-right.svg?raw";
+import RawCubeTop from "@/assets/icons/cube-top.svg?raw";
 import ClaimSharingBackground from "@/assets/images/claim-sharing-image-template.svg?raw";
 import moment from "moment";
 import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
 import type AnnouncementsDto from "@/common/api/dto/AnnouncementsDto";
 import MetamaskClient from "@/common/MetamaskClient";
 import detectEthereumProvider from "@metamask/detect-provider";
+
+function randomCube(): string {
+  const cubes = [RawCubeLeft, RawCubeRight, RawCubeTop];
+  const cube = cubes[Math.floor(Math.random() * cubes.length)];
+  return "data:image/svg+xml;base64," + btoa(cube);
+}
+
+function randomBackgroundColor(): string {
+  const colors = [
+    "#ffeac3",
+    "#d4e68c",
+    "#b3dbd5",
+    "#c3d0ff",
+    "#efbeff",
+    "#ffb4b4",
+  ];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
 
 const currencyIcons = {
   ARY: SvgAry,
@@ -220,11 +248,11 @@ let claimModal = reactive({
 });
 
 const campaignsLoading = ref(true);
-let campaigns: Array<CampaignWithRewardDto> = reactive([]);
+const campaigns: Array<CampaignWithRewardDto> = reactive([]);
 const announcementsLoading = ref(true);
 const announcements: Array<AnnouncementsDto> = reactive([]);
 
-onMounted(() => {
+function updateRewards() {
   // load rewards
   store.dispatch(
       "HttpModule/getCampaignsWithReward"
@@ -238,6 +266,9 @@ onMounted(() => {
     localTimeOffsetMs = moment().diff(data.now);
     campaignsLoading.value = false;
   });
+}
+
+function updateAnnouncments() {
   // load announcements
   store.dispatch(
       "HttpModule/getAnnouncementsList",
@@ -251,6 +282,11 @@ onMounted(() => {
       }
       announcementsLoading.value = false;
     });
+}
+
+onMounted(() => {
+  updateRewards();
+  updateAnnouncments();
 });
 
 function openCampaignDetails(campaign: CampaignWithRewardDto): void {
@@ -279,7 +315,6 @@ async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
       campaignId: campaign.id,
     });
 
-    campaigns = campaigns.filter((c) => c.id !== campaign.id);
     claimModal.loading = false;
     claimModal.open = true;
   } catch (e: any) {
@@ -453,14 +488,14 @@ function generateAndCopyClaimImage(campaign: CampaignWithRewardDto): void {
 }
 </script>
 <style lang="scss">
+.static-spinner {
+  position: static;
+  margin-top: 0;
+}
+
 .claim-modal {
   text-align: center;
   max-width: 19.93em;
-
-  .el-loading-spinner {
-    position: static;
-    margin-top: 0;
-  }
 
   .medal-image {
     width: 200px;
@@ -557,6 +592,12 @@ function generateAndCopyClaimImage(campaign: CampaignWithRewardDto): void {
     border-bottom: 1px solid #000;
     height: 14.286em;
     background-size: cover;
+
+    &.random-cube {
+      background-size: 50% 65%;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
   }
 
   .card-content {
