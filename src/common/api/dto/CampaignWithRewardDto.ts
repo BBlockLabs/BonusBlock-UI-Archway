@@ -2,6 +2,7 @@ export default class CampaignWithRewardDto {
   id: string = "";
   name: string = "";
   networkName: string = "";
+  smartContractAddress: string = "";
   amount: string = "";
   decimal: number = NaN;
   currency: string = "";

@@ -77,6 +77,13 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
       context: Context,
       payload: { campaignId: string }
     ) => Promise<ClaimResponseDto>);
+
+  claimRewardInit: HttpAction &
+    ((
+      this: Store<RootStateInterface>,
+      context: Context,
+      payload: { campaignId: string }
+    ) => Promise<null>);
 }
 
 export default class Actions implements ActionsInterface {
@@ -330,5 +337,23 @@ export default class Actions implements ActionsInterface {
     );
 
     return responseData.payload;
+  };
+
+  claimRewardInit = async (
+    context: Context,
+    payload: { campaignId: string }
+  ): Promise<null> => {
+    const response: Response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/claim/init`,
+      {
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+          "X-Auth-Token": context.rootState.UserModule?.token || "",
+        },
+        method: "POST",
+      }
+    );
+    return null;
   };
 }
