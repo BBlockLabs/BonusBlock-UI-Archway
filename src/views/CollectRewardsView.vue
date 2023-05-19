@@ -248,14 +248,22 @@ function openCampaignDetails(campaign: CampaignWithRewardDto): void {
   window.open(campaign.mainLink, "_blank");
 }
 
-function claimCampaign(campaign: CampaignWithRewardDto): void {
+async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
   // todo: actual implementation
   claimModal.campaign = campaign;
   claimModal.open = true;
   claimModal.loading = true;
-  setTimeout(() => {
+  try {
+    const response = await store.dispatch(
+        "HttpModule/claimReward",
+        {campaignId: campaign.id}
+    );
     claimModal.loading = false;
-  }, 1500);
+    ElMessage({ message: "Memo received: " + response.memo, type: "success" });
+  } catch (e: any) {
+    claimModal.open = false;
+    ElMessage({ message: "Failed to claim:\n" + e.message, type: "error", duration: 0, showClose: true });
+  }
 }
 
 function openAnnouncement(announcement: AnnouncementsDto): void {
