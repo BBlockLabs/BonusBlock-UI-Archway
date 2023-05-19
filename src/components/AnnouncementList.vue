@@ -43,13 +43,14 @@
               </el-link>
             </template>
             <el-link
+              v-if="announcement.mainLink"
               class="ml-auto"
               target="_blank"
               :href="announcement.mainLink"
               :underline="false"
             >
-              <el-button type="primary">Visit</el-button></el-link
-            >
+              <el-button type="primary">{{ announcement.mainLinkTitle }}</el-button>
+            </el-link>
           </div>
         </div>
       </div>
