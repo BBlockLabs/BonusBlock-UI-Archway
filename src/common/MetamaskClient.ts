@@ -116,4 +116,36 @@ export default class MetamaskClient {
       throw error;
     }
   }
+
+  static async sendTransaction(
+    provider: any,
+    to: string,
+    value: string,
+    data: string
+  ): Promise<Array<string>> {
+    try {
+      const accounts: Array<string> = await provider.request({
+        method: "eth_accounts",
+      });
+
+      if (accounts.length == 0) {
+        return [];
+      }
+
+      return await provider.request({
+        method: "eth_sendTransaction",
+        params: [
+          {
+            from: accounts[0],
+            to: to,
+            value: value.toString(16),
+            data: data,
+          },
+        ],
+      });
+    } catch (error: Error | any) {
+      console.error(error);
+      throw error;
+    }
+  }
 }

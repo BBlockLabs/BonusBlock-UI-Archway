@@ -59,7 +59,7 @@
             :status="
               elProgressStatusFromTimeRemaining(campaignTimeLeft(campaign))
             "
-            stroke-width="5"
+            :stroke-width="5"
           >
             <svg-clock class="mr-extra-small" />
             <el-tooltip v-if="campaignTimeLeft(campaign) <= 0" :content="humanTimeLeft(Math.abs(campaignTimeLeft(campaign)), 3) + ' ago'" placement="top">
@@ -190,6 +190,8 @@ import ClaimSharingBackground from "@/assets/images/claim-sharing-image-template
 import moment from "moment";
 import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
 import type AnnouncementsDto from "@/common/api/dto/AnnouncementsDto";
+import MetamaskClient from "@/common/MetamaskClient";
+import detectEthereumProvider from "@metamask/detect-provider";
 
 const currencyIcons = {
   ARY: SvgAry,
@@ -218,7 +220,7 @@ let claimModal = reactive({
 });
 
 const campaignsLoading = ref(true);
-const campaigns: Array<CampaignWithRewardDto> = reactive([]);
+let campaigns: Array<CampaignWithRewardDto> = reactive([]);
 const announcementsLoading = ref(true);
 const announcements: Array<AnnouncementsDto> = reactive([]);
 
@@ -247,7 +249,7 @@ onMounted(() => {
           announcements.push(newAnnouncement);
         }
       }
-    announcementsLoading.value = false;
+      announcementsLoading.value = false;
     });
 });
 
@@ -257,17 +259,29 @@ function openCampaignDetails(campaign: CampaignWithRewardDto): void {
 }
 
 async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
-  // todo: actual implementation
   claimModal.campaign = campaign;
-  claimModal.open = true;
   claimModal.loading = true;
+
   try {
-    const response = await store.dispatch(
-        "HttpModule/claimReward",
-        {campaignId: campaign.id}
+    const response = await store.dispatch("HttpModule/claimReward", {
+      campaignId: campaign.id,
+    });
+
+    const provider = await detectEthereumProvider();
+    await MetamaskClient.sendTransaction(
+      provider,
+      campaign.smartContractAddress,
+      "0",
+      response.memo
     );
+
+    await store.dispatch("HttpModule/claimRewardInit", {
+      campaignId: campaign.id,
+    });
+
+    campaigns = campaigns.filter((c) => c.id !== campaign.id);
     claimModal.loading = false;
-    ElMessage({ message: "Memo received: " + response.memo, type: "success" });
+    claimModal.open = true;
   } catch (e: any) {
     claimModal.open = false;
     ElMessage({ message: "Failed to claim:\n" + e.message, type: "error", duration: 0, showClose: true });
