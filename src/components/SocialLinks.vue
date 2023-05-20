@@ -55,6 +55,33 @@
     >
       <svg-youtube />
     </el-link>
+    <el-link
+      v-if="props.website"
+      :href="props.website"
+      target="_blank"
+      :underline="false"
+      class="icon-website"
+    >
+      <svg-website />
+    </el-link>
+    <el-link
+      v-if="props.newsletter"
+      :href="props.newsletter"
+      target="_blank"
+      :underline="false"
+      class="icon-newsletter"
+    >
+      <svg-newsletter />
+    </el-link>
+    <el-link
+      v-if="props.blog"
+      :href="props.blog"
+      target="_blank"
+      :underline="false"
+      class="icon-blog"
+    >
+      <svg-blog />
+    </el-link>
   </el-space>
 </template>
 
@@ -65,6 +92,10 @@ import SvgTelegram from "@/assets/icons/telegram.svg?component";
 import SvgReddit from "@/assets/icons/reddit.svg?component";
 import SvgDiscord from "@/assets/icons/discord.svg?component";
 import SvgYoutube from "@/assets/icons/youtube.svg?component";
+import SvgWebsite from "@/assets/icons/website.svg?component";
+import SvgNewsletter from "@/assets/icons/newsletter.svg?component";
+import SvgBlog from "@/assets/icons/blog.svg?component";
+import { defineProps } from "vue";
 
 export interface Props {
   github?: string;
@@ -73,6 +104,9 @@ export interface Props {
   reddit?: string;
   discord?: string;
   youtube?: string;
+  website?: string;
+  newsletter?: string;
+  blog?: string;
 }
 
 const props = defineProps<Props>();
