@@ -9,12 +9,18 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from "vue";
 import { Router, useRoute, useRouter } from "vue-router";
 import { useStore, StoreType } from "@/store";
 
 const store: StoreType = useStore();
 const router: Router = useRouter();
 const route = useRoute();
+
+onMounted(() => {
+  // @ts-ignore
+  document.getElementById("loader").style.display = "none";
+});
 
 async function checkLogin() {
   if (!store.getters["UserModule/loggedIn"]) {

@@ -45,8 +45,34 @@
     })();
   </script>
   <!-- End cookie3 analytics -->
+  <style>
+      body {background: #FFF7EA}
+      #loader {position: fixed;top: 50%;left: 0;right: 0;bottom: 0}
+      #loader > div {display: block;margin: -100px auto 0 auto;width: 200px;text-align: center;color: #777}
+      #loader span {display: block;margin-top: 0.5em;font-size: 2em;animation: fadein 2s}
+      @keyframes fadein {
+          from {opacity: 0}
+          to {opacity: 1}
+      }
+  </style>
 </head>
 <body id="body">
 <div id="app"></div>
+<div id="loader">
+  <div>
+    <svg viewBox="0 0 290 290" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M233.7 23h-70.6l35.3 61.4H269L233.7 23Z" fill="#fff"/>
+      <path d="M198.4 84.4 163.1 23l-34.9 61.4 34.9 60.9 35.3-61Z" fill="#1E1C4E"/>
+      <path d="M128.2 84.4h-71l35.4 60.9h70.5l-34.9-61Z" fill="#fff"/>
+      <path d="m92.6 145.3-35.4-61L22 145.8l35.2 61 35.4-61.4Z" fill="#1E1C4E"/>
+      <path d="m163 145.3 35.4 61.3H269l-34.9-60.9-71-.4Z" fill="#fff"/>
+      <path d="m127.4 207 35.3 61 35.7-61.4-35.3-61.3-35.7 61.8Z" fill="#1E1C4E"/>
+      <path d="m92.6 145.3-35.4 61.3 70.2.5 35.7-61.8H92.6Z" fill="#F5BF5B"/>
+      <path d="M269 84.4h-70.6l-35.3 60.9 71 .4L269 84.4Z" fill="#F5BF5B"/>
+      <path d="M198.4 206.6 162.7 268H231l38-61.4h-70.6Z" fill="#F5BF5B"/>
+    </svg>
+    <span>Loading...</span>
+  </div>
+</div>
 </body>
 </html>
