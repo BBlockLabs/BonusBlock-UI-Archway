@@ -67,3 +67,9 @@
     box-shadow: 3px 3px 0px #F5BF5B, 4px 4px 0px #000000;
   }
 }
+
+.el-box--primary {
+  .el-button--info.is-link {
+    color: #fff;
+  }
+}

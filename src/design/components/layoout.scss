@@ -197,6 +197,10 @@ html .d {
   text-overflow: ellipsis;
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
 .fullscreen-empty-list {
   display: flex;
   width: 100%;
