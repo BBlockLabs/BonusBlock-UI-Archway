@@ -11,7 +11,7 @@
 
   .el-menu-item:not(.is-disabled):hover,
   .el-menu-item:not(.is-disabled):focus {
-    background: rgba(6, 6, 18, 0.1);
+    background: #e6dfd4;
   }
 
   & > .el-menu-item.is-active,
@@ -21,4 +21,8 @@
     background: #060612;
     color: #fff !important;
   }
+}
+
+.el-popper.is-light {
+  border: 1px solid #000;
 }

@@ -141,6 +141,10 @@ onMounted(() => {
   font-family: "Nimbus Sans L", sans-serif;
   font-weight: 700;
   line-height: 120%;
+
+  @media only screen and (max-width: 400px) {
+    font-size: 8em;
+  }
 }
 
 .title-number {

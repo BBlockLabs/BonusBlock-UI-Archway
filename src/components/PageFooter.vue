@@ -1,6 +1,6 @@
 <template>
   <el-footer class="px-large py-medium" :class="classesList">
-    <el-row justify="space-between">
+    <el-row justify="space-between" class="gap-small" align="middle">
       <el-col :span="-1">
         <social-links
           :twitter="LinkTwitter"

@@ -5,7 +5,7 @@
     size="25.2857142857em"
     :append-to-body="true"
     modal-class="hidden-md-and-up"
-    class="hidden-md-and-up"
+    class="hidden-md-and-up page-wrapper-drawer"
     @closed="infoPanelClosed"
   >
     <template #header>
@@ -41,7 +41,7 @@
     class="hidden-sm-and-down br-solid b-info"
   >
     <el-container class="h-100" direction="vertical">
-      <el-main>
+      <el-main class="d-flex flex-column gap-base">
         <el-row justify="center" class="mb-base">
           <el-col>
             <id-card-front v-if="!props.cardBack" />
@@ -98,7 +98,27 @@ function infoPanelClosed(): void {
 const store: StoreType = useStore();
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+.page-wrapper-drawer {
+  .el-drawer__header {
+    margin-bottom: 2rem;
+  }
+
+  .el-drawer__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 0;
+    padding-bottom: 1rem;
+  }
+
+  .el-footer {
+    height: auto;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
 .limit-width {
   max-width: 1600px;
   margin: auto;

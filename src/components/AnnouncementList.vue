@@ -1,12 +1,6 @@
 <template>
   <div v-infinite-scroll="loadAnnouncements">
-    <div v-if="loading" class="el-loading-spinner static-spinner mb-small text-muted-more">
-      <svg class="circular" viewBox="0 0 50 50">
-        <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
-      </svg>
-    </div>
-    <div v-else-if="announcements.length < 1">No announcements yet</div>
-    <div v-else class="campaign-container mb-base">
+    <div v-if="announcements.length > 0" class="campaign-container mb-base">
       <div
         v-for="announcement in announcements"
         :key="announcement.id"
@@ -55,6 +49,12 @@
         </div>
       </div>
     </div>
+    <div v-if="loading" class="el-loading-spinner static-spinner mb-small text-muted-more">
+      <svg class="circular" viewBox="0 0 50 50">
+        <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
+      </svg>
+    </div>
+    <div v-else-if="announcements.length < 1">No announcements yet</div>
   </div>
 </template>
 <script>
@@ -131,7 +131,11 @@ export default {
         { page: this.page, perPage: 12 }
       );
 
-      this.announcements = this.announcements.concat(newAnnouncements);
+      if (newAnnouncements) {
+        for (let newAnnouncement of newAnnouncements) {
+          this.announcements.push(newAnnouncement);
+        }
+      }
       this.page++;
 
       if (newAnnouncements.length < 12) {
