@@ -42,6 +42,17 @@
   }
 }
 
-.el-button--large {
+.el-button:not(.is-link) {
+  box-shadow: none;
+}
+
+.el-button:not(.is-link):hover {
+  box-shadow: var(--el-box-shadow-lighter);
+  background-color: var(--el-button-bg-color);
+  color: var(--el-button-text-color);
+  transform: translate(-4px, -4px);
+}
+
+.el-button.el-button--large:hover {
   box-shadow: 3px 3px 0px #F5BF5B, 4px 4px 0px #000000;
 }
