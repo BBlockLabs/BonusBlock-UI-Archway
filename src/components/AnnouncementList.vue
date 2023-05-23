@@ -5,6 +5,7 @@
         v-for="announcement in announcements"
         :key="announcement.id"
         class="project-card"
+        style="display: flex;"
       >
         <div
           class="card-image"
@@ -17,35 +18,31 @@
             backgroundColor: randomBackgroundColor(announcement.id),
           }"
         ></div>
-        <div class="card-content">
+        <div class="card-content" style="flex-grow:1">
           <h3 class="fs-large my-base">{{ announcement.title }}</h3>
           <!-- eslint-disable-next-line vue/no-v-html -->
           <span v-html="announcement.description" />
-          <div class="d-flex mt-large mb-base">
-            <template v-for="social in announcement.socials" :key="social.type">
-              <el-link
-                :href="social.link || social.url"
-                target="_blank"
-                :underline="false"
-                class="mr-small mt-small fs-extra-small"
-              >
-                <SvgTwitter v-if="social.type === 'twitter'" />
-                <SvgTelegram v-else-if="social.type === 'telegram'" />
-                <SvgYoutube v-else-if="social.type === 'youtube'" />
-                <SvgDiscord v-else-if="social.type === 'discord'" />
-                <SvgReddit v-else-if="social.type === 'reddit'" />
-              </el-link>
-            </template>
+        </div>
+        <div class="d-flex mt-large mb-base" style="padding-left:1.5em;padding-right:1.5em;">
+          <div v-for="social in announcement.socials" :key="social.type">
             <el-link
-              v-if="announcement.mainLink"
-              class="ml-auto"
+              :href="social.link || social.url"
               target="_blank"
-              :href="announcement.mainLink"
               :underline="false"
+              class="mr-small mt-small fs-extra-small"
             >
-              <el-button type="primary">{{ announcement.mainLinkTitle }}</el-button>
+              <social-icon :type="social.type" />
             </el-link>
           </div>
+          <el-link
+            v-if="announcement.mainLink"
+            class="ml-auto"
+            target="_blank"
+            :href="announcement.mainLink"
+            :underline="false"
+          >
+            <el-button type="primary">{{ announcement.mainLinkTitle }}</el-button>
+          </el-link>
         </div>
       </div>
     </div>
@@ -58,23 +55,15 @@
   </div>
 </template>
 <script>
-import SvgTwitter from "@/assets/icons/twitter.svg?component";
-import SvgTelegram from "@/assets/icons/telegram.svg?component";
-import SvgReddit from "@/assets/icons/reddit.svg?component";
-import SvgDiscord from "@/assets/icons/discord.svg?component";
-import SvgYoutube from "@/assets/icons/youtube.svg?component";
 import RawCubeLeft from "@/assets/icons/cube-left.svg?raw";
 import RawCubeRight from "@/assets/icons/cube-right.svg?raw";
 import RawCubeTop from "@/assets/icons/cube-top.svg?raw";
+import SocialIcon from "@/components/SocialIcon.vue";
 import { ref } from "vue";
 
 export default {
   components: {
-    SvgTwitter,
-    SvgTelegram,
-    SvgReddit,
-    SvgDiscord,
-    SvgYoutube,
+    SocialIcon,
   },
   props: {
     topThree: {

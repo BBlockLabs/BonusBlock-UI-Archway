@@ -101,6 +101,11 @@
   border: 1px solid #000;
   border-radius: 0.75em;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
 
   .card-image {
     border-bottom: 1px solid #000;
