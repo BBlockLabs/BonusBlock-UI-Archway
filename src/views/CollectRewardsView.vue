@@ -267,11 +267,14 @@ function getCampaignWeekNumber(campaign: CampaignWithRewardDto): number {
 }
 
 function nextCampaignCalculationDate(campaign: CampaignWithRewardDto): string {
-  const secondsInPeriod = 60 * 60 * 24 * 7;
-  let remainingSeconds = secondsInPeriod - (now.value - campaign.periodFromParsed) % secondsInPeriod;
-  let date = new Date(now.value + remainingSeconds * 1000);
-  const month_names_short = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",];
-  return month_names_short[date.getMonth()] + " " + date.getDate();
+  const date: moment.Moment = moment.unix(campaign.periodFromParsed);
+  const now: moment.Moment = moment();
+
+  while (date.diff(now, 'days') < 0) {
+    date.add(7, 'days');
+  }
+
+  return date.format("MMM DD");
 }
 
 function campaignTimeLeft(campaign: CampaignWithRewardDto): number {
