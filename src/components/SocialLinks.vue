@@ -1,5 +1,5 @@
 <template>
-  <el-space>
+  <el-space class="social-links">
     <el-link
       v-if="props.github"
       :href="props.github"
@@ -113,12 +113,19 @@ const props = defineProps<Props>();
 </script>
 
 <style lang="scss">
-.icon-discord {
-  position: relative;
-  top: 0.15em;
-}
-.icon-youtube {
-  position: relative;
-  top: 0.15em;
+.social-links {
+  svg {
+    height: 1.714em;
+  }
+
+  .icon-discord {
+    position: relative;
+    top: 0.15em;
+  }
+
+  .icon-youtube {
+    position: relative;
+    top: 0.15em;
+  }
 }
 </style>

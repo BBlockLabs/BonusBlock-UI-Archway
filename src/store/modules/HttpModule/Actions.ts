@@ -10,6 +10,7 @@ import type AnnouncementsDto from "@/common/api/dto/AnnouncementsDto";
 import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
 import type AnnouncementsRequest from "@/common/api/AnnouncementsRequest";
 import type ClaimResponseDto from "@/common/api/dto/ClaimResponseDto";
+import type ChartDataDto from "@/common/api/dto/ChartDataDto";
 import moment from "moment";
 
 export type Context = ActionContext<{}, RootStateInterface>;
@@ -84,6 +85,13 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
       context: Context,
       payload: { campaignId: string }
     ) => Promise<null>);
+
+  loadAnalytics: HttpAction &
+    ((
+      this: Store<RootStateInterface>,
+      context: Context,
+      payload: { from: number; to: number | null }
+    ) => Promise<ChartDataDto>);
 }
 
 export default class Actions implements ActionsInterface {
@@ -354,6 +362,30 @@ export default class Actions implements ActionsInterface {
         method: "POST",
       }
     );
+    await HttpResponse.fromResponse<never>(response);
     return null;
+  };
+
+  loadAnalytics = async (
+    context: Context,
+    payload: { from: number; to: number | null }
+  ): Promise<ChartDataDto> => {
+    const response: Response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/analytics`,
+      {
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+          "X-Auth-Token": context.rootState.UserModule?.token || "",
+        },
+        method: "POST",
+      }
+    );
+
+    const responseData = await HttpResponse.fromResponse<ChartDataDto>(
+      response
+    );
+
+    return responseData.payload;
   };
 }

@@ -22,7 +22,16 @@
 @use "@/design/components/tooltip.scss";
 @use "@/design/components/cookie-consent.scss";
 @use "@/design/components/rewards-and-announcements.scss";
+@use "@/design/components/apexchart.scss";
 
 body {
   background: #FFF7EA
+}
+
+svg {
+  height: auto;
+
+  &.icon-normal {
+    height: 1.714em;
+  }
 }

@@ -37,9 +37,14 @@
     </el-dialog>
 
     <el-row>
+      <h2>Your stats</h2>
+    </el-row>
+    <interactions-chart/>
+
+    <el-row>
       <h2>Collect Rewards</h2>
     </el-row>
-    <div v-if="campaigns.length < 1" class="fullscreen-empty-list text-muted-more" style="height: 20em">
+    <div v-if="campaigns.length < 1" class="fullscreen-empty-list text-muted-more" style="height: 18em">
       <template v-if="campaignsLoading">
         <div class="el-loading-spinner static-spinner mb-small">
           <svg class="circular" viewBox="0 0 50 50">
@@ -165,6 +170,7 @@ import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
 import MetamaskClient from "@/common/MetamaskClient";
 import detectEthereumProvider from "@metamask/detect-provider";
 import AnnouncementList from "@/components/AnnouncementList.vue";
+import InteractionsChart from "@/components/InteractionsChart.vue";
 
 const currencyIcons = {
   ARY: SvgAry,
@@ -182,6 +188,11 @@ const now = ref(Math.ceil((new Date().valueOf() - localTimeOffsetMs) / 1000));
 const timer = setInterval(() => {
   now.value = Math.ceil((new Date().valueOf() - localTimeOffsetMs) / 1000);
 }, 1000);
+
+onMounted(() => {
+  updateRewards();
+});
+
 onUnmounted(() => {
   clearInterval(timer);
 });
@@ -211,10 +222,6 @@ function updateRewards() {
     campaignsLoading.value = false;
   });
 }
-
-onMounted(() => {
-  updateRewards();
-});
 
 function openCampaignDetails(campaign: CampaignWithRewardDto): void {
   // todo: actual implementation

@@ -19,6 +19,7 @@
     "@keplr-wallet/types": "^0.11.44",
     "@metamask/detect-provider": "^2.0.0",
     "@whi/identicons": "^0.1.1",
+    "apexcharts": "^3.40.0",
     "awesome-qr": "^2.1.5-rc.0",
     "buffer": "^6.0.3",
     "cookie-consent-tools": "0.1.6",
@@ -26,6 +27,7 @@
     "moment": "^2.29.4",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6",
+    "vue3-apexcharts": "^1.4.1",
     "vuex": "^4.1.0"
   },
   "devDependencies": {

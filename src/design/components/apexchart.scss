@@ -1,0 +1,14 @@
+
+.apexcharts-grid > line {
+  display: none;
+}
+
+.apexcharts-grid-borders .apexcharts-gridline:nth-child(2) {
+  display: none;
+}
+
+.chart-border {
+  border: 1px solid #000;
+  border-radius: 0.714em;
+  padding: 1em;
+}

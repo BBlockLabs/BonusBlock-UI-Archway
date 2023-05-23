@@ -23,7 +23,7 @@
           <!-- eslint-disable-next-line vue/no-v-html -->
           <span v-html="announcement.description" />
         </div>
-        <div class="d-flex mt-large mb-base" style="padding-left:1.5em;padding-right:1.5em;">
+        <div class="d-flex mb-large" style="padding-left:1.5em;padding-right:1.5em;">
           <div v-for="social in announcement.socials" :key="social.type">
             <el-link
               v-if="social.type !== 'main-link' && social.type !== 'main-label'"

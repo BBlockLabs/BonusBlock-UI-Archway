@@ -5,6 +5,7 @@ import { store, key } from "@/store";
 import ElementPlus from "element-plus";
 import type Chain from "@/common/Chain";
 import VueCommonMixin from "@/common/Mixin";
+import VueApexCharts from "vue3-apexcharts";
 
 import "@/design/index.scss";
 import "@/../types/window.d.ts";
@@ -18,6 +19,7 @@ app.mixin(VueCommonMixin);
 app.use(router);
 app.use(store, key);
 app.use(ElementPlus);
+app.use(VueApexCharts);
 app.mount("#app");
 
 const chains: Array<Chain> = JSON.parse(

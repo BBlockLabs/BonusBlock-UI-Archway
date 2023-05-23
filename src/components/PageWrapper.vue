@@ -66,7 +66,7 @@
     </el-header>
 
     <el-main class="px-large pt-small">
-      <div class="limit-width">
+      <div id="page-wrapper" class="limit-width">
         <slot />
       </div>
     </el-main>
