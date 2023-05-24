@@ -1,5 +1,5 @@
 <template>
-  <div v-if="interactionsSeries[0].data.length > 0" v-loading="chartLoading" class="chart-border mb-medium">
+  <div v-if="interactionsSeries[0].data.length > 0" v-loading="chartLoading[props.range]" class="chart-border mb-medium">
     <apexchart
       ref="interactionsChart"
       style="width: 100%"
@@ -9,7 +9,7 @@
       :series="interactionsSeries"
     ></apexchart>
   </div>
-  <div v-else-if="chartLoading" class="el-loading-spinner static-spinner mb-small text-muted-more">
+  <div v-else-if="chartLoading[props.range]" class="el-loading-spinner static-spinner mb-small text-muted-more">
     <svg class="circular" viewBox="0 0 50 50">
       <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
     </svg>
@@ -27,8 +27,13 @@ import { store } from "@/store";
 import type ChartDataDto from "@/common/api/dto/ChartDataDto";
 import SvgCubeTop from "@/assets/icons/cube-top.svg?component";
 
+interface Props {
+  range: string;
+}
+const props: Props = defineProps<Props>();
+
 onMounted(() => {
-  setChartRange(props.range);
+  fetchChartData();
   window.addEventListener("resize", updateChartBarWidth);
 });
 
@@ -36,19 +41,15 @@ onUnmounted(() => {
   window.removeEventListener("resize", updateChartBarWidth);
 });
 
-interface Props {
-  range: string;
-}
-const props: Props = defineProps<Props>();
 watch(
   () => props.range,
   (): void => {
-    setChartRange(props.range);
+    fetchChartData();
   }
 );
 
 const interactionsChart = ref(null);
-const chartLoading = ref(true);
+const chartLoading = reactive({} as { [key: string]: boolean });
 const interactionsSeries = [
   {
     name: "Interactions",
@@ -144,49 +145,62 @@ const interactionsOptions = {
   },
 };
 
-function setChartRange(range: string) {
-  let periodFrom = moment().startOf("day").utc();
-  switch (range) {
-    case "day":
-      break;
-    case "week":
-      periodFrom.subtract(7, "days");
-      break;
-    case "month":
-      periodFrom.subtract(32, "days");
-      break;
-    case "year":
-      periodFrom.subtract(1, "year");
-      break;
+function parseChartRange(range: string) {
+  let from = null;
+  if (range !== "all") {
+    let periodFrom = moment().startOf("day").utc();
+    switch (range) {
+      case "today":
+        break;
+      case "week":
+        periodFrom.subtract(7, "days");
+        break;
+      case "month":
+        periodFrom.subtract(32, "days");
+        break;
+      case "year":
+        periodFrom.subtract(1, "year");
+        break;
+    }
+    from = periodFrom.unix();
   }
-  fetchChartData(periodFrom.unix(), null);
+  return {
+    from: from,
+    to: null,
+  };
 }
 
 let cache: { [key: string]: { time: Moment; data: ChartDataDto } } = {};
 
-function fetchChartData(periodFrom: number, periodTo: number | null) {
-  let cacheKey = periodFrom + "-" + periodTo;
+function fetchChartData() {
+  let queriedRange = props.range;
+  let query = parseChartRange(queriedRange);
+  let cacheKey = query.from + "-" + query.to;
   if (cache[cacheKey]) {
     updateChart(cache[cacheKey].data);
-    if (moment().diff(cache[cacheKey].time) < 1000 * 60) {
+    if (moment().diff(cache[cacheKey].time) < 1000 * 60 * 5) {
       return;
     }
   }
-  chartLoading.value = true;
+  if (chartLoading[queriedRange]) {
+    return;
+  }
+  chartLoading[queriedRange] = true;
   store.dispatch(
     "HttpModule/loadAnalytics",
-    {
-      from: periodFrom,
-      to: periodTo,
-    }
+    query
   ).then((result) => {
     cache[cacheKey] = { time: moment(), data: result };
-    updateChart(result);
-    chartLoading.value = false;
+    if (props.range === queriedRange) {
+      updateChart(result);
+    }
+    chartLoading[queriedRange] = false;
   }).catch((e) => {
     console.error(e);
-    updateChart(null);
-    chartLoading.value = false;
+    if (props.range === queriedRange) {
+      updateChart(null);
+    }
+    chartLoading[queriedRange] = false;
   });
 }
 
