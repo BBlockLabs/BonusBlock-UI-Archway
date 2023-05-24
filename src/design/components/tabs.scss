@@ -1,0 +1,22 @@
+.el-tabs__header {
+  margin: 0;
+}
+
+.el-tabs__item {
+  height: 2.5em;
+}
+
+.el-tabs__nav-scroll {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.el-tabs__active-bar {
+  background-color: #EDC16C;
+  padding: 0 10px;
+  margin-left: -10px;
+}
+
+.el-tabs__nav-wrap::after {
+  display: none;
+}

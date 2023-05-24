@@ -2,6 +2,7 @@
   <div v-if="interactionsSeries[0].data.length > 0" class="chart-border mb-medium">
     <apexchart
       ref="interactionsChart"
+      v-loading="chartLoading"
       style="width: 100%"
       height="270px"
       type="bar"
@@ -9,7 +10,7 @@
       :series="interactionsSeries"
     ></apexchart>
   </div>
-  <div v-else-if="chartLoading" class="el-loading-spinner static-spinner mb-small">
+  <div v-else-if="chartLoading" class="el-loading-spinner static-spinner mb-small text-muted-more">
     <svg class="circular" viewBox="0 0 50 50">
       <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
     </svg>
@@ -21,14 +22,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, reactive, ref } from "vue";
+import { onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import moment from "moment";
 import { store } from "@/store";
 import type ChartDataDto from "@/common/api/dto/ChartDataDto";
 import SvgCubeTop from "@/assets/icons/cube-top.svg?component";
 
 onMounted(() => {
-  getChartData(moment().subtract(31, "days").unix(), null);
+  setChartRange(props.range);
   window.addEventListener("resize", updateChartBarWidth);
 });
 
@@ -36,12 +37,23 @@ onUnmounted(() => {
   window.removeEventListener("resize", updateChartBarWidth);
 });
 
+interface Props {
+  range: string;
+}
+const props: Props = defineProps<Props>();
+watch(
+  () => props.range,
+  (): void => {
+    setChartRange(props.range);
+  }
+);
+
 const interactionsChart = ref(null);
 const chartLoading = ref(true);
 const interactionsSeries = [
   {
     name: "Interactions",
-    data: reactive([] as Array<number>),
+    data: reactive([0] as Array<number>),
   },
 ];
 const interactionsOptions = {
@@ -53,6 +65,9 @@ const interactionsOptions = {
   chart: {
     animations: {
       speed: 400,
+      dynamicAnimation: {
+        enabled: false,
+      }
     },
     toolbar: {
       show: true,
@@ -78,7 +93,7 @@ const interactionsOptions = {
       fontSize: "18px",
     },
   },
-  subtitle: reactive({
+  subtitle: {
     text: "",
     align: "right",
     margin: 10,
@@ -89,9 +104,9 @@ const interactionsOptions = {
       fontWeight: "normal",
       color: "#303133",
     },
-  }),
+  },
   xaxis: {
-    categories: reactive([] as Array<string>),
+    categories: reactive([""] as Array<string>),
     labels: {
       hideOverlappingLabels: true,
       style: {
@@ -130,6 +145,24 @@ const interactionsOptions = {
   },
 };
 
+function setChartRange(range: string) {
+  let periodFrom = moment().startOf("day").utc();
+  switch (range) {
+    case "day":
+      break;
+    case "week":
+      periodFrom.subtract(7, "days");
+      break;
+    case "month":
+      periodFrom.subtract(32, "days");
+      break;
+    case "year":
+      periodFrom.subtract(1, "year");
+      break;
+  }
+  getChartData(periodFrom.unix(), null);
+}
+
 function getChartData(periodFrom: number, periodTo: number | null) {
   chartLoading.value = true;
   store.dispatch(
@@ -140,6 +173,9 @@ function getChartData(periodFrom: number, periodTo: number | null) {
     }
   ).then((result) => {
     updateChart(result);
+    chartLoading.value = false;
+  }).catch(() => {
+    updateChart(null);
     chartLoading.value = false;
   });
 }
@@ -168,11 +204,26 @@ function updateChartBarWidth() {
   }
 }
 
-function updateChart(chartData: ChartDataDto) {
-  let keys = Object.keys(chartData.interactions).sort();
+function updateChartSubtitle(text: string) {
+  interactionsOptions.subtitle.text = text;
+  if (interactionsChart.value) {
+    // @ts-ignore
+    interactionsChart.value.updateOptions({
+      subtitle: {
+        text: text,
+      },
+    });
+  }
+}
 
+function updateChart(chartData: ChartDataDto | null) {
   interactionsSeries[0].data.length = 0;
   interactionsOptions.xaxis.categories.length = 0;
+  updateChartSubtitle("");
+
+  if (!chartData) {
+    return;
+  }
 
   let dateFormat = "";
   if (chartData.mode === "hour") {
@@ -183,6 +234,7 @@ function updateChart(chartData: ChartDataDto) {
     dateFormat = "MMM YYYY";
   }
 
+  let keys = Object.keys(chartData.interactions).sort();
   for (let key of keys) {
     let date = moment(key).format(dateFormat);
     let interactionsPerDate = chartData.interactions[key];
@@ -194,9 +246,7 @@ function updateChart(chartData: ChartDataDto) {
   updateChartBarWidth();
 
   if (chartData.interactionsToday !== null) {
-    interactionsOptions.subtitle.text = "Today interactions: " + chartData.interactionsToday;
-  } else {
-    interactionsOptions.subtitle.text = "";
+    updateChartSubtitle("Today interactions: " + chartData.interactionsToday);
   }
 }
 </script>

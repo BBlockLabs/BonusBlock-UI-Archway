@@ -36,10 +36,16 @@
       </div>
     </el-dialog>
 
-    <el-row>
+    <el-row align="middle" justify="space-between">
       <h2>Your stats</h2>
+      <el-tabs v-model="interactionsRange">
+        <el-tab-pane label="Year" name="year"></el-tab-pane>
+        <el-tab-pane label="Month" name="month"></el-tab-pane>
+        <el-tab-pane label="Week" name="week"></el-tab-pane>
+        <el-tab-pane label="Today" name="today"></el-tab-pane>
+      </el-tabs>
     </el-row>
-    <interactions-chart/>
+    <interactions-chart :range="interactionsRange" />
 
     <el-row>
       <h2>Collect Rewards</h2>
@@ -51,7 +57,7 @@
             <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
           </svg>
         </div>
-        <b class="slightly-larger">Loading...</b>
+        <!--b class="slightly-larger">Loading...</b-->
       </template>
       <template v-else>
         <svg-cube-top class="splash-image" />
@@ -196,6 +202,8 @@ onMounted(() => {
 onUnmounted(() => {
   clearInterval(timer);
 });
+
+let interactionsRange = ref("week");
 
 let claimModal = reactive({
   campaign: {},
