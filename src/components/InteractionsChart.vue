@@ -1,8 +1,7 @@
 <template>
-  <div v-if="interactionsSeries[0].data.length > 0" class="chart-border mb-medium">
+  <div v-if="interactionsSeries[0].data.length > 0" v-loading="chartLoading" class="chart-border mb-medium">
     <apexchart
       ref="interactionsChart"
-      v-loading="chartLoading"
       style="width: 100%"
       height="270px"
       type="bar"
@@ -23,7 +22,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, reactive, ref, watch } from "vue";
-import moment from "moment";
+import moment, { Moment } from "moment";
 import { store } from "@/store";
 import type ChartDataDto from "@/common/api/dto/ChartDataDto";
 import SvgCubeTop from "@/assets/icons/cube-top.svg?component";
@@ -67,7 +66,7 @@ const interactionsOptions = {
       speed: 400,
       dynamicAnimation: {
         enabled: false,
-      }
+      },
     },
     toolbar: {
       show: true,
@@ -160,10 +159,19 @@ function setChartRange(range: string) {
       periodFrom.subtract(1, "year");
       break;
   }
-  getChartData(periodFrom.unix(), null);
+  fetchChartData(periodFrom.unix(), null);
 }
 
-function getChartData(periodFrom: number, periodTo: number | null) {
+let cache: { [key: string]: { time: Moment; data: ChartDataDto } } = {};
+
+function fetchChartData(periodFrom: number, periodTo: number | null) {
+  let cacheKey = periodFrom + "-" + periodTo;
+  if (cache[cacheKey]) {
+    updateChart(cache[cacheKey].data);
+    if (moment().diff(cache[cacheKey].time) < 1000 * 60) {
+      return;
+    }
+  }
   chartLoading.value = true;
   store.dispatch(
     "HttpModule/loadAnalytics",
@@ -172,9 +180,11 @@ function getChartData(periodFrom: number, periodTo: number | null) {
       to: periodTo,
     }
   ).then((result) => {
+    cache[cacheKey] = { time: moment(), data: result };
     updateChart(result);
     chartLoading.value = false;
-  }).catch(() => {
+  }).catch((e) => {
+    console.error(e);
     updateChart(null);
     chartLoading.value = false;
   });

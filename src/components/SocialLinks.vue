@@ -95,7 +95,6 @@ import SvgYoutube from "@/assets/icons/youtube.svg?component";
 import SvgWebsite from "@/assets/icons/website.svg?component";
 import SvgNewsletter from "@/assets/icons/newsletter.svg?component";
 import SvgBlog from "@/assets/icons/blog.svg?component";
-import { defineProps } from "vue";
 
 export interface Props {
   github?: string;
