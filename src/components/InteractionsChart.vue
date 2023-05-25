@@ -312,13 +312,16 @@ function updateChart(chartData: ChartDataDto | null) {
     return;
   }
 
+  let from = moment(chartData.from);
+  let to = moment(chartData.to);
+
   let dateFormat = "";
   if (chartData.truncateTo === "hours") {
     dateFormat = "HH:00";
   } else if (chartData.truncateTo === "days") {
-    dateFormat = "MMM DD";
+    dateFormat = to.diff(from, "days") > 8 ? "DD" : "dddd";
   } else {
-    dateFormat = "MMM YYYY";
+    dateFormat = "MMM";
   }
 
   let samples: { [key: string]: number } = {};
@@ -327,8 +330,6 @@ function updateChart(chartData: ChartDataDto | null) {
     samples[formattedDate] = chartData.interactions[key] ?? 0;
   }
 
-  let from = moment(chartData.from);
-  let to = moment(chartData.to);
   let date = from.clone();
   while (date.diff(to) < 0) {
     let formattedDate = moment(date).format(dateFormat);
