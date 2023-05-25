@@ -152,6 +152,10 @@ html .d {
   &-grow {
     flex-grow: 1;
   }
+
+  &-nowrap {
+    flex-wrap: nowrap;
+  }
 }
 
 .float {

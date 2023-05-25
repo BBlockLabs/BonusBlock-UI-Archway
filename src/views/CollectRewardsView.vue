@@ -38,14 +38,11 @@
 
     <el-row align="middle" justify="space-between">
       <h2>Your stats</h2>
-      <el-tabs v-model="interactionsRange">
-        <el-tab-pane label="Year" name="year"></el-tab-pane>
-        <el-tab-pane label="Month" name="month"></el-tab-pane>
-        <el-tab-pane label="Week" name="week"></el-tab-pane>
-        <el-tab-pane label="Today" name="today"></el-tab-pane>
-      </el-tabs>
+      <div v-if="todayInteractions !== null" style="margin-right: 2px">
+        Today interactions: <strong>{{ todayInteractions }}</strong>
+      </div>
     </el-row>
-    <interactions-chart :range="interactionsRange" />
+    <interactions-chart />
 
     <el-row>
       <h2>Collect Rewards</h2>
@@ -197,13 +194,12 @@ const timer = setInterval(() => {
 
 onMounted(() => {
   updateRewards();
+  fetchTodayInteractions();
 });
 
 onUnmounted(() => {
   clearInterval(timer);
 });
-
-let interactionsRange = ref("week");
 
 let claimModal = reactive({
   campaign: {},
@@ -211,8 +207,25 @@ let claimModal = reactive({
   loading: false,
 });
 
+const todayInteractions = ref(null as number | null);
 const campaignsLoading = ref(true);
 const campaigns: Array<CampaignWithRewardDto> = reactive([]);
+
+function fetchTodayInteractions() {
+  store.dispatch(
+    "HttpModule/loadAnalytics",
+    {
+      timeZoneOffset: new Date().getTimezoneOffset() * -1,
+    }
+  ).then((result) => {
+    for (let k in result.interactions) {
+      todayInteractions.value = result.interactions[k];
+      break;
+    }
+  }).catch((e) => {
+    console.error(e);
+  });
+}
 
 function updateRewards() {
   // load rewards

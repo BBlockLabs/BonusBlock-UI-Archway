@@ -90,7 +90,7 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
     ((
       this: Store<RootStateInterface>,
       context: Context,
-      payload: { from: number; to: number | null }
+      payload: { from: number | null; to: number | null; timeZoneOffset: number | null }
     ) => Promise<ChartDataDto>);
 }
 
@@ -368,7 +368,7 @@ export default class Actions implements ActionsInterface {
 
   loadAnalytics = async (
     context: Context,
-    payload: { from: number; to: number | null }
+    payload: { from: number | null; to: number | null; timeZoneOffset: number | null }
   ): Promise<ChartDataDto> => {
     const response: Response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/analytics`,
