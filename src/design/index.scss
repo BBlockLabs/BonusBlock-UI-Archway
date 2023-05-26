@@ -32,6 +32,7 @@ body {
 svg {
   height: auto;
 
+  &.icon,
   &.icon-normal {
     height: 1.714em;
   }

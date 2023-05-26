@@ -274,6 +274,36 @@ export default class Actions implements ActionsInterface {
     >(response);
 
     responseData.payload.map((row) => {
+      if (!row.id) {
+        row.id = row.title;
+      }
+      if (row.bannerImg) {
+        row.image = row.bannerImg;
+      }
+      if (row.content) {
+        row.description = row.content;
+      }
+      if (!row.socials) {
+        row.socials = [];
+      }
+      if (row.mainLink) {
+        row.socials.push({ type: "main-link", link: row.mainLink });
+      }
+      if (row.twitterLink) {
+        row.socials.push({ type: "twitter", link: row.twitterLink });
+      }
+      if (row.telegramLink) {
+        row.socials.push({ type: "telegram", link: row.telegramLink });
+      }
+      if (row.youtubeLink) {
+        row.socials.push({ type: "youtube", link: row.youtubeLink });
+      }
+      if (row.redditLink) {
+        row.socials.push({ type: "reddit", link: row.redditLink });
+      }
+      if (row.discordLink) {
+        row.socials.push({ type: "discord", link: row.discordLink });
+      }
       if (row.socials) {
         for (const r of row.socials) {
           if (r.type === "main" || r.type == "main-link") {
@@ -283,7 +313,7 @@ export default class Actions implements ActionsInterface {
         }
       }
       if (row.image) {
-        row.image = "data:" + row.imageType + ";base64," + row.image;
+        row.image = "data:" + (row.imageType ?? "image/jpeg") + ";base64," + row.image;
       }
     });
 
