@@ -152,6 +152,10 @@ html .d {
   &-grow {
     flex-grow: 1;
   }
+
+  &-nowrap {
+    flex-wrap: nowrap;
+  }
 }
 
 .float {
@@ -195,4 +199,31 @@ html .d {
 .of-hidden {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.fullscreen-empty-list {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin: auto;
+  gap: 0.5em;
+
+  .splash-image {
+    width: 14.5em;
+    height: auto;
+    max-width: 45vw;
+    max-height: 50vh;
+  }
+}
+
+.el-loading-mask {
+  background-color: rgba(255, 247, 234, 0.9);
 }

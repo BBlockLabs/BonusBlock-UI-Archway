@@ -12,21 +12,33 @@
 @use "@/design/components/card.scss";
 @use "@/design/components/col.scss";
 @use "@/design/components/dialog.scss";
+@use "@/design/components/drawer.scss";
 @use "@/design/components/fonts.scss";
 @use "@/design/components/footer.scss";
 @use "@/design/components/icons.scss";
 @use "@/design/components/layoout.scss";
+@use "@/design/components/menu.scss";
 @use "@/design/components/message-box.scss";
+@use "@/design/components/tooltip.scss";
+@use "@/design/components/tabs.scss";
 @use "@/design/components/cookie-consent.scss";
+@use "@/design/components/rewards-and-announcements.scss";
+@use "@/design/components/apexchart.scss";
 
 body {
-  background:
-    linear-gradient(
-        243.18deg,
-        rgba(193, 155, 80, 0.25) 8.88%,
-        rgba(124, 144, 115, 0.25) 35.3%,
-        rgba(76, 69, 163, 0.25) 71.76%,
-        rgba(143, 11, 122, 0.25) 100%
-    ),
-    EPFunctions.getCssVar('bg-color')
+  background: #FFF7EA
+}
+
+svg {
+  height: auto;
+
+  &.icon-normal {
+    height: 1.714em;
+  }
+}
+
+.prevent-select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
 }

@@ -1,0 +1,46 @@
+.chart-border {
+  border: 1px solid #000;
+  border-radius: 0.714em;
+  padding: 1em;
+  overflow: hidden;
+}
+
+.vue-apexcharts {
+  .apexcharts-grid > line {
+    display: none;
+  }
+
+  .apexcharts-grid-borders .apexcharts-gridline:nth-child(2) {
+    display: none;
+  }
+
+  .apexcharts-tooltip.apexcharts-theme-light {
+    border: 1px solid #000;
+    box-shadow: 2px 2px 0 #000000;
+
+    .apexcharts-tooltip-title {
+      font-weight: bold;
+      background: #FFF;
+      border-bottom: 1px solid #000;
+    }
+
+    .apexcharts-tooltip-marker {
+      border: 1px solid #000;
+    }
+  }
+}
+
+.chart-navigation {
+  flex-wrap: nowrap;
+
+  svg {
+    cursor: pointer;
+    height: 1.25em;
+    padding: 0.5em;
+
+    &.disabled {
+      cursor: default;
+      opacity: 0.3;
+    }
+  }
+}

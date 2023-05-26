@@ -5,7 +5,7 @@
     size="25.2857142857em"
     :append-to-body="true"
     modal-class="hidden-md-and-up"
-    class="hidden-md-and-up"
+    class="hidden-md-and-up page-wrapper-drawer"
     @closed="infoPanelClosed"
   >
     <template #header>
@@ -38,10 +38,10 @@
 
   <el-aside
     width="25.2857142857em"
-    class="hidden-sm-and-down bg-light br-solid b-info"
+    class="hidden-sm-and-down br-solid b-info"
   >
     <el-container class="h-100" direction="vertical">
-      <el-main>
+      <el-main class="d-flex flex-column gap-base">
         <el-row justify="center" class="mb-base">
           <el-col>
             <id-card-front v-if="!props.cardBack" />
@@ -62,11 +62,13 @@
 
   <el-container>
     <el-header class="p-0">
-      <navigation-bar class="bg-light" />
+      <navigation-bar />
     </el-header>
 
     <el-main class="px-large pt-small">
-      <slot />
+      <div id="page-wrapper" class="limit-width" :style="fullHeight ? 'height: 100%' : ''">
+        <slot />
+      </div>
     </el-main>
 
     <slot name="footer" />
@@ -83,10 +85,12 @@ import { StoreType, useStore } from "@/store";
 
 interface Props {
   cardBack?: boolean;
+  fullHeight?: boolean;
 }
 
 const props: Props = withDefaults(defineProps<Props>(), {
   cardBack: false,
+  fullHeight: false,
 });
 
 function infoPanelClosed(): void {
@@ -96,8 +100,29 @@ function infoPanelClosed(): void {
 const store: StoreType = useStore();
 </script>
 
-<style scoped lang="scss">
-.bg-light {
-  background: rgba(255, 255, 255, 0.6);
+<style lang="scss">
+.page-wrapper-drawer {
+  .el-drawer__header {
+    margin-bottom: 2rem;
+  }
+
+  .el-drawer__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 0;
+    padding-bottom: 1rem;
+  }
+
+  .el-footer {
+    height: auto;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+.limit-width {
+  max-width: 1600px;
+  margin: auto;
 }
 </style>

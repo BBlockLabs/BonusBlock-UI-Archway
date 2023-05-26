@@ -1,0 +1,8 @@
+.el-popper[role="tooltip"]:not(.el-select__popper):not(.el-popover) {
+  background: #fff;
+  color: #000;
+
+  .el-popper__arrow {
+    display: none;
+  }
+}

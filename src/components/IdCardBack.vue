@@ -34,7 +34,7 @@
 
     <el-row justify="center">
       <el-col :span="-1">
-        <el-button type="primary">
+        <el-button type="primary" @click="copyToClipboard(store.getters['UserModule/refLink'])">
           <svg-share class="icon-small mr-extra-small" />
           Share
         </el-button>

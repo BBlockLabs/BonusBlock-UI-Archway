@@ -6,7 +6,8 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "preserveValueImports": false
+    "preserveValueImports": false,
+    "allowJs": true
   },
 
   "references": [

@@ -1,0 +1,30 @@
+.br-solid.b-info {
+  border-right: 2px solid #060612;
+}
+
+.el-divider--horizontal {
+  border-top: 2px solid #060612;
+}
+
+.el-menu--horizontal {
+  border-bottom: 2px solid #060612;
+
+  .el-menu-item:not(.is-disabled):hover,
+  .el-menu-item:not(.is-disabled):focus,
+  & > .el-sub-menu .el-sub-menu__title:hover,
+  & > .el-sub-menu .el-sub-menu__title:focus {
+    background: #e6dfd4;
+  }
+
+  & > .el-menu-item.is-active,
+  & > .el-menu-item.is-active:hover,
+  & > .el-menu-item.is-active:focus {
+    border-bottom-color: #060612;
+    background: #060612;
+    color: #fff !important;
+  }
+}
+
+.el-popper.is-light {
+  border: 1px solid #000;
+}

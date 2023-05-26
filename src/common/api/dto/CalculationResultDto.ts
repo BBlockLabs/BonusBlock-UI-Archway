@@ -1,4 +1,4 @@
-import type {Moment} from "moment/moment";
+import type { Moment } from "moment/moment";
 import moment from "moment/moment";
 
 export default class CalculationResultDto {

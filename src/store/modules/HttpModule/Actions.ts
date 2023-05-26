@@ -4,12 +4,14 @@ import HttpResponse from "@/common/api/HttpResponse";
 import type KeplrCheckResponseRequest from "@/common/api/KeplrCheckResponseRequest";
 import type LoginResponse from "@/common/api/LoginResponse";
 import type KeplrUnlinkWalletRequest from "@/common/api/KeplrUnlinkWalletRequest";
-import HttpCallNotSuccessfulError from "@/common/errors/HttpCallNotSuccessfulError";
-import FormattedError from "@/common/errors/FormattedError";
 import type MetamaskConnectRequest from "@/common/api/MetamaskConnectRequest";
 import type CalculationResultDto from "@/common/api/dto/CalculationResultDto";
-import HttpUnauthorizedError from "@/common/errors/HttpUnauthorizedError";
 import type AnnouncementsDto from "@/common/api/dto/AnnouncementsDto";
+import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
+import type AnnouncementsRequest from "@/common/api/AnnouncementsRequest";
+import type ClaimResponseDto from "@/common/api/dto/ClaimResponseDto";
+import type ChartDataDto from "@/common/api/dto/ChartDataDto";
+import moment from "moment";
 
 export type Context = ActionContext<{}, RootStateInterface>;
 export type HttpAction = Action<{}, RootStateInterface>;
@@ -60,20 +62,40 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
   getAnnouncementsList: HttpAction &
     ((
       this: Store<RootStateInterface>,
-      context: Context
+      context: Context,
+      payload: AnnouncementsRequest
     ) => Promise<Array<AnnouncementsDto>>);
+
+  getCampaignsWithReward: HttpAction &
+    ((
+      this: Store<RootStateInterface>,
+      context: Context
+    ) => Promise<HttpResponse<Array<CampaignWithRewardDto>>>);
+
+  claimReward: HttpAction &
+    ((
+      this: Store<RootStateInterface>,
+      context: Context,
+      payload: { campaignId: string }
+    ) => Promise<ClaimResponseDto>);
+
+  claimRewardInit: HttpAction &
+    ((
+      this: Store<RootStateInterface>,
+      context: Context,
+      payload: { campaignId: string }
+    ) => Promise<null>);
+
+  loadAnalytics: HttpAction &
+    ((
+      this: Store<RootStateInterface>,
+      context: Context,
+      payload: { from: number | null; to: number | null; timeZoneOffset: number | null }
+    ) => Promise<ChartDataDto>);
 }
 
 export default class Actions implements ActionsInterface {
   [key: string]: Action<{}, RootStateInterface>;
-
-  private static getBadResponseError(code: number): Error {
-    if (code === 401) {
-      return new HttpUnauthorizedError();
-    }
-
-    return new HttpCallNotSuccessfulError();
-  }
 
   getStatus = async (context: Context): Promise<LoginResponse> => {
     const response: Response = await fetch(
@@ -85,18 +107,9 @@ export default class Actions implements ActionsInterface {
       }
     );
 
-    if (!response.ok) {
-      throw Actions.getBadResponseError(response.status);
-    }
-
     const responseData = await HttpResponse.fromResponse<LoginResponse>(
       response
     );
-
-    if (!responseData.success) {
-      console.error(responseData);
-      throw new HttpCallNotSuccessfulError();
-    }
 
     return responseData.payload;
   };
@@ -117,16 +130,7 @@ export default class Actions implements ActionsInterface {
       }
     );
 
-    if (!response.ok) {
-      throw Actions.getBadResponseError(response.status);
-    }
-
     const responseData = await HttpResponse.fromResponse<string>(response);
-
-    if (!responseData.success) {
-      console.error(responseData);
-      throw new HttpCallNotSuccessfulError();
-    }
 
     return responseData.payload;
   };
@@ -147,34 +151,9 @@ export default class Actions implements ActionsInterface {
       }
     );
 
-    if (!response.ok && response.status !== 400) {
-      throw Actions.getBadResponseError(response.status);
-    }
-
     const responseData = await HttpResponse.fromResponse<LoginResponse>(
       response
     );
-
-    if (!responseData.success) {
-      if (
-        responseData.errors &&
-        responseData.errors[0] &&
-        responseData.errors[0].includes("Cannot get wallet/staking data")
-      ) {
-        throw new FormattedError(
-          "Cannot get wallet/staking data, please try again later or contact an administrator."
-        );
-      } else if (
-        responseData.errors &&
-        responseData.errors[0] &&
-        responseData.errors[0].includes("Wallet address already in use")
-      ) {
-        throw new FormattedError("Wallet is already attached to an account.");
-      } else {
-        console.error(responseData);
-        throw new HttpCallNotSuccessfulError();
-      }
-    }
 
     return responseData.payload;
   };
@@ -195,26 +174,9 @@ export default class Actions implements ActionsInterface {
       }
     );
 
-    if (!response.ok && response.status !== 400) {
-      throw Actions.getBadResponseError(response.status);
-    }
-
     const responseData = await HttpResponse.fromResponse<LoginResponse>(
       response
     );
-
-    if (!responseData.success) {
-      if (
-        responseData.errors &&
-        responseData.errors[0] &&
-        responseData.errors[0].includes("Wallet address already in use")
-      ) {
-        throw new FormattedError("Wallet is already attached to an account.");
-      } else {
-        console.error(responseData);
-        throw new HttpCallNotSuccessfulError();
-      }
-    }
 
     return responseData.payload;
   };
@@ -235,16 +197,7 @@ export default class Actions implements ActionsInterface {
       }
     );
 
-    if (!response.ok) {
-      throw Actions.getBadResponseError(response.status);
-    }
-
-    const responseData = await HttpResponse.fromResponse<null>(response);
-
-    if (!responseData.success) {
-      console.error(responseData);
-      throw new HttpCallNotSuccessfulError();
-    }
+    await HttpResponse.fromResponse<null>(response);
   };
 
   terminateSession = async (context: Context): Promise<void> => {
@@ -257,21 +210,12 @@ export default class Actions implements ActionsInterface {
       }
     );
 
-    if (!response.ok) {
-      if (response.status === 401) {
-        // All good, user is logged out
-        return;
-      }
-
-      throw Actions.getBadResponseError(response.status);
+    if (!response.ok && response.status === 401) {
+      // All good, user is logged out
+      return;
     }
 
-    const responseData = await HttpResponse.fromResponse<null>(response);
-
-    if (!responseData.success) {
-      console.error(responseData);
-      throw new HttpCallNotSuccessfulError();
-    }
+    await HttpResponse.fromResponse<null>(response);
   };
 
   getUserCount = async (context: Context): Promise<string> => {
@@ -284,16 +228,7 @@ export default class Actions implements ActionsInterface {
       }
     );
 
-    if (!response.ok) {
-      throw Actions.getBadResponseError(response.status);
-    }
-
     const responseData = await HttpResponse.fromResponse<string>(response);
-
-    if (!responseData.success) {
-      console.error(responseData);
-      throw new HttpCallNotSuccessfulError();
-    }
 
     return responseData.payload;
   };
@@ -307,51 +242,149 @@ export default class Actions implements ActionsInterface {
         headers: {
           "Content-Type": "application/json",
           "X-Auth-Token": context.rootState.UserModule?.token || "",
-        }
+        },
       }
     );
 
-    if (!response.ok) {
-      throw Actions.getBadResponseError(response.status);
-    }
-
-    const responseData = await HttpResponse.fromResponse<Array<CalculationResultDto>>(response);
-
-    if (!responseData.success) {
-      console.error(responseData);
-      throw new HttpCallNotSuccessfulError();
-    }
+    const responseData = await HttpResponse.fromResponse<
+      Array<CalculationResultDto>
+    >(response);
 
     return responseData.payload;
   };
 
   getAnnouncementsList = async (
-    context: Context
+    context: Context,
+    payload: AnnouncementsRequest
   ): Promise<Array<AnnouncementsDto>> => {
     const response: Response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/announcements`,
       {
+        body: JSON.stringify(payload),
         headers: {
           "Content-Type": "application/json",
           "X-Auth-Token": context.rootState.UserModule?.token || "",
-        }
+        },
+        method: "POST",
       }
     );
 
-    if (!response.ok) {
-      throw Actions.getBadResponseError(response.status);
-    }
-
-    const responseData = await HttpResponse.fromResponse<Array<AnnouncementsDto>>(response);
+    const responseData = await HttpResponse.fromResponse<
+      Array<AnnouncementsDto>
+    >(response);
 
     responseData.payload.map((row) => {
-      row.bannerImg = 'data:image/png;base64,' + row.bannerImg;
-    })
+      if (row.socials) {
+        for (const r of row.socials) {
+          if (r.type === "main" || r.type == "main-link") {
+            row.mainLink = r.link;
+            row.mainLinkTitle = r.title || "Visit";
+          }
+        }
+      }
+      if (row.image) {
+        row.image = "data:" + row.imageType + ";base64," + row.image;
+      }
+    });
 
-    if (!responseData.success) {
-      console.error(responseData);
-      throw new HttpCallNotSuccessfulError();
+    return responseData.payload;
+  };
+
+  getCampaignsWithReward = async (
+    context: Context
+  ): Promise<HttpResponse<Array<CampaignWithRewardDto>>> => {
+    const response: Response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/campaigns-with-reward`,
+      {
+        headers: {
+          "X-Auth-Token": context.rootState.UserModule?.token || "",
+        },
+      }
+    );
+
+    const responseData = await HttpResponse.fromResponse<
+      Array<CampaignWithRewardDto>
+    >(response);
+
+    if (responseData.payload) {
+      responseData.payload.map((campaign) => {
+        if (campaign.socials) {
+          for (const r of campaign.socials) {
+            if (r.type === "main" || r.type == "main-link") {
+              campaign.mainLink = r.link;
+              campaign.mainLinkTitle = r.title || "Visit";
+            }
+          }
+        }
+        campaign.periodFromParsed = Math.round(moment(campaign.periodFrom).valueOf() / 1000);
+        campaign.periodTillParsed = Math.round(moment(campaign.periodTill).valueOf() / 1000);
+      });
     }
+
+    return responseData;
+  };
+
+  claimReward = async (
+    context: Context,
+    payload: { campaignId: string }
+  ): Promise<ClaimResponseDto> => {
+    const response: Response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/claim`,
+      {
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+          "X-Auth-Token": context.rootState.UserModule?.token || "",
+        },
+        method: "POST",
+      }
+    );
+
+    const responseData = await HttpResponse.fromResponse<ClaimResponseDto>(
+      response
+    );
+
+    return responseData.payload;
+  };
+
+  claimRewardInit = async (
+    context: Context,
+    payload: { campaignId: string }
+  ): Promise<null> => {
+    const response: Response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/claim/init`,
+      {
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+          "X-Auth-Token": context.rootState.UserModule?.token || "",
+        },
+        method: "POST",
+      }
+    );
+    await HttpResponse.fromResponse<never>(response);
+    return null;
+  };
+
+  loadAnalytics = async (
+    context: Context,
+    payload: { from: number | null; to: number | null; timeZoneOffset: number | null }
+  ): Promise<ChartDataDto> => {
+    const response: Response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/analytics`,
+      {
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+          "X-Auth-Token": context.rootState.UserModule?.token || "",
+        },
+        method: "POST",
+      }
+    );
+
+    const responseData = await HttpResponse.fromResponse<ChartDataDto>(
+      response
+    );
 
     return responseData.payload;
   };

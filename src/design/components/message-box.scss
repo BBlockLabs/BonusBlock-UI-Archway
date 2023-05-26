@@ -14,3 +14,79 @@
     }
   }
 }
+
+.el-message__content {
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.2;
+}
+
+.el-message--info,
+.el-message--success,
+.el-message--warning,
+.el-message--error {
+  border: none;
+  border-radius: 1.16em;
+  font-size: 0.75em;
+  align-items: flex-start;
+  width: 98%;
+  max-width: 32em;
+
+  .toast-body {
+    white-space: pre-wrap;
+    word-break: break-word;
+    flex-grow: 1;
+
+    h6 {
+      font-size: 1.17em;
+      margin: -0.18em 0 1em 0;
+      font-weight: normal;
+    }
+
+    >div {
+      margin: 0 -2em;
+    }
+
+    .el-collapse-item__header {
+      cursor: pointer;
+      text-align: center;
+      padding: 1em 0 0.5em 0;
+      margin-bottom: -0.5em;
+    }
+
+    .el-collapse-item__arrow {
+      font-size: 1.2em;
+      margin-left: 0.4em;
+      vertical-align: -0.25em;
+      transform: rotate(90deg);
+      transition: none;
+
+      &.is-active {
+        transform: rotate(-90deg);
+      }
+    }
+
+    .thin-scrollbar {
+      overflow-y: auto;
+      max-height: 20em;
+    }
+  }
+
+  .el-message__icon {
+    font-size: 1.28em;
+  }
+
+  .el-message__closeBtn {
+    font-size: 1.3em;
+    position: static;
+    transform: none;
+    color: inherit;
+    padding: 0.3em;
+    margin: -0.3em;
+
+    &:hover {
+      color: inherit;
+      opacity: 0.6;
+    }
+  }
+}

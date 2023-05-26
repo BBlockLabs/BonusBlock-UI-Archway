@@ -110,6 +110,7 @@ $box: map.merge(
     'extra-large': 2.286rem, // 32px
     'large': 1.429rem, // 20px
     'medium': 1.286rem, // 18px
+    'slightly-larger': 1.143rem, // 16px
     'base': 1rem, // 14px
     'small': 0.929rem, // 13px
     'extra-small': 0.857rem, //12px
@@ -122,6 +123,7 @@ $box: map.merge(
   $menu: (
     'border-color': EPFunctions.getCssVar('border-color', 'darker'),
     'bg-color': transparent,
+    'item-font-size': 1.1em
   ),
   $main: (
     'padding': 1.428em, //20px

@@ -16,7 +16,7 @@
 
     <el-row v-for="[key, value] in data" :key="key" class="my-small">
       <el-col>
-        <el-tooltip :content="String(value)">
+        <el-tooltip :content="String(value)" :disabled="String(value).length < 15">
           <box class="fs-small px-base py-small">
             <el-row justify="space-between" class="flex-row" :gutter="5">
               <el-col :span="-1" class="fs-extra-small flex-noshrink">
