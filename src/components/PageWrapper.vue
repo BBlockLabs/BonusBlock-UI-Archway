@@ -66,7 +66,7 @@
     </el-header>
 
     <el-main class="px-large pt-small">
-      <div id="page-wrapper" class="limit-width">
+      <div id="page-wrapper" class="limit-width" :style="fullHeight ? 'height: 100%' : ''">
         <slot />
       </div>
     </el-main>
@@ -85,10 +85,12 @@ import { StoreType, useStore } from "@/store";
 
 interface Props {
   cardBack?: boolean;
+  fullHeight?: boolean;
 }
 
 const props: Props = withDefaults(defineProps<Props>(), {
   cardBack: false,
+  fullHeight: false,
 });
 
 function infoPanelClosed(): void {

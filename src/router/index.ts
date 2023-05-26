@@ -26,7 +26,13 @@ const router = createRouter({
     {
       path: "/collect-rewards",
       name: "Collect Rewards",
-      component: () => import("@/views/CollectRewardsView.vue"),
+      component: () => {
+        if (import.meta.env.MODE === "PRODUCTION") {
+          return import("@/views/CollectRewardsComingSoon.vue");
+        } else {
+          return import("@/views/CollectRewardsView.vue");
+        }
+      },
     },
   ],
 });
