@@ -57,6 +57,24 @@ const interactionsRange = ref("week");
 const chartOffset = ref(0);
 const interactionsChart = ref(null);
 const chartLoading = reactive({} as { [key: string]: boolean });
+let cache: { [key: string]: { time: Moment; data: ChartDataDto } } = {};
+
+function tooltipXFormatter(label: string) {
+  switch (interactionsRange.value) {
+    case "day":
+      return label + " - " + currentRangeStart.value.format("MMMM Do, YYYY");
+    case "week":
+      return label + " - " + currentRangeStart.value.format("MMMM, YYYY");
+    case "month":
+      return currentRangeStart.value.format("MMMM [" + nth(parseInt(label)) + "], YYYY");
+  }
+  return label;
+}
+
+function tooltipYFormatter(value: number) {
+  return value.toFixed(0);
+}
+
 const interactionsSeries = [
   {
     name: "Interactions",
@@ -94,6 +112,7 @@ const interactionsOptions = {
     categories: reactive([""] as Array<string>),
     labels: {
       hideOverlappingLabels: true,
+      rotate: -45,
       style: {
         fontWeight: 700,
       },
@@ -113,6 +132,14 @@ const interactionsOptions = {
         colors: ["#909399"],
         fontSize: "10px",
       },
+    },
+  },
+  tooltip: {
+    x: {
+      formatter: tooltipXFormatter,
+    },
+    y: {
+      formatter: tooltipYFormatter,
     },
   },
   dataLabels: {
@@ -175,17 +202,29 @@ function weekOfMonth(input: Moment) {
   return Math.ceil((input.date() + offset) / 7);
 }
 
+const currentRangeStart = computed(() => {
+  return moment()
+    .subtract(chartOffset.value, interactionsRange.value as unitOfTime.Base)
+    .startOf(interactionsRange.value as unitOfTime.Base);
+});
+
+const currentRangeEnd = computed(() => {
+  return moment()
+    .subtract(chartOffset.value, interactionsRange.value as unitOfTime.Base)
+    .endOf(interactionsRange.value as unitOfTime.Base);
+});
+
 const currentRangeName = computed(() => {
-  let substractedDate = moment().subtract(chartOffset.value, interactionsRange.value as unitOfTime.Base);
+  let rangeEnd = currentRangeStart.value;
   switch (interactionsRange.value) {
     case "day":
-      return substractedDate.format("MMMM Do");
+      return rangeEnd.format("MMMM Do");
     case "week":
-      return nth(weekOfMonth(substractedDate)) + " week of " + substractedDate.format("MMMM");
+      return nth(weekOfMonth(rangeEnd)) + " week of " + rangeEnd.format("MMMM");
     case "month":
-      return substractedDate.format("MMMM");
+      return rangeEnd.format("MMMM");
     case "year":
-      return substractedDate.format("YYYY");
+      return rangeEnd.format("YYYY");
   }
   return "";
 });
@@ -195,8 +234,7 @@ const hasPrevRange = computed(() => {
   if (!startDate) {
     return true;
   }
-  let substractedDate = moment().subtract(chartOffset.value, interactionsRange.value as unitOfTime.Base);
-  return substractedDate.startOf(interactionsRange.value as unitOfTime.Base).isAfter(startDate);
+  return currentRangeStart.value.isAfter(startDate);
 });
 
 const hasNextRange = computed(() => {
@@ -210,47 +248,22 @@ function jumpBy(offset: number) {
   chartOffset.value = Math.max(0, chartOffset.value + offset);
 }
 
-function parseChartRange(range: string) {
-  let ret = {
-    from: null as number | null,
-    to: null as number | null,
-    truncateTo: null as string | null,
-    timeZoneOffset: new Date().getTimezoneOffset() * -1,
-  };
-  let substractedDate = moment().subtract(chartOffset.value, interactionsRange.value as unitOfTime.Base);
-  ret.from = substractedDate.startOf(range as unitOfTime.Base).unix();
-  ret.to = substractedDate.endOf(range as unitOfTime.Base).unix();
-  switch (range) {
-    case "day":
-      ret.truncateTo = "hours";
-      ret.from = substractedDate.startOf("day").unix();
-      ret.to = substractedDate.endOf("day").unix();
-      break;
-    case "week":
-      ret.truncateTo = "days";
-      ret.from = substractedDate.startOf("week").unix();
-      ret.to = substractedDate.endOf("week").unix();
-      break;
-    case "month":
-      ret.truncateTo = "days";
-      ret.from = substractedDate.startOf("month").unix();
-      ret.to = substractedDate.endOf("month").unix();
-      break;
-    case "year":
-      ret.truncateTo = "months";
-      ret.from = substractedDate.startOf("year").unix();
-      ret.to = substractedDate.endOf("year").unix();
-      break;
-  }
-  return ret;
-}
-
-let cache: { [key: string]: { time: Moment; data: ChartDataDto } } = {};
+const truncateSettings: { [key: string]: string } = {
+  day: "hours",
+  week: "days",
+  month: "days",
+  year: "months",
+};
 
 function fetchChartData() {
   let queriedRange = interactionsRange.value;
   let queriedOffset = chartOffset.value;
-  let query = parseChartRange(queriedRange);
+  let query = {
+    from: currentRangeStart.value.unix(),
+    to: currentRangeEnd.value.unix(),
+    truncateTo: truncateSettings[interactionsRange.value],
+    timeZoneOffset: new Date().getTimezoneOffset() * -1,
+  };
   let cacheKey = query.from + "-" + query.to + "-" + query.truncateTo;
   if (cache[cacheKey]) {
     updateChart(cache[cacheKey].data);
@@ -304,6 +317,20 @@ function updateChartBarWidth() {
   }
 }
 
+function updateLabelRotationAngle(angle: number) {
+  interactionsOptions.xaxis.labels.rotate = angle;
+  if (interactionsChart.value) {
+    // @ts-ignore
+    interactionsChart.value.updateOptions({
+      xaxis: {
+        labels: {
+          rotate: angle,
+        },
+      },
+    });
+  }
+}
+
 function updateChart(chartData: ChartDataDto | null) {
   interactionsSeries[0].data.length = 0;
   interactionsOptions.xaxis.categories.length = 0;
@@ -317,12 +344,14 @@ function updateChart(chartData: ChartDataDto | null) {
 
   let dateFormat = "";
   if (chartData.truncateTo === "hours") {
-    dateFormat = "HH:00";
+    dateFormat = "[\u00A0]HH:00[\u00A0]";
   } else if (chartData.truncateTo === "days") {
     dateFormat = to.diff(from, "days") > 8 ? "DD" : "dddd";
   } else {
     dateFormat = "MMM";
   }
+
+  updateLabelRotationAngle((chartData.truncateTo === "hours" || dateFormat === "DD") ? -90 : -45);
 
   let samples: { [key: string]: number } = {};
   for (let key in chartData.interactions) {
