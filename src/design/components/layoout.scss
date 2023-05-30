@@ -153,6 +153,10 @@ html .d {
     flex-grow: 1;
   }
 
+  &-wrap {
+    flex-wrap: wrap;
+  }
+
   &-nowrap {
     flex-wrap: nowrap;
   }
@@ -226,4 +230,12 @@ html .d {
 
 .el-loading-mask {
   background-color: rgba(255, 247, 234, 0.9);
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.bold {
+  font-weight: bold;
 }

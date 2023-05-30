@@ -24,6 +24,11 @@ const router = createRouter({
       component: () => import("@/views/ReferralView.vue"),
     },
     {
+      path: "/campaign/:id",
+      name: "Campaign",
+      component: () => import("@/views/CampaignDetails.vue"),
+    },
+    {
       path: "/collect-rewards",
       name: "Collect Rewards",
       component: () => {

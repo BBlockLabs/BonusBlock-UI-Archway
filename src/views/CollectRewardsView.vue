@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper>
+  <PageWrapper :full-width="true" :no-padding="true" class="py-base">
     <el-dialog v-model="claimModal.open" class="claim-modal">
       <div v-if="claimModal.loading">
         <div class="el-loading-spinner static-spinner mb-small">
@@ -36,111 +36,115 @@
       </div>
     </el-dialog>
 
-    <el-row align="middle" justify="space-between">
-      <h2>Your stats</h2>
-      <div v-if="todayInteractions !== null" style="margin-right: 2px">
-        Today interactions: <strong>{{ todayInteractions }}</strong>
-      </div>
-    </el-row>
-    <interactions-chart />
+    <div class="limit-width px-large">
+      <el-row align="middle" justify="space-between">
+        <h2>Your stats</h2>
+        <div v-if="todayInteractions !== null" style="margin-right: 2px">
+          Today interactions: <strong>{{ todayInteractions }}</strong>
+        </div>
+      </el-row>
+      <interactions-chart />
 
-    <el-row>
-      <h2>Collect Rewards</h2>
-    </el-row>
-    <div v-if="campaigns.length < 1" class="fullscreen-empty-list text-muted-more" style="height: 18em">
-      <template v-if="campaignsLoading">
-        <div class="el-loading-spinner static-spinner mb-small">
-          <svg class="circular" viewBox="0 0 50 50">
-            <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
-          </svg>
-        </div>
-        <!--b class="slightly-larger">Loading...</b-->
-      </template>
-      <template v-else>
-        <svg-cube-top class="splash-image" />
-        <b class="slightly-larger">Nothing to collect yet</b>
-      </template>
-    </div>
-    <div v-else class="campaign-container">
-      <div
-        v-for="campaign in campaigns"
-        :key="campaign.id"
-        class="campaign-card"
-      >
-        <div class="top-half">
-          <el-row justify="space-between" align="middle">
-            <h3 class="fs-slightly-larger">{{ campaign.name }}</h3>
-            <svg-link
-              v-if="campaign.mainLink"
-              class="card-link"
-              @click="openCampaignDetails(campaign)"
-            />
-          </el-row>
-          <el-progress
-            :percentage="getCampaignProgressPercent(campaign)"
-            :status="
-              elProgressStatusFromTimeRemaining(campaignTimeLeft(campaign))
-            "
-            :stroke-width="5"
-          >
-            <svg-clock class="mr-extra-small" />
-            <el-tooltip v-if="campaignTimeLeft(campaign) <= 0" :content="humanTimeLeft(Math.abs(campaignTimeLeft(campaign)), 3) + ' ago'" placement="top">
-              <b class="fs-extra-small">Ended</b>
-            </el-tooltip>
-            <el-tooltip v-else :content="humanTimeLeft(campaignTimeLeft(campaign), 3)" placement="top">
-              <b class="fs-extra-small">{{ humanTimeLeft(campaignTimeLeft(campaign)) }} left</b>
-            </el-tooltip>
-          </el-progress>
-        </div>
-        <div class="bottom-half">
-          <el-row
-            justify="space-between"
-            align="middle"
-            class="pt-medium pb-medium"
-          >
-            <b>Your Reward</b>
-            <!--div
-              class="text-link text-muted"
-              @click="openCampaignDetails(campaign)"
+      <el-row>
+        <h2>Collect Rewards</h2>
+      </el-row>
+      <div v-if="campaigns.length < 1" class="fullscreen-empty-list text-muted-more" style="height: 18em">
+        <template v-if="campaignsLoading">
+          <div class="el-loading-spinner static-spinner mb-small">
+            <svg class="circular" viewBox="0 0 50 50">
+              <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
+            </svg>
+          </div>
+          <!--b class="slightly-larger">Loading...</b-->
+        </template>
+        <template v-else>
+          <svg-cube-top class="splash-image" />
+          <b class="slightly-larger">Nothing to collect yet</b>
+        </template>
+      </div>
+      <div v-else class="campaign-container">
+        <div
+          v-for="campaign in campaigns"
+          :key="campaign.id"
+          class="campaign-card"
+        >
+          <div class="top-half">
+            <el-row justify="space-between" align="middle">
+              <h3 class="fs-slightly-larger">{{ campaign.name }}</h3>
+              <svg-link
+                v-if="campaign.mainLink"
+                class="card-link"
+                @click="openCampaignDetails(campaign)"
+              />
+            </el-row>
+            <el-progress
+              :percentage="getCampaignProgressPercent(campaign)"
+              :status="
+                elProgressStatusFromTimeRemaining(campaignTimeLeft(campaign))
+              "
+              :stroke-width="5"
             >
-              See more <svg-chevron-right />
-            </div-->
-          </el-row>
-          <el-row justify="space-between" align="middle">
-            <component
-              :is="currencyIcons[campaign.currency] ?? 'div'"
-              class="currency-icon"
-            />
-            <div v-if="campaign.amount" class="flex-grow ml-small">
-              {{ getHumanAmount(campaign).substring(0, 17) }} {{ campaign.currency }}
-            </div>
-            <div v-else class="flex-grow ml-small text-muted">
-              Unlocks on {{ nextCampaignCalculationDate(campaign) }}
-            </div>
-            <el-tooltip :content="campaign.amount ? 'Claim your rewards' : 'Unlocks on ' + nextCampaignCalculationDate(campaign)" placement="top">
-              <div>
-                <el-button
-                  type="primary"
-                  class="yellow-button"
-                  :disabled="!campaign.amount"
-                  @click="claimCampaign(campaign)"
-                >
-                  <svg-lock v-if="!campaign.amount" />
-                  Claim
-                </el-button>
+              <svg-clock class="mr-extra-small" />
+              <el-tooltip v-if="campaignTimeLeft(campaign) <= 0" :content="humanTimeLeft(Math.abs(campaignTimeLeft(campaign)), 3) + ' ago'" placement="top">
+                <b class="fs-extra-small">Ended</b>
+              </el-tooltip>
+              <el-tooltip v-else :content="humanTimeLeft(campaignTimeLeft(campaign), 3)" placement="top">
+                <b class="fs-extra-small">{{ humanTimeLeft(campaignTimeLeft(campaign)) }} left</b>
+              </el-tooltip>
+            </el-progress>
+          </div>
+          <div class="bottom-half">
+            <el-row
+              justify="space-between"
+              align="middle"
+              class="pt-medium pb-medium"
+            >
+              <b>Your Reward</b>
+              <!--div
+                class="text-link text-muted"
+                @click="openCampaignDetails(campaign)"
+              >
+                See more <svg-chevron-right />
+              </div-->
+            </el-row>
+            <el-row justify="space-between" align="middle">
+              <component
+                :is="currencyIcons[campaign.currency] ?? 'div'"
+                class="currency-icon"
+              />
+              <div v-if="campaign.amount" class="flex-grow ml-small">
+                {{ getHumanAmount(campaign).substring(0, 17) }} {{ campaign.currency }}
               </div>
-            </el-tooltip>
-          </el-row>
+              <div v-else class="flex-grow ml-small text-muted">
+                Unlocks on {{ nextCampaignCalculationDate(campaign) }}
+              </div>
+              <el-tooltip :content="campaign.amount ? 'Claim your rewards' : 'Unlocks on ' + nextCampaignCalculationDate(campaign)" placement="top">
+                <div>
+                  <el-button
+                    type="primary"
+                    class="yellow-button"
+                    :disabled="!campaign.amount"
+                    @click="claimCampaign(campaign)"
+                  >
+                    <svg-lock v-if="!campaign.amount" />
+                    Claim
+                  </el-button>
+                </div>
+              </el-tooltip>
+            </el-row>
+          </div>
         </div>
       </div>
     </div>
 
     <el-divider />
 
-    <el-row>
-      <h2>Keep Earning</h2>
-    </el-row>
-    <announcement-list :top-three="true" />
+    <div class="limit-width px-large">
+      <el-row>
+        <h2>Keep Earning</h2>
+      </el-row>
+      <announcement-list :top-three="true" />
+    </div>
   </PageWrapper>
 </template>
 
@@ -174,6 +178,7 @@ import MetamaskClient from "@/common/MetamaskClient";
 import detectEthereumProvider from "@metamask/detect-provider";
 import AnnouncementList from "@/components/AnnouncementList.vue";
 import InteractionsChart from "@/components/InteractionsChart.vue";
+import router from "@/router";
 
 const currencyIcons = {
   ARY: SvgAry,
@@ -245,8 +250,8 @@ function updateRewards() {
 }
 
 function openCampaignDetails(campaign: CampaignWithRewardDto): void {
-  // todo: actual implementation
-  window.open(campaign.mainLink, "_blank");
+  //window.open(campaign.mainLink, "_blank");
+  router.push("/campaign/" + campaign.id);
 }
 
 async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
@@ -296,9 +301,9 @@ function getCampaignWeekNumber(campaign: CampaignWithRewardDto): number {
 
 function nextCampaignCalculationDate(campaign: CampaignWithRewardDto): string {
   const date: moment.Moment = moment.unix(campaign.periodFromParsed);
-  const now: moment.Moment = moment();
+  const nowDate: moment.Moment = moment.unix(now.value);
 
-  while (date.diff(now, 'days') < 0) {
+  while (date.diff(nowDate, 'days') < 0) {
     date.add(7, 'days');
   }
 
