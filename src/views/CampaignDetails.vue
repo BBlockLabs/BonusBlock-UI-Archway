@@ -8,7 +8,7 @@
             style="vertical-align: -0.15em"
             @click="goBack()"
           />
-          {{ campaign.name }}
+          {{ campaignLoaded ? campaign.name : "Loading..." }}
         </h2>
         <div v-if="campaign.tags && campaign.tags.length > 0">
           <el-tag v-for="tag in campaign.tags" :key="tag" effect="plain" round>
@@ -21,41 +21,55 @@
             Today interactions: <strong>{{ todayInteractions }}</strong>
           </div>
         </el-row>
-        <interactions-chart />
+        <interactions-chart
+          :campaign-id="route.params.id"
+          :min-date="campaign?.periodFrom"
+          :max-date="campaign?.periodTill"
+          :parent-loading="!campaignLoaded"
+        />
       </div>
       <div class="py-base d-flex flex-column campaign-details">
         <h2>Campaign Details</h2>
         <el-card
+          v-loading="!campaignLoaded"
           shadow="never"
           class="campaign-image"
           :class="campaign.image ? '' : 'random-cube'"
           :style="{ backgroundImage: 'url(' + (campaign.image ?? randomCube(campaign.id)) + ')', backgroundColor: randomBackgroundColor(campaign.id) }"
         ></el-card>
-        <el-card shadow="never">
-          Campaign ends in:
-          <el-row class="mt-extra-small fs-xxl date-flex bold">
-            <div>{{ campaignTimeLeft.d }}</div>
-            <div>{{ campaignTimeLeft.h }}</div>
-            <div>{{ campaignTimeLeft.m }}</div>
-            <div>{{ campaignTimeLeft.s }}</div>
-          </el-row>
-          <el-row class="mt-base fs-small date-flex">
-            <div>Days</div>
-            <div>Hours</div>
-            <div>Minutes</div>
-            <div>Seconds</div>
-          </el-row>
+        <el-card v-loading="!campaignLoaded" shadow="never">
+          <template v-if="campaignTimeLeft">
+            Campaign ends in:
+            <el-row class="mt-extra-small fs-xxl date-flex bold">
+              <div>{{ campaignTimeLeft.d }}</div>
+              <div>{{ campaignTimeLeft.h }}</div>
+              <div>{{ campaignTimeLeft.m }}</div>
+              <div>{{ campaignTimeLeft.s }}</div>
+            </el-row>
+            <el-row class="mt-base fs-small date-flex">
+              <div>Days</div>
+              <div>Hours</div>
+              <div>Minutes</div>
+              <div>Seconds</div>
+            </el-row>
+          </template>
+          <template v-else-if="campaign.periodTill">
+            Campaign ended on:
+            <el-row class="mt-extra-small fs-xxl bold">
+              {{ campaign.periodTill.format("MMMM D, YYYY") }}
+            </el-row>
+          </template>
         </el-card>
-        <el-card shadow="never">
+        <el-card v-loading="!campaignLoaded" shadow="never">
           <el-row align="middle">
             <div>Network</div>
-            <svg-eth class="icon ml-auto mr-extra-small" />
-            <div>Ethereum</div>
+            <svg-eth v-if="campaignLoaded" class="icon ml-auto mr-extra-small" />
+            <div>{{ campaign.networkName }}</div>
           </el-row>
           <el-row align="middle" class="mt-base">
             <div>Reward pool</div>
-            <svg-uni class="icon ml-auto mr-extra-small" />
-            <div>UniSwap</div>
+            <svg-eth v-if="campaignLoaded" class="icon ml-auto mr-extra-small" />
+            <div>{{ campaign.rewardPoolName }}</div>
           </el-row>
         </el-card>
       </div>
@@ -72,7 +86,7 @@
   </PageWrapper>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import PageWrapper from "@/components/PageWrapper.vue";
 import InteractionsChart from "@/components/InteractionsChart.vue";
@@ -82,9 +96,12 @@ import RawCubeLeft from "@/assets/icons/cube-left.svg?raw";
 import RawCubeRight from "@/assets/icons/cube-right.svg?raw";
 import RawCubeTop from "@/assets/icons/cube-top.svg?raw";
 import SvgEth from "@/assets/currencies/eth.svg?component";
-import SvgUni from "@/assets/currencies/uni.svg?component";
 import router from "@/router";
-import moment from "moment";
+import moment, { Moment } from "moment";
+import { store } from "@/store";
+import type CampaignDataDto from "@/common/api/dto/CampaignDataDto";
+
+const route = useRoute();
 
 let localTimeOffsetMs: number = 0;
 const now = ref(Math.ceil((new Date().valueOf() - localTimeOffsetMs) / 1000));
@@ -93,38 +110,72 @@ const timer = setInterval(() => {
 }, 1000);
 
 onMounted(() => {
+  fetchCampaignData(route.params.id as string);
+  fetchTodayInteractions(route.params.id as string);
 });
 
 onUnmounted(() => {
   clearInterval(timer);
 });
 
-const route = useRoute();
 const todayInteractions = ref(null as number | null);
-todayInteractions.value = 42;
-const campaign = {
+const campaignLoaded = ref(false);
+const campaign: CampaignDataDto = reactive({
+  id: "",
+  name: "",
+  networkName: "",
+  rewardPoolName: "",
+  currency: "",
+  tags: [],
   image: null,
-  id: "a",
-  name: "Campaign name",
-  tags: ["DeFi", "DEX"],
-  periodTillParsed: moment()
-    .add(16, "days")
-    .add(4, "hours")
-    .add(11, "minutes")
-    .add(35, "seconds"),
-};
+  imageType: null,
+  periodFrom: null,
+  periodTill: null,
+});
+
+function fetchCampaignData(campaignId: string) {
+  store.dispatch(
+      "HttpModule/loadCampaign",
+      {
+        campaignId: campaignId,
+      }
+  ).then((result) => {
+    if (result) {
+      Object.assign(campaign, result);
+      campaignLoaded.value = true;
+    }
+  }).catch((e) => {
+    console.error(e);
+  });
+}
+
+function fetchTodayInteractions(campaignId: string) {
+  store.dispatch(
+      "HttpModule/loadAnalytics",
+      {
+        timeZoneOffset: new Date().getTimezoneOffset() * -1,
+        campaignIds: [route.params.id],
+      }
+  ).then((result) => {
+    for (let k in result.interactions) {
+      todayInteractions.value = result.interactions[k];
+      break;
+    }
+  }).catch((e) => {
+    console.error(e);
+  });
+}
 
 const campaignTimeLeft = computed(() => {
-  if (!campaign.periodTillParsed) {
-    return {
-      d: "",
-      h: "",
-      m: "",
-      s: "",
-    };
+  if (!campaign.periodTill) {
+    return null;
   }
-  let diff = campaign.periodTillParsed.diff(moment.unix(now.value), "seconds");
+  let diff = campaign.periodTill.diff(moment.unix(now.value), "seconds");
+  if (diff <= 0) {
+    return null;
+  }
   return {
+    diff: diff,
     d: Math.floor(diff / 60 / 60 / 24),
     h: Math.floor(diff / 60 / 60) % 24,
     m: Math.floor(diff / 60) % 60,
@@ -163,8 +214,6 @@ function randomBackgroundColor(seed: string) {
   ];
   return colors[numberFromSeed(seed, colors.length - 1)];
 }
-
-console.log(route.params.id);
 </script>
 <style lang="scss">
 .campaign-details-frame {
@@ -200,6 +249,7 @@ console.log(route.params.id);
 
     .el-card__body {
       padding: 0.25em 0;
+      min-height: 4em;
     }
 
     &.campaign-image {

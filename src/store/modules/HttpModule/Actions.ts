@@ -11,6 +11,7 @@ import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
 import type AnnouncementsRequest from "@/common/api/AnnouncementsRequest";
 import type ClaimResponseDto from "@/common/api/dto/ClaimResponseDto";
 import type ChartDataDto from "@/common/api/dto/ChartDataDto";
+import type CampaignDataDto from "@/common/api/dto/CampaignDataDto";
 import moment from "moment";
 
 export type Context = ActionContext<{}, RootStateInterface>;
@@ -90,8 +91,15 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
     ((
       this: Store<RootStateInterface>,
       context: Context,
-      payload: { from: number | null; to: number | null; timeZoneOffset: number | null }
+      payload: { from: number | null; to: number | null; timeZoneOffset: number | null; campaignIds: Array<string> | null; }
     ) => Promise<ChartDataDto>);
+
+  loadCampaign: HttpAction &
+    ((
+      this: Store<RootStateInterface>,
+      context: Context,
+      payload: { campaignId: string; }
+    ) => Promise<CampaignDataDto>);
 }
 
 export default class Actions implements ActionsInterface {
@@ -283,7 +291,7 @@ export default class Actions implements ActionsInterface {
         }
       }
       if (row.image) {
-        row.image = "data:" + row.imageType + ";base64," + row.image;
+        row.image = "data:" + (row.imageType ?? "image/jpeg") + ";base64," + row.image;
       }
     });
 
@@ -368,7 +376,7 @@ export default class Actions implements ActionsInterface {
 
   loadAnalytics = async (
     context: Context,
-    payload: { from: number | null; to: number | null; timeZoneOffset: number | null }
+    payload: { from: number | null; to: number | null; timeZoneOffset: number | null; campaignIds: Array<string> | null }
   ): Promise<ChartDataDto> => {
     const response: Response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/analytics`,
@@ -387,5 +395,32 @@ export default class Actions implements ActionsInterface {
     );
 
     return responseData.payload;
+  };
+
+  loadCampaign = async (
+    context: Context,
+    payload: { campaignId: string }
+  ): Promise<CampaignDataDto> => {
+    const response: Response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/campaign/` + payload.campaignId,
+      {
+        headers: {
+          "X-Auth-Token": context.rootState.UserModule?.token || "",
+        },
+      }
+    );
+
+    const responseData = await HttpResponse.fromResponse<CampaignDataDto>(
+      response
+    );
+    const row = responseData.payload;
+    if (row && row.periodFrom) {
+      row.periodFrom = moment(row.periodFrom);
+      row.periodTill = moment(row.periodTill);
+    }
+    if (row && row.image) {
+      row.image = "data:" + (row.imageType ?? "image/jpeg") + ";base64," + row.image;
+    }
+    return row;
   };
 }
