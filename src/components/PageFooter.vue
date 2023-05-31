@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import SocialLinks from "@/components/SocialLinks.vue";
+import SocialLinks from "@/components/ExternalLinks.vue";
 import { normalizeClass, unref } from "vue";
 import { useNamespace } from "element-plus";
 
