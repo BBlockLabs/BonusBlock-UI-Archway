@@ -65,8 +65,8 @@
       <navigation-bar />
     </el-header>
 
-    <el-main class="px-large pt-small">
-      <div id="page-wrapper" class="limit-width" :style="fullHeight ? 'height: 100%' : ''">
+    <el-main :class="noPadding ? 'px-0 pt-0' : 'px-large pt-small'">
+      <div id="page-wrapper" :class="fullWidth ? '' : 'limit-width'" :style="fullHeight ? 'height: 100%' : ''" v-bind="$attrs">
         <slot />
       </div>
     </el-main>
@@ -83,9 +83,15 @@ import NavigationBar from "@/components/NavigationBar.vue";
 import TwitterBox from "@/components/TwitterBox.vue";
 import { StoreType, useStore } from "@/store";
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 interface Props {
   cardBack?: boolean;
   fullHeight?: boolean;
+  fullWidth?: boolean;
+  noPadding?: boolean;
 }
 
 const props: Props = withDefaults(defineProps<Props>(), {
@@ -124,5 +130,6 @@ const store: StoreType = useStore();
 .limit-width {
   max-width: 1600px;
   margin: auto;
+  box-sizing: content-box;
 }
 </style>

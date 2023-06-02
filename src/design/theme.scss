@@ -17,7 +17,7 @@ $base-font-size: map.merge(
 $icon-size: () !default;
 $icon-size: map.merge(
   (
-    'extra-large': 4.714, //66px
+    'extra-large': 4.714em, //66px
     'large': 3.429em, //48px
     'medium': 2.286em, // 32px
     'base': 1.714em, //24px
@@ -107,6 +107,7 @@ $box: map.merge(
     'border-radius': 8px,
   ),
   $font-size: (
+    'xxl': 3rem,
     'extra-large': 2.286rem, // 32px
     'large': 1.429rem, // 20px
     'medium': 1.286rem, // 18px

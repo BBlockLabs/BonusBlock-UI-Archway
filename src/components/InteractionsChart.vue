@@ -1,5 +1,5 @@
 <template>
-  <div v-if="interactionsSeries[0].data.length > 0" class="chart-border mb-medium">
+  <div class="chart-border mb-medium">
     <el-row align="middle" justify="space-between">
       <el-tabs v-model="interactionsRange">
         <el-tab-pane label="Year" name="year"></el-tab-pane>
@@ -24,6 +24,7 @@
     </el-row>
 
     <apexchart
+      v-if="interactionsSeries[0].data.length > 0"
       ref="interactionsChart"
       v-loading="chartLoading[interactionsRange + chartOffset]"
       style="width: 100%"
@@ -32,15 +33,15 @@
       :options="interactionsOptions"
       :series="interactionsSeries"
     ></apexchart>
-  </div>
-  <div v-else-if="chartLoading[interactionsRange + chartOffset]" class="el-loading-spinner static-spinner mb-small text-muted-more">
-    <svg class="circular" viewBox="0 0 50 50">
-      <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
-    </svg>
-  </div>
-  <div v-else class="fullscreen-empty-list text-muted-more" style="height: 18em">
-    <svg-cube-top class="splash-image" />
-    <b class="slightly-larger">No data yet</b>
+    <div v-else-if="chartLoading[interactionsRange + chartOffset] || props.parentLoading" class="el-loading-spinner static-spinner mb-small text-muted-more">
+      <svg class="circular" viewBox="0 0 50 50">
+        <circle class="path" cx="25" cy="25" r="20" fill="none"></circle>
+      </svg>
+    </div>
+    <div v-else class="fullscreen-empty-list text-muted-more" style="height: 18em">
+      <svg-cube-top class="splash-image" />
+      <b class="slightly-larger">No data for selected period yet</b>
+    </div>
   </div>
 </template>
 
@@ -52,6 +53,14 @@ import type ChartDataDto from "@/common/api/dto/ChartDataDto";
 import SvgCubeTop from "@/assets/icons/cube-top.svg?component";
 import SvgChevronLeft from "@/assets/icons/nav-arrow-left.svg?component";
 import SvgChevronRight from "@/assets/icons/nav-arrow-right.svg?component";
+
+interface Props {
+  campaignId?: string;
+  minDate?: Moment;
+  maxDate?: Moment;
+  parentLoading?: boolean;
+}
+const props: Props = defineProps<Props>();
 
 const interactionsRange = ref("week");
 const chartOffset = ref(0);
@@ -158,6 +167,7 @@ const interactionsOptions = {
 };
 
 onMounted(() => {
+  chartOffset.value = lowestOffset.value;
   fetchChartData();
   window.addEventListener("resize", updateChartBarWidth);
 });
@@ -169,7 +179,7 @@ onUnmounted(() => {
 watch(
   () => interactionsRange.value,
   (): void => {
-    chartOffset.value = 0;
+    chartOffset.value = lowestOffset.value;
     fetchChartData();
   }
 );
@@ -178,6 +188,26 @@ watch(
   () => chartOffset.value,
   (): void => {
     fetchChartData();
+  }
+);
+
+watch(
+  () => props.maxDate,
+  (): void => {
+    if (props.maxDate && currentRangeStart.value.isAfter(props.maxDate)) {
+      const diff = currentRangeStart.value.diff(props.maxDate, interactionsRange.value as unitOfTime.Base, true);
+      jumpBy(Math.ceil(diff));
+    }
+  }
+);
+
+watch(
+  () => props.minDate,
+  (): void => {
+    if (props.minDate && currentRangeEnd.value.isBefore(props.minDate)) {
+      const diff = currentRangeEnd.value.diff(props.minDate, interactionsRange.value as unitOfTime.Base, true);
+      jumpBy(Math.floor(diff));
+    }
   }
 );
 
@@ -201,6 +231,16 @@ function weekOfMonth(input: Moment) {
   const offset = firstDayOfMonth.diff(firstDayOfWeek, "days");
   return Math.ceil((input.date() + offset) / 7);
 }
+
+const lowestOffset = computed(() => {
+  if (!props.maxDate) {
+    return 0;
+  }
+  const diff = moment()
+    .startOf(interactionsRange.value as unitOfTime.Base)
+    .diff(props.maxDate, interactionsRange.value as unitOfTime.Base, true);
+  return diff > 0 ? Math.ceil(diff) : 0;
+});
 
 const currentRangeStart = computed(() => {
   return moment()
@@ -230,14 +270,20 @@ const currentRangeName = computed(() => {
 });
 
 const hasPrevRange = computed(() => {
-  let startDate = store.state.UserModule?.user?.createdOn;
-  if (!startDate) {
-    return true;
+  if (props.minDate && currentRangeStart.value.isBefore(props.minDate)) {
+    return false;
   }
-  return currentRangeStart.value.isAfter(startDate);
+  let userJoinDate = store.state.UserModule?.user?.createdOn;
+  if (userJoinDate && currentRangeStart.value.isBefore(userJoinDate)) {
+    return false;
+  }
+  return true;
 });
 
 const hasNextRange = computed(() => {
+  if (props.maxDate && currentRangeEnd.value.isAfter(props.maxDate)) {
+    return false;
+  }
   return chartOffset.value > 0;
 });
 
@@ -245,7 +291,7 @@ function jumpBy(offset: number) {
   if (offset > 0 && !hasPrevRange.value) {
     return;
   }
-  chartOffset.value = Math.max(0, chartOffset.value + offset);
+  chartOffset.value = Math.max(lowestOffset.value, chartOffset.value + offset);
 }
 
 const truncateSettings: { [key: string]: string } = {
@@ -263,7 +309,11 @@ function fetchChartData() {
     to: currentRangeEnd.value.unix(),
     truncateTo: truncateSettings[interactionsRange.value],
     timeZoneOffset: new Date().getTimezoneOffset() * -1,
+    campaignIds: null as Array<string> | null,
   };
+  if (props.campaignId) {
+    query.campaignIds = [props.campaignId];
+  }
   let cacheKey = query.from + "-" + query.to + "-" + query.truncateTo;
   if (cache[cacheKey]) {
     updateChart(cache[cacheKey].data);
@@ -341,6 +391,12 @@ function updateChart(chartData: ChartDataDto | null) {
 
   let from = moment(chartData.from);
   let to = moment(chartData.to);
+  if (props.minDate && from.isBefore(props.minDate)) {
+    from = moment(props.minDate);
+  }
+  if (props.maxDate && to.isAfter(props.maxDate)) {
+    to = moment(props.maxDate);
+  }
 
   let dateFormat = "";
   if (chartData.truncateTo === "hours") {
