@@ -2,6 +2,7 @@
 @use '@/design/theme.scss' as theme;
 @use 'element-plus/theme-chalk/src/mixins/mixins' as EPMixins;
 @use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+@use "@/design/vars.scss";
 
 $directions: (
   'l': left,
@@ -238,4 +239,8 @@ html .d {
 
 .bold {
   font-weight: bold;
+}
+
+hr {
+  border: 1px solid vars.$archway-warm-grey;
 }

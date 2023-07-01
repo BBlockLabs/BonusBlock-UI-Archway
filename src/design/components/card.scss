@@ -1,5 +1,6 @@
 @use 'element-plus/theme-chalk/src/mixins/mixins' as EPMixins;
 @use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+@use "@/design/vars.scss";
 
 @mixin card-variant($type) {
   $card-color-types: (
@@ -26,7 +27,7 @@
 }
 
 @include EPMixins.b(card) {
-  border: 2px solid EPFunctions.getCssVar('card', 'border-color');
+  border: none;
 
   @include EPMixins.when(always-shadow) {
     box-shadow: EPFunctions.getCssVar('box-shadow', 'dark');
@@ -45,7 +46,11 @@
     }
   }
 }
-
 .el-card.is-always-shadow {
-  box-shadow: 8px 8px 0px #060612;
+  box-shadow: none;
+}
+
+.el-card.mission-preview {
+  --el-card-padding: 1em;
+  border: 1px solid vars.$archway-warm-grey;
 }

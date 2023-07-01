@@ -1,6 +1,7 @@
 import Actions from "./Actions";
 import Getters from "./Getters";
 import HttpModule from "@/store/modules/HttpModule";
+import ArchwayHttpModule from "@/store/modules/ArchwayModule";
 import Mutations from "./Mutations";
 import UserModule from "@/store/modules/UserModule";
 import type { InjectionKey } from "vue";
@@ -19,6 +20,7 @@ export const store = createStore<StateInterface>({
   modules: {
     HttpModule: new HttpModule(),
     UserModule: new UserModule(),
+    ArchwayHttpModule: new ArchwayHttpModule(),
   },
 });
 

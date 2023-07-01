@@ -1,73 +1,79 @@
 <template>
-  <el-main class="d-flex flex-column">
+  <el-main
+    style="font-size: 1.3vw"
+    class="d-flex mx-extra-large p-0 flex-column"
+  >
     <el-row justify="end">
       <el-col :span="-1">
         <svg-logo class="title-logo" />
       </el-col>
     </el-row>
-
-    <el-row justify="center" class="my-auto">
-      <el-col :md="-1">
-        <el-space fill :size="40">
-          <el-row justify="center">
-            <el-col :span="-1" class="tc">
-              <span class="title-text"> Join </span>
-              <span class="title-number">
-                {{ store.state.userCount }}
-              </span>
-            </el-col>
-          </el-row>
-
-          <el-row justify="center">
-            <el-col :span="-1" class="fs-extra-large tc">
-              <h1 class="fs-extra-large m-0">blocktopians to earn rewards</h1>
-            </el-col>
-          </el-row>
-
-          <el-row justify="center" :gutter="20">
-            <el-col :md="6" :xl="5" class="my-small">
-              <el-button size="large" class="w-100" @click="onMetamaskLogin">
-                <svg-metamask-fox class="mr-medium icon-medium" />
-                <b>Continue with Metamask</b>
-              </el-button>
-            </el-col>
-
-            <el-col :md="6" :xl="5" class="my-small">
-              <el-button size="large" class="w-100" @click="keplrDialog = true">
-                <svg-keplr class="mr-medium icon-medium" />
-                <b>Continue with Keplr</b>
-              </el-button>
-            </el-col>
-          </el-row>
-
-          <el-row justify="center">
-            <el-col :span="-1">
-              <disclaimer-dialog />
-            </el-col>
-          </el-row>
-        </el-space>
+    <el-row class="h-100" align="top" justify="space-between">
+      <el-col span="-1">
+        <el-row>
+          <el-col span="-1" class="welcome-to-archway">
+            <span style="">Welcome to </span>
+            <br />
+            <span class="archway-orange">Archway</span>
+          </el-col>
+        </el-row>
+        <el-row style="font-size: 1.6vw; line-height: 1.2em">
+          <el-col>
+            <span>Discover the </span>
+            <span class="archway-orange"
+              ><strong>Archway Ecosystem</strong></span
+            >
+            <br />
+            <span>with BonusBlock and earn <strong>$ARCH</strong></span>
+          </el-col>
+        </el-row>
+        <el-row class="mt-large">
+          <box-wrapper
+            style="border-radius: 4px"
+            type="white"
+            round
+            class="pointer fs-large my-small p-small"
+            @click="connectWallet()"
+          >
+            <el-row class="mx-medium is-align-middle" align="middle">
+              <el-col class="d-flex" span="-1">
+                <svg-keplr class="mr-small icon-small" />
+              </el-col>
+              <el-col class="fs-base" span="-1">
+                <strong>Continue with Keplr</strong>
+              </el-col>
+            </el-row>
+          </box-wrapper>
+        </el-row>
+      </el-col>
+      <el-col class="d-flex" span="-1">
+        <SvgHome style="width: 40vw"></SvgHome>
       </el-col>
     </el-row>
     <dialog-keplr v-model:open="keplrDialog" @connect="onKeplrLogin" />
   </el-main>
-
   <footer-component />
   <div id="cookie-consent"></div>
 </template>
 
 <script setup lang="ts">
 import DialogKeplr from "@/components/KeplrDialog.vue";
-import DisclaimerDialog from "@/components/DisclaimerDialog.vue";
-import FooterComponent from "@/components/PageFooter.vue";
+import FooterComponent from "@/components/HomeFooter.vue";
+import SvgLogo from "@/assets/archway/archway-logo.svg";
 import SvgKeplr from "@/assets/icons/keplr.svg?component";
-import SvgLogo from "@/assets/logo/logo-yellow.svg?component";
-import SvgMetamaskFox from "@/assets/icons/metamask-fox.svg?component";
+import SvgHome from "@/assets/archway/home-illustration.svg";
 import type { Ref } from "vue";
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import { Router, useRoute, useRouter } from "vue-router";
 import { StoreType, useStore } from "@/store";
-import MetamaskClient from "@/common/MetamaskClient";
+
 import cookieConsentTools from "cookie-consent-tools";
+import BoxWrapper from "@/components/BoxWrapper.vue";
+import Chain from "@/common/Chain";
+import LinkActionPayload from "@/common/LinkActionPayload";
+import FormattedError from "@/common/errors/FormattedError";
+import { ElMessageBox } from "element-plus";
+import HttpUnauthorizedError from "@/common/errors/HttpUnauthorizedError";
 
 const store: StoreType = useStore();
 const router: Router = useRouter();
@@ -96,34 +102,55 @@ setTimeout(() => {
   });
 }, 1000);
 
-async function onMetamaskLogin(): Promise<void> {
-  try {
-    await MetamaskClient.metamaskLogin(
-      store,
-      route.query.ref
-        ? String(route.query.ref)
-        : route.query.r
-        ? String(route.query.r)
-        : null
-    );
-  } catch (e: any) {
-    // All errors should be handled in metamaskLogin already
-    return;
-  }
-
-  await router.push("/wallets");
-}
-
 async function onKeplrLogin(): Promise<void> {
   keplrDialog.value = false;
   await router.push("/wallets");
 }
 
-onMounted(() => {
-  if ("metamask-login" in route.query) {
-    onMetamaskLogin();
+const connectWallet = async (): Promise<void> => {
+  let chain = new Chain();
+  chain.name = "Archway Network";
+  chain.id = "constantine-3";
+  chain.denom = "uarch";
+  chain.source = "Keplr";
+  chain.iconUrl = "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/constantine/chain.png";
+  store.commit("setLoading", true);
+
+  try {
+    await store.dispatch(
+      "UserModule/keplrLogin",
+      new LinkActionPayload(
+        chain,
+        route.query.ref
+          ? String(route.query.ref)
+          : route.query.r
+            ? String(route.query.r)
+            : null
+      )
+    );
+    keplrDialog.value = false;
+    await router.push("/wallets");
+  } catch (error: any) {
+    if (error instanceof FormattedError) {
+      await ElMessageBox.alert(error.message, error.name, {});
+    } else if (error instanceof HttpUnauthorizedError) {
+      await store.dispatch("UserModule/removeSession");
+      await router.push("/");
+    } else {
+      console.error(error);
+      await ElMessageBox.alert(
+        "There was an error connecting your wallet, please try again.",
+        "Error",
+        {
+          center: true,
+        }
+      );
+    }
+  } finally {
+    store.commit("setLoading", false);
   }
-});
+};
+
 </script>
 
 <style scoped lang="scss">

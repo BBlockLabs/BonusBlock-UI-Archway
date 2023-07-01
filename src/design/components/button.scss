@@ -1,5 +1,6 @@
 @use 'element-plus/theme-chalk/src/mixins/mixins' as EPMixins;
 @use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+@use "@/design/vars.scss";
 
 @include EPMixins.b(button) {
   box-shadow: EPFunctions.getCssVar('box-shadow', 'lighter');
@@ -42,15 +43,22 @@
   }
 }
 
-.el-button:not(.is-link) {
+.el-button.is-link {
+  color: vars.$archway-primary-orange!important;
   box-shadow: none;
 }
 
+.el-button.is-link:hover {
+  color: vars.$archway-hover!important;
+}
+
+.el-button:not(.is-link) {
+  box-shadow: none;
+  color: vars.$archway-primary-orange;
+}
+
 .el-button:not(.is-link):hover {
-  box-shadow: var(--el-box-shadow-lighter);
-  background-color: var(--el-button-bg-color);
-  color: var(--el-button-text-color);
-  transform: translate(-4px, -4px);
+  background-color: vars.$archway-white-hover;
 }
 
 .el-button.el-button--large:hover {

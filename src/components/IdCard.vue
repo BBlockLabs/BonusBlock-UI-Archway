@@ -13,13 +13,12 @@ import ColoredCard from "@/components/ColoredCard.vue";
 </script>
 
 <style lang="scss" scoped>
+@use "@/design/vars.scss" as v;
 .dot {
   box-sizing: border-box;
   width: 64px;
   height: 16px;
-  background: #ffffff;
-  border: 2px solid #000000;
-  box-shadow: inset 10px 10px 0 #000000;
+  background: v.$archway-warm-grey;
   border-radius: 8px;
 }
 </style>

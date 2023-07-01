@@ -1,4 +1,4 @@
-export default class AnnouncementsRequest {
+export default class PaginationRequest {
   page: number;
   perPage: number;
 

@@ -1,3 +1,5 @@
+@use "@/design/vars.scss";
+
 .static-spinner {
   position: static;
   margin-top: 0;
@@ -16,6 +18,12 @@
 .campaign-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(22em, 1fr));
+  gap: 1em;
+}
+
+.info-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(33em, 1fr));
   gap: 1em;
 }
 
@@ -98,7 +106,6 @@
 
 .project-card {
   background: #fff;
-  border: 1px solid #000;
   border-radius: 0.75em;
   overflow: hidden;
   display: flex;
@@ -128,4 +135,23 @@
       gap: 0.5em;
     }
   }
+}
+
+.explore-archway {
+  font-size: 4em;
+  font-weight: 400;
+}
+
+.welcome-to-archway {
+  font-size: 6em;
+  font-weight: 400;
+}
+
+.archway-orange {
+  color: vars.$archway-primary-orange;
+}
+
+.archway-orange-bg {
+  background-color: vars.$archway-primary-orange;
+  color: white;
 }

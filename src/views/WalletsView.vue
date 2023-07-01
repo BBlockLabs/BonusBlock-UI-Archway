@@ -19,34 +19,170 @@
     <!--      </el-col>-->
     <!--    </el-row>-->
     <!--/remove-on-prod-->
-    <el-row>
-      <h2>
-        Connect your wallet
-        <el-tooltip
-          class="box-item"
-          effect="dark"
-          content="The signed request contains a one time use token that is used to verify if the add wallet request is sent from the same connection. <br />The signed data is only used to verify the wallet owner is the one sending the request. It does not contain any personal or other private information."
-          raw-content
-          placement="bottom-start"
-        >
-          <svg-info class="info-tooltip" style="" />
-        </el-tooltip>
-      </h2>
-    </el-row>
-    <el-row :gutter="10">
-      <el-col :span="12" class="my-small">
-        <wallet-box-keplr />
-      </el-col>
+    <template v-if="!selected">
+      <el-row justify="space-between" class="is-align-middle">
+        <el-col span="-1" class="explore-archway">
+          <span style="">Explore </span>
+          <span class="archway-orange">Archway</span>
+        </el-col>
+        <el-col span="-1" class="my-small">
+          <el-row>
+            <box-wrapper type="white" round class="fs-large my-small p-large">
+              <el-row style="text-align: center;">
+                <el-col class="mx-medium" span="8">
+                  <el-col class="bold mb-small">
+                    {{ store.state.archwayProducts.length }}
+                  </el-col>
+                  <el-col class="archway-orange">
+                    Products
+                  </el-col>
+                </el-col>
 
-      <el-col :span="12" class="my-small">
-        <wallet-box-metamask />
-      </el-col>
-    </el-row>
+                <el-col class="mx-medium" span="8">
+                  <el-col class="bold mb-small">
+                    18
+                  </el-col>
+                  <el-col class="archway-orange">
+                    Missions
+                  </el-col>
+                </el-col>
 
-    <el-row>
-      <h2>Announcements</h2>
-    </el-row>
-    <announcement-list />
+                <el-col class="mx-medium" span="8">
+                  <el-col class="bold mb-small">
+                    0
+                  </el-col>
+                  <el-col class="archway-orange">
+                    Contributors
+                  </el-col>
+                </el-col>
+              </el-row>
+            </box-wrapper>
+          </el-row>
+        </el-col>
+      </el-row>
+
+      <el-row>
+        <box-wrapper type="white" round class="w-100 my-small px-large">
+          <el-row align="middle" justify="space-between">
+            <el-col span="-1">
+              <h2>
+                Connect wallet
+                <el-tooltip
+                  class="box-item"
+                  effect="dark"
+                  content="The signed request contains a one time use token that is used to verify if the add wallet request is sent from the same connection. <br />The signed data is only used to verify the wallet owner is the one sending the request. It does not contain any personal or other private information."
+                  raw-content
+                  placement="bottom-start"
+                >
+                  <svg-info class="info-tooltip" />
+                </el-tooltip>
+              </h2>
+            </el-col>
+            <el-col span="-1">
+              <SvgKeplr class="pointer" style="height: 40px" />
+            </el-col>
+          </el-row>
+        </box-wrapper>
+      </el-row>
+
+      <el-row class="mt-medium" justify="space-between">
+        <el-col style="width: 32%" span="-1">
+          <box-wrapper style="min-height: 14em" type="white" round class="archway-orange-bg my-small py-extra-large px-extra-large">
+            <el-row class="mb-large">
+              <SvgChatBubbleEmpty />
+            </el-row>
+            <el-row class="fs-large bold mb-large">
+              Reach out
+            </el-row>
+            <el-row class="mb-large">
+              Want to partner up or build a Dapp?
+              Get in touch with our core contributors.
+            </el-row>
+            <el-row>
+              <el-button type="primary" > Get in touch</el-button>
+            </el-row>
+          </box-wrapper>
+        </el-col>
+
+        <el-col style="width: 32%" span="-1">
+          <box-wrapper style="min-height: 14em" type="white" round class="my-small py-extra-large px-extra-large">
+            <el-row class="mb-large">
+              <SvgGroup />
+            </el-row>
+            <el-row class="fs-large bold mb-large">
+              Start building
+            </el-row>
+            <el-row class="mb-large">
+              Find everything you need to start
+              building on archway today.
+            </el-row>
+            <el-row>
+              <el-button class="is-link" type="primary" > View Documentation</el-button>
+            </el-row>
+          </box-wrapper>
+        </el-col>
+
+        <el-col style="width: 32%" span="-1">
+          <box-wrapper style="min-height: 14em" type="white" round class=" my-small py-extra-large px-extra-large">
+            <el-row class="mb-large">
+              <SvgOpenBook />
+            </el-row>
+            <el-row class="fs-large bold mb-large">
+              Join the community
+            </el-row>
+            <el-row class="mb-large">
+              Connect with people from across the
+              ecosystem, Build and grow together.
+              Access the community hub
+            </el-row>
+            <el-row>
+              <el-button class="is-link" type="primary" > Access the community hub</el-button>
+            </el-row>
+          </box-wrapper>
+        </el-col>
+
+      </el-row>
+
+      <el-row>
+        <h2>Products</h2>
+      </el-row>
+      <product-list @selected="productSelected"/>
+    </template>
+
+    <template v-else>
+      <el-row class="my-medium">
+        <el-col class="mr-large" span="-1">
+          <SvgChevronLeft
+            class="icon pointer"
+            @click="selected = false"
+          />
+        </el-col>
+        <box-wrapper style="min-height: 14em" type="white" round class="flex-grow py-extra-large px-extra-large">
+          <el-row>
+            <el-col :span="18">
+              123
+            </el-col>
+            <el-col  :span="6">
+              <h2 class="mt-0">
+                Details
+              </h2>
+              <hr/>
+              <h3>
+                Tags
+              </h3>
+              <h3>
+                Website
+              </h3>
+              <h3>
+                Links
+              </h3>
+
+            </el-col>
+          </el-row>
+        </box-wrapper>
+      </el-row>
+    </template>
+
     <!--    <template #footer>
       <el-footer height="unset" class="px-large pb-medium">
         <box-wrapper class="p-medium t-info b-info">
@@ -74,11 +210,27 @@
 </template>
 
 <script setup lang="ts">
+import SvgKeplr from "@/assets/icons/keplr.svg?component";
 import PageWrapper from "@/components/PageWrapper.vue";
-import WalletBoxKeplr from "@/components/WalletBoxKeplr.vue";
-import WalletBoxMetamask from "@/components/WalletBoxMetamask.vue";
 import SvgInfo from "@/assets/icons/info.svg?component";
-import AnnouncementList from "@/components/AnnouncementList.vue";
+import SvgChatBubbleEmpty from "@/assets/icons/chat-bubble-empty.svg";
+import SvgGroup from "@/assets/icons/group.svg";
+import SvgOpenBook from "@/assets/icons/open-book.svg";
+import SvgChevronLeft from "@/assets/icons/nav-arrow-left.svg?component";
+import BoxWrapper from "@/components/BoxWrapper.vue";
+import ProductList from "@/components/ProductList.vue";
+import { store } from "../store";
+import type { Ref } from "vue";
+import { ref } from "vue";
+
+let selected: Ref<boolean> = ref(false);
+
+function productSelected(id: string) {
+
+  console.log(id);
+  selected.value = true;
+}
+
 </script>
 
 <style lang="scss">

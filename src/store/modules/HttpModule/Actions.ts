@@ -8,7 +8,7 @@ import type MetamaskConnectRequest from "@/common/api/MetamaskConnectRequest";
 import type CalculationResultDto from "@/common/api/dto/CalculationResultDto";
 import type AnnouncementsDto from "@/common/api/dto/AnnouncementsDto";
 import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
-import type AnnouncementsRequest from "@/common/api/AnnouncementsRequest";
+import type PaginationRequest from "@/common/api/PaginationRequest";
 import type ClaimResponseDto from "@/common/api/dto/ClaimResponseDto";
 import type ChartDataDto from "@/common/api/dto/ChartDataDto";
 import type CampaignDataDto from "@/common/api/dto/CampaignDataDto";
@@ -64,7 +64,7 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
     ((
       this: Store<RootStateInterface>,
       context: Context,
-      payload: AnnouncementsRequest
+      payload: PaginationRequest
     ) => Promise<Array<AnnouncementsDto>>);
 
   getCampaignsWithReward: HttpAction &
@@ -263,7 +263,7 @@ export default class Actions implements ActionsInterface {
 
   getAnnouncementsList = async (
     context: Context,
-    payload: AnnouncementsRequest
+    payload: PaginationRequest
   ): Promise<Array<AnnouncementsDto>> => {
     const response: Response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/announcements`,

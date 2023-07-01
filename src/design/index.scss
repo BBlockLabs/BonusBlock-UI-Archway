@@ -5,6 +5,7 @@
 @use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
 @use 'element-plus/theme-chalk/display.css';
 @use "@/design/var.scss";
+@use "@/design/vars.scss";
 
 @use "@/design/components/avatar.scss";
 @use "@/design/components/box.scss";
@@ -27,7 +28,7 @@
 @use "@/design/components/apexchart.scss";
 
 body {
-  background: #FFF7EA
+  background: vars.$archway-warm-grey
 }
 
 svg {
@@ -43,4 +44,8 @@ svg {
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
+}
+
+.el-card{
+
 }

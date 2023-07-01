@@ -1,5 +1,6 @@
 @use "sass:map";
 @use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
+@use "@/design/vars.scss";
 
 $base-font-size: () !default;
 $base-font-size: map.merge(
@@ -58,11 +59,11 @@ $box: map.merge(
     'white': #ffffff,
     'black': #000000,
     'primary': (
-      'base': #060612,
-      'contrast-text': #FFFFFF,
+      'base': #ffffff,
+      'contrast-text': vars.$archway-primary-orange,
     ),
     'success': (
-      'base': #67c23a,
+      'base': #000000,
       'contrast-text': EPFunctions.getCssVar('text-color', 'primary'),
     ),
     'warning': (
@@ -118,7 +119,7 @@ $box: map.merge(
   ),
   $footer: (
     'padding': 0,
-    'height': 4em, //56px
+    'height': 8em, //112px
     'bg-color': EPFunctions.getCssVar('color', 'warning'),
   ),
   $menu: (

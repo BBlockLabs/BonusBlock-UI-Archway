@@ -1,20 +1,14 @@
 <template>
-  <box-wrapper class="py-medium pl-large pr-medium round">
+  <box-wrapper class="twitter-box py-medium pl-large pr-medium">
     <div class="d-flex flex-row">
       <div class="mx-0 my-auto">
-        <h3 class="fs-base m-0">
-          Share to your community about joining BonusBlock so others would know!
+        <h3 style="line-height: 200%" class="pr-small fs-small m-0">
+          <strong>Share the awesome news about joining Archway Network</strong>
         </h3>
       </div>
 
       <a :href="link" target="_blank" class="my-auto">
-        <box-wrapper
-          circular
-          type="warning"
-          class="ml-medium my-auto tweet-circle d-flex"
-        >
-          <svg-twitter class="icon-base m-auto" />
-        </box-wrapper>
+        <SvgArchwayTwitter />
       </a>
     </div>
   </box-wrapper>
@@ -22,7 +16,7 @@
 
 <script setup lang="ts">
 import BoxWrapper from "@/components/BoxWrapper.vue";
-import SvgTwitter from "@/assets/icons/twitter.svg?component";
+import SvgArchwayTwitter from "@/assets/archway/archway-twitter.svg";
 import type { ComputedRef } from "vue";
 import { useStore, StoreType } from "@/store";
 import { computed } from "vue";
@@ -30,6 +24,7 @@ import { computed } from "vue";
 const store: StoreType = useStore();
 
 const link: ComputedRef<string> = computed((): string => {
+  //TODO link
   const referral: string = store.getters["UserModule/refLink"];
 
   const message: string = `I have joined as a Blocktopian on @bonus_block! Visit ${referral} to start earning rewards for on-chain activity across Web3!`;
@@ -40,15 +35,4 @@ const link: ComputedRef<string> = computed((): string => {
 });
 </script>
 
-<style scoped lang="scss">
-.round {
-  border-radius: 77px;
-}
-
-.tweet-circle {
-  $size: 3.78571428571em; //53px
-  height: $size;
-  width: $size;
-  flex-shrink: 0;
-}
-</style>
+<style scoped lang="scss"></style>

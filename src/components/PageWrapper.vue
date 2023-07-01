@@ -36,12 +36,12 @@
     </template>
   </el-drawer>
 
-  <el-aside
-    width="25.2857142857em"
-    class="hidden-sm-and-down br-solid b-info"
-  >
+  <el-aside width="25.2857142857em" class="hidden-sm-and-down br-solid b-info">
     <el-container class="h-100" direction="vertical">
       <el-main class="d-flex flex-column gap-base">
+        <el-row justify="center">
+          <archway-logo/>
+        </el-row>
         <el-row justify="center" class="mb-base">
           <el-col>
             <id-card-front v-if="!props.cardBack" />
@@ -76,6 +76,7 @@
 </template>
 
 <script setup lang="ts">
+import ArchwayLogo from "@/assets/archway/archway-logo.svg"
 import FooterComponent from "@/components/PageFooter.vue";
 import IdCardBack from "@/components/IdCardBack.vue";
 import IdCardFront from "@/components/IdCardFront.vue";
@@ -128,7 +129,7 @@ const store: StoreType = useStore();
 }
 
 .limit-width {
-  max-width: 1600px;
+  max-width: 1800px;
   margin: auto;
   box-sizing: content-box;
 }

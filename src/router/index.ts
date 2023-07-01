@@ -33,6 +33,11 @@ const router = createRouter({
       name: "Collect Rewards",
       component: () => import("@/views/CollectRewardsView.vue"),
     },
+    {
+      path: "/leaderboard",
+      name: "Leaderboard",
+      component: () => import("@/views/LeaderboardView.vue"),
+    },
   ],
 });
 

@@ -1,6 +1,7 @@
 @use 'element-plus/theme-chalk/src/mixins/mixins' as EPMixins;
 @use 'element-plus/theme-chalk/src/mixins/function' as EPFunctions;
 @use '@/design/theme.scss' as theme;
+@use "@/design/vars.scss";
 
 @mixin box-variant($type) {
   $box-color-types: (
@@ -36,7 +37,6 @@
 }
 
 @include EPMixins.b(box) {
-  border: 1px solid EPFunctions.getCssVar('box', 'border-color');
   background-color: EPFunctions.getCssVar('box', 'bg-color');
   border-radius: EPFunctions.getCssVar('box', 'border-radius');
   color: EPFunctions.getCssVar('box', 'text-color');
@@ -66,6 +66,19 @@
   @include EPMixins.when(shadow) {
     box-shadow: 3px 3px 0px #F5BF5B, 4px 4px 0px #000000;
   }
+}
+
+.el-box.id-card-social {
+  background-color: vars.$archway-primary-orange;
+  font-weight: 700;
+  color: white;
+  border: none;
+}
+
+.el-box.twitter-box {
+  background-color: white;
+  border: none;
+  border-radius: 15px;
 }
 
 .el-box--primary {

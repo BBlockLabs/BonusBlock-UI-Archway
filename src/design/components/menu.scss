@@ -1,27 +1,29 @@
+@use "@/design/vars.scss";
+
 .br-solid.b-info {
-  border-right: 2px solid #060612;
+  border-right: 1px solid vars.$archway-border;
 }
 
 .el-divider--horizontal {
-  border-top: 2px solid #060612;
+  border-top: 1px solid vars.$archway-border;
 }
 
 .el-menu--horizontal {
-  border-bottom: 2px solid #060612;
+  border-bottom: 1px solid vars.$archway-border;
 
   .el-menu-item:not(.is-disabled):hover,
   .el-menu-item:not(.is-disabled):focus,
   & > .el-sub-menu .el-sub-menu__title:hover,
   & > .el-sub-menu .el-sub-menu__title:focus {
-    background: #e6dfd4;
+    //TODO hover color
+    background: #d4d8e6;
   }
 
   & > .el-menu-item.is-active,
   & > .el-menu-item.is-active:hover,
   & > .el-menu-item.is-active:focus {
-    border-bottom-color: #060612;
-    background: #060612;
-    color: #fff !important;
+    border-bottom-color: vars.$archway-primary-orange;
+    color: vars.$archway-primary-orange !important;
   }
 }
 

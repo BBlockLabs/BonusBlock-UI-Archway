@@ -44,7 +44,6 @@ async function checkLogin() {
 
 checkLogin();
 store.dispatch("getEnabledExtensions");
-store.dispatch("getUserCount");
 </script>
 
 <style lang="scss" scoped>
