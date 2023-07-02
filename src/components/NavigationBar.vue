@@ -9,9 +9,9 @@
     <div class="flex-grow" />
 
     <el-menu-item index="/wallets">Explore</el-menu-item>
-    <el-menu-item disabled index="/referral">Referral</el-menu-item>
-    <el-menu-item disabled index="/collect-rewards">Collect Rewards</el-menu-item>
-    <el-menu-item disabled index="/leaderboard">Leaderboard</el-menu-item>
+    <el-menu-item index="/referral">Referral</el-menu-item>
+    <el-menu-item index="/collect-rewards">Collect Rewards</el-menu-item>
+    <el-menu-item index="/leaderboard">Leaderboard</el-menu-item>
 
     <div class="flex-grow" />
 

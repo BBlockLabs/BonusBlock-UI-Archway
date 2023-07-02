@@ -1,0 +1,21 @@
+@use "@/design/vars.scss";
+
+.mission-image {
+  width: 100%;
+  min-height: 10em;
+  aspect-ratio: 1.7;
+  background-size: cover;
+  background-position: center;
+}
+
+.mission-card-content {
+  padding: 1.5em
+}
+
+.product-banner {
+  background-image:
+    linear-gradient(360deg, #FF4D00 50%, rgba(255, 77, 0, 0.00) 75%),
+    url('https://i.ibb.co/8dPn1Jx/5d46428056935579bfe32778350f530e.jpg');
+  background-size: cover;
+  color: white;
+}

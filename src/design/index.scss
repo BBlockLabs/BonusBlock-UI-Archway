@@ -26,6 +26,7 @@
 @use "@/design/components/cookie-consent.scss";
 @use "@/design/components/rewards-and-announcements.scss";
 @use "@/design/components/apexchart.scss";
+@use "@/design/archway-override.scss";
 
 body {
   background: vars.$archway-warm-grey

@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper>
+  <PageWrapper class="fs-medium">
     <!--remove-on-prod-->
     <!--    <el-row class="my-large">-->
     <!--      <el-col>-->
@@ -19,7 +19,7 @@
     <!--      </el-col>-->
     <!--    </el-row>-->
     <!--/remove-on-prod-->
-    <template v-if="!selected">
+    <template v-if="!selectedProduct">
       <el-row justify="space-between" class="is-align-middle">
         <el-col span="-1" class="explore-archway">
           <span style="">Explore </span>
@@ -31,7 +31,7 @@
               <el-row style="text-align: center;">
                 <el-col class="mx-medium" span="8">
                   <el-col class="bold mb-small">
-                    {{ store.state.archwayProducts.length }}
+                    6
                   </el-col>
                   <el-col class="archway-orange">
                     Products
@@ -150,37 +150,10 @@
     </template>
 
     <template v-else>
-      <el-row class="my-medium">
-        <el-col class="mr-large" span="-1">
-          <SvgChevronLeft
-            class="icon pointer"
-            @click="selected = false"
-          />
-        </el-col>
-        <box-wrapper style="min-height: 14em" type="white" round class="flex-grow py-extra-large px-extra-large">
-          <el-row>
-            <el-col :span="18">
-              123
-            </el-col>
-            <el-col  :span="6">
-              <h2 class="mt-0">
-                Details
-              </h2>
-              <hr/>
-              <h3>
-                Tags
-              </h3>
-              <h3>
-                Website
-              </h3>
-              <h3>
-                Links
-              </h3>
-
-            </el-col>
-          </el-row>
-        </box-wrapper>
-      </el-row>
+      <MissionView
+        :product="selectedProduct"
+        @deselected="selectedProduct = ''"
+      />
     </template>
 
     <!--    <template #footer>
@@ -222,13 +195,14 @@ import ProductList from "@/components/ProductList.vue";
 import { store } from "../store";
 import type { Ref } from "vue";
 import { ref } from "vue";
+import MissionView from "@/components/MissionView.vue";
 
-let selected: Ref<boolean> = ref(false);
+let selectedProduct: Ref<string> = ref("");
 
 function productSelected(id: string) {
 
   console.log(id);
-  selected.value = true;
+  selectedProduct.value = id;
 }
 
 </script>

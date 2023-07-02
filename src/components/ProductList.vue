@@ -109,7 +109,7 @@ import RawCubeTop from "@/assets/icons/cube-top.svg?raw";
 import EmptyCube from "@/assets/archway/empty-cube.svg";
 import SvgProductLogoBlank from "@/assets/archway/product-logo-blank.svg";
 import { ref } from "vue";
-import { store } from "@/store";
+import { store } from "@/store/index.ts";
 
 export default {
   components: {
@@ -147,7 +147,6 @@ export default {
           }
         }
       });
-    console.log(this.products);
     this.loading = false;
   },
   methods: {

@@ -24,7 +24,7 @@ import { computed } from "vue";
 const store: StoreType = useStore();
 
 const link: ComputedRef<string> = computed((): string => {
-  //TODO link
+
   const referral: string = store.getters["UserModule/refLink"];
 
   const message: string = `I have joined as a Blocktopian on @bonus_block! Visit ${referral} to start earning rewards for on-chain activity across Web3!`;

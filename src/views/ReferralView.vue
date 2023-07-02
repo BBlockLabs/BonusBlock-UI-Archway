@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper card-back>
+  <PageWrapper>
     <el-row justify="space-between" :gutter="24" class="mt-extra-large">
       <el-col :md="16" :lg="17">
         <h3 class="fs-medium mt-0">
@@ -8,7 +8,7 @@
 
         <b>Invitation Link</b>
 
-        <copy-box :text="store.getters['UserModule/refLink']" />
+        <copy-box class="mt-small" :text="store.getters['UserModule/refLink']" />
 
         <p>
           Once a new user signs-up and adds at least one wallet, it will be
