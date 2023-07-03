@@ -131,7 +131,7 @@ const url = computed(() => {
   return result.dataURL;
 });
 
-const twitterId: ComputedRef<string> = computed(
+let twitterId: ComputedRef<string> = computed(
   () => store.state.UserModule?.user?.twitter || ""
 );
 
@@ -189,6 +189,7 @@ async function unlinkTwitter(): Promise<void> {
       true,
       3000
     );
+    twitterId = computed(() => "");
   }
 }
 
