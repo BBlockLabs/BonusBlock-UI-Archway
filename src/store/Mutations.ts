@@ -3,6 +3,7 @@ import type { Mutation, MutationTree } from "vuex";
 import type { Plugins } from "@/common/Plugins";
 import type { StateInterface } from "./State";
 import type ArchwayProductDto from "@/common/api/archway/ArchwayProductDto";
+import type ArchwayStatsDto from "@/common/api/archway/ArchwayStatsDto";
 
 interface MutationsInterface extends MutationTree<StateInterface> {
   addChain: Mutation<StateInterface> &
@@ -10,6 +11,9 @@ interface MutationsInterface extends MutationTree<StateInterface> {
 
   addArchwayProduct: Mutation<StateInterface> &
     ((state: StateInterface, payload: ArchwayProductDto) => void);
+
+  setArchwayStats: Mutation<StateInterface> &
+    ((state: StateInterface, payload: ArchwayStatsDto) => void);
 
   setLoading: Mutation<StateInterface> &
     ((state: StateInterface, loading: boolean | null) => void);
@@ -40,6 +44,10 @@ export default class Mutations implements MutationsInterface {
 
   addArchwayProduct = (state: StateInterface, payload: ArchwayProductDto): void => {
     state.archwayProducts.push(payload);
+  };
+
+  setArchwayStats = (state: StateInterface, payload: ArchwayStatsDto): void => {
+    state.archwayStats = payload;
   };
 
   setLoading = (

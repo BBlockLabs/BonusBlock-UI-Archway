@@ -31,7 +31,7 @@
               <el-row style="text-align: center;">
                 <el-col class="mx-medium" span="8">
                   <el-col class="bold mb-small">
-                    6
+                    {{store.state.archwayStats.products}}
                   </el-col>
                   <el-col class="archway-orange">
                     Products
@@ -40,7 +40,7 @@
 
                 <el-col class="mx-medium" span="8">
                   <el-col class="bold mb-small">
-                    18
+                    {{store.state.archwayStats.missions}}
                   </el-col>
                   <el-col class="archway-orange">
                     Missions
@@ -49,7 +49,7 @@
 
                 <el-col class="mx-medium" span="8">
                   <el-col class="bold mb-small">
-                    0
+                    {{store.state.archwayStats.contributors}}
                   </el-col>
                   <el-col class="archway-orange">
                     Contributors
@@ -189,7 +189,6 @@ import SvgInfo from "@/assets/icons/info.svg?component";
 import SvgChatBubbleEmpty from "@/assets/icons/chat-bubble-empty.svg";
 import SvgGroup from "@/assets/icons/group.svg";
 import SvgOpenBook from "@/assets/icons/open-book.svg";
-import SvgChevronLeft from "@/assets/icons/nav-arrow-left.svg?component";
 import BoxWrapper from "@/components/BoxWrapper.vue";
 import ProductList from "@/components/ProductList.vue";
 import { store } from "../store";
@@ -205,6 +204,7 @@ function productSelected(id: string) {
   selectedProduct.value = id;
 }
 
+store.dispatch("ArchwayHttpModule/getStats");
 </script>
 
 <style lang="scss">
