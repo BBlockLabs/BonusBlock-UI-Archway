@@ -140,7 +140,6 @@ import ArchwayInfoCard from "@/components/ArchwayInfoCard.vue";
 let selectedProduct: Ref<string> = ref("");
 
 function productSelected(id: string) {
-
   console.log(id);
   selectedProduct.value = id;
 }
