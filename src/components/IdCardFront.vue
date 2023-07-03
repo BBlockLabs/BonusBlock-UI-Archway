@@ -24,7 +24,7 @@
       <el-col>
         <box class="id-card-social fs-small px-base py-small">
           <el-row justify="space-between" class="is-align-middle flex-row pointer" :gutter="5" @click="linkTwitter()" v-if="twitterId === ''">
-            <el-col :span="-1" class="fs-base flex-noshrink" >
+            <el-col :span="-1" class="fs-base flex-noshrink">
               Connect Twitter
             </el-col>
             <el-col :span="-1" class="of-hidden">
@@ -104,20 +104,22 @@
 <script setup lang="ts">
 import Box from "@/components/BoxWrapper.vue";
 import IdCard from "@/components/IdCard.vue";
-import type {ComputedRef} from "vue";
-import {StoreType, useStore} from "@/store";
-import {computed} from "vue";
-import {renderDiscs} from "@whi/identicons";
+import type { ComputedRef, Ref } from "vue";
+import { computed, ref} from "vue";
+import { StoreType, useStore } from "@/store";
+import { renderDiscs } from "@whi/identicons";
 import SvgUnlink from "@/assets/icons/unlink.svg";
 import SvgTwitter from "@/assets/icons/twitter.svg";
 import SvgTelegram from "@/assets/icons/telegram.svg";
 import SvgDiscord from "@/assets/icons/discord.svg";
 import SvgReddit from "@/assets/icons/reddit.svg";
-import {ElMessageBox} from "element-plus";
+import { ElMessageBox } from "element-plus";
 import HttpResponse from "@/common/api/HttpResponse";
 import Toast from "@/common/Toast";
 
 const store: StoreType = useStore();
+
+let twitterIdRemoved: Ref<boolean> = ref(false);
 
 const url = computed(() => {
   const result = renderDiscs({
@@ -131,8 +133,8 @@ const url = computed(() => {
   return result.dataURL;
 });
 
-let twitterId: ComputedRef<string> = computed(
-  () => store.state.UserModule?.user?.twitter || ""
+const twitterId: ComputedRef<string> = computed(
+  () => twitterIdRemoved.value ? "" : (store.state.UserModule?.user?.twitter || "")
 );
 
 async function linkTwitter(): Promise<void> {
@@ -189,7 +191,7 @@ async function unlinkTwitter(): Promise<void> {
       true,
       3000
     );
-    twitterId = computed(() => "");
+    twitterIdRemoved.value = true;
   }
 }
 

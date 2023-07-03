@@ -60,31 +60,6 @@
           </el-row>
         </el-col>
       </el-row>
-
-      <el-row>
-        <box-wrapper type="white" round class="w-100 my-small px-large">
-          <el-row align="middle" justify="space-between">
-            <el-col span="-1">
-              <h2>
-                Connect wallet
-                <el-tooltip
-                  class="box-item"
-                  effect="dark"
-                  content="The signed request contains a one time use token that is used to verify if the add wallet request is sent from the same connection. <br />The signed data is only used to verify the wallet owner is the one sending the request. It does not contain any personal or other private information."
-                  raw-content
-                  placement="bottom-start"
-                >
-                  <svg-info class="info-tooltip" />
-                </el-tooltip>
-              </h2>
-            </el-col>
-            <el-col span="-1">
-              <SvgKeplr class="pointer" style="height: 40px" />
-            </el-col>
-          </el-row>
-        </box-wrapper>
-      </el-row>
-
       <archway-info-card />
 
       <el-row>
