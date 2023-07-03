@@ -5,13 +5,6 @@
       class="is-align-middle d-flex gap-small"
       align="middle"
     >
-      <el-col span="-1" class="fs-extra-small">
-        <span>
-          The ARCH tokens will not be offered in the United States or to U.S.
-          persons or to residents of certain other prohibited jurisdictions.
-          <a class="archway-link" href="http://example.com">Learn more.</a>
-        </span>
-      </el-col>
       <el-col :span="-1">
         <social-links
           :twitter="LinkTwitter"

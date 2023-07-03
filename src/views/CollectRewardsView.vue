@@ -7,7 +7,7 @@
       <h1 class="fs-large">Coming Soon</h1>
     </div>
   </PageWrapper>
-  <PageWrapper v-else :full-width="true" :no-padding="true" class="py-base">
+  <PageWrapper v-else :full-width="true" :no-padding="true" class="fs-medium py-base">
     <el-dialog v-model="claimModal.open" class="claim-modal">
       <div v-if="claimModal.loading">
         <div class="el-loading-spinner static-spinner mb-small">
@@ -51,7 +51,7 @@
           Today interactions: <strong>{{ todayInteractions }}</strong>
         </div>
       </el-row>
-      <interactions-chart />
+      <interactions-chart/>
 
       <el-row>
         <h2>Collect Rewards</h2>
@@ -79,6 +79,7 @@
           v-for="campaign in campaigns"
           :key="campaign.id"
           class="campaign-card"
+          style="background: white; border: none;"
         >
           <div class="top-half">
             <el-row justify="space-between" align="middle">
@@ -94,7 +95,7 @@
               :status="
                 elProgressStatusFromTimeRemaining(campaignTimeLeft(campaign))
               "
-              :stroke-width="5"
+              :stroke-width="6"
             >
               <svg-clock class="mr-extra-small" />
               <el-tooltip
@@ -155,7 +156,7 @@
                 <div>
                   <el-button
                     type="primary"
-                    class="yellow-button"
+                    class="archway-claim-button"
                     :disabled="!campaign.amount"
                     @click="claimCampaign(campaign)"
                   >
@@ -174,9 +175,9 @@
 
     <div class="limit-width px-large">
       <el-row>
-        <h2>Keep Earning</h2>
+        <h2>Explore more</h2>
       </el-row>
-      <announcement-list :top-three="true" />
+      <product-list />
     </div>
   </PageWrapper>
 </template>
@@ -202,6 +203,7 @@ import SvgEvx from "@/assets/currencies/evx.svg?component";
 import SvgLuna from "@/assets/currencies/luna.svg?component";
 import SvgPowr from "@/assets/currencies/powr.svg?component";
 import SvgUni from "@/assets/currencies/uni.svg?component";
+import SvgArch from "@/assets/currencies/arch.svg?component";
 import SvgMedal from "@/assets/images/congratulations_medal.svg?component";
 import SvgCubeTop from "@/assets/icons/cube-top.svg?component";
 import ClaimSharingBackground from "@/assets/images/claim-sharing-image-template.svg?raw";
@@ -209,9 +211,9 @@ import moment from "moment";
 import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
 import MetamaskClient from "@/common/MetamaskClient";
 import detectEthereumProvider from "@metamask/detect-provider";
-import AnnouncementList from "@/components/AnnouncementList.vue";
 import InteractionsChart from "@/components/InteractionsChart.vue";
 import router from "@/router";
+import ProductList from "@/components/ProductList.vue";
 
 const currencyIcons = {
   ARY: SvgAry,
@@ -222,6 +224,7 @@ const currencyIcons = {
   LUNA: SvgLuna,
   POWR: SvgPowr,
   UNI: SvgUni,
+  ARCH: SvgArch,
 };
 
 let localTimeOffsetMs: number = 0;

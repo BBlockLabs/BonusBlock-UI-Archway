@@ -11,8 +11,10 @@
         <copy-box class="mt-small" :text="store.getters['UserModule/refLink']" />
 
         <p>
-          Once a new user signs-up and adds at least one wallet, it will be
-          counted towards a bigger reward.
+          <b>
+            Once a new user signs-up and adds at least one wallet, it will be
+            counted towards a bigger reward.
+          </b>
         </p>
 
         <p>

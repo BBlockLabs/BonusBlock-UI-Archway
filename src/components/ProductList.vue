@@ -46,13 +46,13 @@
                 style="
                   justify-content: center;
                   align-content: center;
-                  aspect-ratio: 16/9;
+                  aspect-ratio: 1.36/1
                 "
                 class="d-flex"
               >
                 <img
                   v-if="product.featuredMission && product.featuredMission.imageUrl"
-                  style="border-radius: 4px; aspect-ratio: 16/9"
+                  style="border-radius: 4px; aspect-ratio: 1.36/1"
                   :src="product.featuredMission.imageUrl"
                   alt="Product"
                 />
@@ -64,39 +64,22 @@
               <el-row class="mb-medium">
                 <strong>{{ product.featuredMission.title }}</strong>
               </el-row>
-              <el-row style="word-break: break-word; height: 8.5em">
+              <el-row class="h-auto" style="word-break: break-word">
                 {{ product.featuredMission.shortDescription }}
               </el-row>
             </template>
           </el-card>
         </el-row>
-        <el-row justify="end" align="middle" class="mt-large mb-small">
+        <el-row justify="end" align="middle" class="mt-large mb-large">
           <el-col class="mr-medium is-align-center" span="-1">
             <el-button
               class="is-link"
               type="primary"
-              @click="$emit('selected', product.id)"
+              @click="$router.push('/product/' + product.id)"
               >View details</el-button
             >
           </el-col>
-          <el-col
-            v-if="
-              product.featuredMission &&
-              product.featuredMission.buttonText &&
-              product.featuredMission.buttonUrl
-            "
-            class="is-align-center"
-            span="-1"
-          >
-            <el-link
-              class="ml-auto"
-              target="_blank"
-              :href="product.featuredMission.buttonUrl"
-              :underline="false"
-            >
-              <el-button style="background-color: black; color: white" type="primary">{{ product.featuredMission.buttonText }}</el-button>
-            </el-link>
-          </el-col>
+
         </el-row>
       </div>
     </div>

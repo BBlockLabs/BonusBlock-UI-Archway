@@ -85,63 +85,7 @@
         </box-wrapper>
       </el-row>
 
-      <el-row class="mt-medium" justify="space-between">
-        <el-col style="width: 32%" span="-1">
-          <box-wrapper style="min-height: 14em" type="white" round class="archway-orange-bg my-small py-extra-large px-extra-large">
-            <el-row class="mb-large">
-              <SvgChatBubbleEmpty />
-            </el-row>
-            <el-row class="fs-large bold mb-large">
-              Reach out
-            </el-row>
-            <el-row class="mb-large">
-              Want to partner up or build a Dapp?
-              Get in touch with our core contributors.
-            </el-row>
-            <el-row>
-              <el-button type="primary" > Get in touch</el-button>
-            </el-row>
-          </box-wrapper>
-        </el-col>
-
-        <el-col style="width: 32%" span="-1">
-          <box-wrapper style="min-height: 14em" type="white" round class="my-small py-extra-large px-extra-large">
-            <el-row class="mb-large">
-              <SvgGroup />
-            </el-row>
-            <el-row class="fs-large bold mb-large">
-              Start building
-            </el-row>
-            <el-row class="mb-large">
-              Find everything you need to start
-              building on archway today.
-            </el-row>
-            <el-row>
-              <el-button class="is-link" type="primary" > View Documentation</el-button>
-            </el-row>
-          </box-wrapper>
-        </el-col>
-
-        <el-col style="width: 32%" span="-1">
-          <box-wrapper style="min-height: 14em" type="white" round class=" my-small py-extra-large px-extra-large">
-            <el-row class="mb-large">
-              <SvgOpenBook />
-            </el-row>
-            <el-row class="fs-large bold mb-large">
-              Join the community
-            </el-row>
-            <el-row class="mb-large">
-              Connect with people from across the
-              ecosystem, Build and grow together.
-              Access the community hub
-            </el-row>
-            <el-row>
-              <el-button class="is-link" type="primary" > Access the community hub</el-button>
-            </el-row>
-          </box-wrapper>
-        </el-col>
-
-      </el-row>
+      <archway-info-card />
 
       <el-row>
         <h2>Products</h2>
@@ -150,10 +94,7 @@
     </template>
 
     <template v-else>
-      <MissionView
-        :product="selectedProduct"
-        @deselected="selectedProduct = ''"
-      />
+      123
     </template>
 
     <!--    <template #footer>
@@ -194,7 +135,7 @@ import ProductList from "@/components/ProductList.vue";
 import { store } from "../store";
 import type { Ref } from "vue";
 import { ref } from "vue";
-import MissionView from "@/components/MissionView.vue";
+import ArchwayInfoCard from "@/components/ArchwayInfoCard.vue";
 
 let selectedProduct: Ref<string> = ref("");
 

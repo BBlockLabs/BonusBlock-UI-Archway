@@ -23,8 +23,8 @@
     <el-row class="my-small">
       <el-col>
         <box class="id-card-social fs-small px-base py-small">
-          <el-row justify="space-between" class="is-align-middle flex-row pointer" :gutter="5" v-if="twitterId === ''">
-            <el-col :span="-1" class="fs-base flex-noshrink" @click="linkTwitter()">
+          <el-row justify="space-between" class="is-align-middle flex-row pointer" :gutter="5" @click="linkTwitter()" v-if="twitterId === ''">
+            <el-col :span="-1" class="fs-base flex-noshrink" >
               Connect Twitter
             </el-col>
             <el-col :span="-1" class="of-hidden">

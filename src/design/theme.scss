@@ -119,7 +119,7 @@ $box: map.merge(
   ),
   $footer: (
     'padding': 0,
-    'height': 8em, //112px
+    'height': 4em, //56px
     'bg-color': EPFunctions.getCssVar('color', 'warning'),
   ),
   $menu: (

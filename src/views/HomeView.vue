@@ -104,7 +104,7 @@ setTimeout(() => {
 
 async function onKeplrLogin(): Promise<void> {
   keplrDialog.value = false;
-  await router.push("/wallets");
+  await router.push("/explore");
 }
 
 const connectWallet = async (): Promise<void> => {
@@ -129,7 +129,7 @@ const connectWallet = async (): Promise<void> => {
       )
     );
     keplrDialog.value = false;
-    await router.push("/wallets");
+    await router.push("/explore");
   } catch (error: any) {
     if (error instanceof FormattedError) {
       await ElMessageBox.alert(error.message, error.name, {});

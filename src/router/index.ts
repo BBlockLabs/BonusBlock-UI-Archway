@@ -14,8 +14,8 @@ const router = createRouter({
       },
     },
     {
-      path: "/wallets",
-      name: "wallets",
+      path: "/explore",
+      name: "Explore",
       component: () => import("@/views/WalletsView.vue"),
     },
     {
@@ -27,6 +27,11 @@ const router = createRouter({
       path: "/campaign/:id",
       name: "Campaign",
       component: () => import("@/views/CampaignDetails.vue"),
+    },
+    {
+      path: "/product/:id",
+      name: "Product",
+      component: () => import("@/views/ProductDetails.vue"),
     },
     {
       path: "/collect-rewards",

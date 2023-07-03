@@ -19,7 +19,7 @@ export default function AuthNavigationGuard(
   }
 
   if (to.path === "/") {
-    next("/wallets");
+    next("/explore");
   }
 
   next();

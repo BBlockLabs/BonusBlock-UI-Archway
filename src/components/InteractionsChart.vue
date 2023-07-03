@@ -91,11 +91,7 @@ const interactionsSeries = [
   },
 ];
 const interactionsOptions = {
-  colors: ["#EDC16C"],
-  stroke: {
-    width: 1,
-    colors: ["#000000"],
-  },
+  colors: ["#FF4D00"],
   chart: {
     animations: {
       speed: 400,

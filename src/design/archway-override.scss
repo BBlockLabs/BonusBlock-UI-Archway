@@ -19,3 +19,87 @@
   background-size: cover;
   color: white;
 }
+
+.info-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1em;
+  .info-element {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.archway-claim-button {
+  border: none;
+  width: 7.71em;
+  font-weight: bold;
+  background: vars.$archway-primary-orange;
+  color: #fff!important;
+
+  &:hover {
+    background: vars.$archway-hover!important;
+    color: #fff!important;
+  }
+
+  &:focus {
+    background: vars.$archway-primary-orange;
+    color: #fff;
+  }
+
+  &:active {
+    background: vars.$archway-primary-orange;
+    color: #fff
+  }
+
+  &.is-disabled,
+  &.is-disabled:hover {
+    background: #a8abb2!important;
+    color: #000!important;
+  }
+
+  svg {
+    margin-right: 0.75em;
+    font-size: 0.75em;
+  }
+}
+
+.el-progress .el-progress-bar__outer {
+  border: none!important;
+  background-color: vars.$archway-warm-grey;
+}
+
+.el-progress .el-progress-bar__inner {
+  border: none!important;
+  background-color: #000;
+}
+.el-progress.is-warning .el-progress-bar__inner {
+  background-color: vars.$archway-primary-orange;
+}
+
+.el-progress.is-success .el-progress__text,
+.el-progress.is-warning .el-progress__text,
+.el-progress.is-exception .el-progress__text {
+  color: #000;
+}
+
+.campaign-card {
+  border-radius: 0.75em;
+  .top-half,
+  .bottom-half {
+    border: none;
+  }
+}
+
+.el-tabs__item.is-active {
+  color: #000;
+}
+
+.chart-border {
+  border: none!important;
+  background-color: white;
+}
+
+.el-tabs__active-bar {
+  background-color: vars.$archway-primary-orange;
+}

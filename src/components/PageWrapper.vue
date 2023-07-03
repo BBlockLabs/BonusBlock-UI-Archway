@@ -71,12 +71,20 @@
       </div>
     </el-main>
 
+    <el-footer class="h-auto mx-small mt-small mb-medium">
+      <span>
+        The ARCH tokens will not be offered in the United States or to U.S.
+        persons or to residents of certain other prohibited jurisdictions.
+        <a class="archway-link" href="http://example.com">Learn more.</a>
+      </span>
+    </el-footer>
+
     <slot name="footer" />
   </el-container>
 </template>
 
 <script setup lang="ts">
-import ArchwayLogo from "@/assets/archway/archway-logo.svg"
+import ArchwayLogo from "@/assets/archway/archway-logo.svg";
 import FooterComponent from "@/components/PageFooter.vue";
 import IdCardBack from "@/components/IdCardBack.vue";
 import IdCardFront from "@/components/IdCardFront.vue";

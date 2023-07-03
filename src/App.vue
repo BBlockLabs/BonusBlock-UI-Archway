@@ -33,7 +33,7 @@ async function checkLogin() {
 
   if (store.getters["UserModule/loggedIn"]) {
     if (document.location.pathname === "/") {
-      await router.push("/wallets");
+      await router.push("/explore");
     }
   } else if (route.path !== "/") {
     await router.push("/");

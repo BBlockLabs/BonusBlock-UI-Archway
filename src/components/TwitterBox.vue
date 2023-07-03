@@ -3,7 +3,7 @@
     <div class="d-flex flex-row">
       <div class="mx-0 my-auto">
         <h3 style="line-height: 200%" class="pr-small fs-small m-0">
-          <strong>Share the awesome news about joining Archway Network</strong>
+          <strong>Spread the word about Archway’s Incentivized Main-net Missions on Twitter!</strong>
         </h3>
       </div>
 
@@ -27,7 +27,7 @@ const link: ComputedRef<string> = computed((): string => {
 
   const referral: string = store.getters["UserModule/refLink"];
 
-  const message: string = `I have joined as a Blocktopian on @bonus_block! Visit ${referral} to start earning rewards for on-chain activity across Web3!`;
+  const message: string = `@ArchwayHQ is kicking off their mainnet launch with a series of Incentivized Mainnet Missions on @bonus_block! Learn about the thriving Archway ecosystem and get rewarded for interacting with Archway dApps. ${referral}`;
 
   const plainLink: string = `https://twitter.com/intent/tweet?text=${message}`;
 
