@@ -23,60 +23,79 @@
     <el-row class="my-small">
       <el-col>
         <box class="id-card-social fs-small px-base py-small">
-          <el-row justify="space-between" class="is-align-middle flex-row" :gutter="5">
-            <el-col :span="-1" class="fs-base flex-noshrink">
+          <el-row justify="space-between" class="is-align-middle flex-row pointer" :gutter="5" v-if="twitterId === ''">
+            <el-col :span="-1" class="fs-base flex-noshrink" @click="linkTwitter()">
               Connect Twitter
             </el-col>
             <el-col :span="-1" class="of-hidden">
-              <SvgTwitter class="icon-base" />
+              <SvgTwitter class="icon-base"/>
             </el-col>
           </el-row>
+          <el-col v-else>
+            <el-row justify="space-between" class="is-align-middle flex-row" :gutter="5" style="opacity:.7">
+              <el-col :span="-1">
+                <el-tooltip content="Unlink" placement="top">
+                  <SvgUnlink style="margin-right: 0.5em" class="pointer" @click="unlinkTwitter()"/>
+                </el-tooltip>
+                ID {{ twitterId }}
+              </el-col>
+              <el-col :span="-1" class="of-hidden">
+                <SvgTwitter class="icon-base"/>
+              </el-col>
+            </el-row>
+          </el-col>
         </box>
       </el-col>
     </el-row>
 
     <el-row class="my-small">
       <el-col>
-        <box class="id-card-social fs-small px-base py-small">
-          <el-row justify="space-between" class="is-align-middle flex-row" :gutter="5">
-            <el-col :span="-1" class="fs-base flex-noshrink">
-              Connect Telegram
-            </el-col>
-            <el-col :span="-1" class="of-hidden">
-              <SvgTelegram class="icon-base" />
-            </el-col>
-          </el-row>
-        </box>
+        <el-tooltip content="Coming soon" placement="top">
+          <box class="id-card-social fs-small px-base py-small">
+            <el-row justify="space-between" class="is-align-middle flex-row" style="opacity:.5;cursor:no-drop" :gutter="5">
+              <el-col :span="-1" class="fs-base flex-noshrink">
+                Connect Telegram
+              </el-col>
+              <el-col :span="-1" class="of-hidden">
+                <SvgTelegram class="icon-base"/>
+              </el-col>
+            </el-row>
+          </box>
+        </el-tooltip>
       </el-col>
     </el-row>
 
     <el-row class="my-small">
       <el-col>
-        <box class="id-card-social fs-small px-base py-small">
-          <el-row justify="space-between" class="is-align-middle flex-row" :gutter="5">
-            <el-col :span="-1" class="fs-base flex-noshrink">
-              Connect Discord
-            </el-col>
-            <el-col :span="-1" class="of-hidden">
-              <SvgDiscord class="icon-base" />
-            </el-col>
-          </el-row>
-        </box>
+        <el-tooltip content="Coming soon" placement="top">
+          <box class="id-card-social fs-small px-base py-small">
+            <el-row justify="space-between" class="is-align-middle flex-row" style="opacity:.5;cursor:no-drop" :gutter="5">
+              <el-col :span="-1" class="fs-base flex-noshrink">
+                Connect Discord
+              </el-col>
+              <el-col :span="-1" class="of-hidden">
+                <SvgDiscord class="icon-base"/>
+              </el-col>
+            </el-row>
+          </box>
+        </el-tooltip>
       </el-col>
     </el-row>
 
     <el-row class="my-small">
       <el-col>
-        <box class="id-card-social fs-small px-base py-small">
-          <el-row justify="space-between" class="is-align-middle flex-row" :gutter="5">
-            <el-col :span="-1" class="fs-base flex-noshrink">
-              Connect Reddit
-            </el-col>
-            <el-col :span="-1" class="of-hidden">
-              <SvgReddit class="icon-base" />
-            </el-col>
-          </el-row>
-        </box>
+        <el-tooltip content="Coming soon" placement="top">
+          <box class="id-card-social fs-small px-base py-small">
+            <el-row justify="space-between" class="is-align-middle flex-row" style="opacity:.5;cursor:no-drop" :gutter="5">
+              <el-col :span="-1" class="fs-base flex-noshrink">
+                Connect Reddit
+              </el-col>
+              <el-col :span="-1" class="of-hidden">
+                <SvgReddit class="icon-base"/>
+              </el-col>
+            </el-row>
+          </box>
+        </el-tooltip>
       </el-col>
     </el-row>
   </id-card>
@@ -85,14 +104,18 @@
 <script setup lang="ts">
 import Box from "@/components/BoxWrapper.vue";
 import IdCard from "@/components/IdCard.vue";
-import type { ComputedRef } from "vue";
-import { StoreType, useStore } from "@/store";
-import { computed } from "vue";
-import { renderDiscs } from "@whi/identicons";
+import type {ComputedRef} from "vue";
+import {StoreType, useStore} from "@/store";
+import {computed} from "vue";
+import {renderDiscs} from "@whi/identicons";
+import SvgUnlink from "@/assets/icons/unlink.svg";
 import SvgTwitter from "@/assets/icons/twitter.svg";
 import SvgTelegram from "@/assets/icons/telegram.svg";
 import SvgDiscord from "@/assets/icons/discord.svg";
 import SvgReddit from "@/assets/icons/reddit.svg";
+import {ElMessageBox} from "element-plus";
+import HttpResponse from "@/common/api/HttpResponse";
+import Toast from "@/common/Toast";
 
 const store: StoreType = useStore();
 
@@ -107,6 +130,67 @@ const url = computed(() => {
 
   return result.dataURL;
 });
+
+const twitterId: ComputedRef<string> = computed(
+  () => store.state.UserModule?.user?.twitter || ""
+);
+
+async function linkTwitter(): Promise<void> {
+  const response: Response = await fetch(
+    `${import.meta.env.VITE_BACKEND_URL}/auth/social-link`,
+    {
+      body: JSON.stringify({
+        social: "twitter",
+        returnTo: window.location.href,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "X-Auth-Token": store.state.UserModule?.token || "",
+      },
+      method: "POST",
+    }
+  );
+  const responseData = await HttpResponse.fromResponse<string>(response);
+  if (responseData.success) {
+    window.location.href = responseData.payload;
+  }
+}
+
+async function unlinkTwitter(): Promise<void> {
+  try {
+    await ElMessageBox.confirm(
+      "Are you sure you want unlink Twitter account?",
+      "Twitter Account",
+      {
+        confirmButtonText: "Unlink",
+        cancelButtonText: "Cancel",
+      }
+    );
+  } catch (e: any) {
+    return;
+  }
+  const response: Response = await fetch(
+    `${import.meta.env.VITE_BACKEND_URL}/auth/social-unlink`,
+    {
+      body: JSON.stringify({social: "twitter"}),
+      headers: {
+        "Content-Type": "application/json",
+        "X-Auth-Token": store.state.UserModule?.token || "",
+      },
+      method: "POST",
+    }
+  );
+  const responseData = await HttpResponse.fromResponse<void>(response);
+  if (responseData.success) {
+    Toast.make(
+      "Twitter unlinked",
+      "Your Twitter account successfully unlinked",
+      "success",
+      true,
+      3000
+    );
+  }
+}
 
 const blocktopianId: ComputedRef<string> = computed(
   () => store.state.UserModule?.user?.userId || "Username"
