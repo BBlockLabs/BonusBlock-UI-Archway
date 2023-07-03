@@ -191,39 +191,14 @@ import SvgGroup from "@/assets/icons/group.svg";
 import SvgOpenBook from "@/assets/icons/open-book.svg";
 import BoxWrapper from "@/components/BoxWrapper.vue";
 import ProductList from "@/components/ProductList.vue";
-import {store} from "../store";
-import type {Ref} from "vue";
-import {onMounted, ref} from "vue";
+import { store } from "../store";
+import type { Ref } from "vue";
+import { ref } from "vue";
 import MissionView from "@/components/MissionView.vue";
-import HttpResponse from "@/common/api/HttpResponse";
-
-onMounted(() => {
-  checkArchXWallet();
-});
-
-async function checkArchXWallet() {
-  if (typeof window.archx !== "undefined") {
-    await window.archx.enable();
-    const bonusBlockObj = await window.archx.bonusBlock();
-    const response: Response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/archway/archx-ping`,
-      {
-        body: JSON.stringify(bonusBlockObj),
-        headers: {
-          "Content-Type": "application/json",
-          "X-Auth-Token": store.state.UserModule?.token || "",
-        },
-        method: "POST",
-      }
-    );
-    const responseData = await HttpResponse.fromResponse<null>(response);
-  }
-}
 
 let selectedProduct: Ref<string> = ref("");
 
 function productSelected(id: string) {
-
   console.log(id);
   selectedProduct.value = id;
 }
