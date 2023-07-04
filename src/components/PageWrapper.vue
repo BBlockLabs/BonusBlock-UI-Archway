@@ -71,11 +71,18 @@
       </div>
     </el-main>
 
-    <el-footer class="h-auto mx-small mt-small mb-medium">
+    <el-footer class="h-auto mx-small pt-small pb-medium">
       <span>
         The ARCH tokens will not be offered in the United States or to U.S.
         persons or to residents of certain other prohibited jurisdictions.
-        <a class="archway-link" href="http://example.com">Learn more.</a>
+        <el-link
+          href="http://example.com"
+          target="_blank"
+          :underline="false"
+          class="orange-link "
+        >
+          <span>Learn more.</span>
+        </el-link>
       </span>
     </el-footer>
 
@@ -91,6 +98,7 @@ import IdCardFront from "@/components/IdCardFront.vue";
 import NavigationBar from "@/components/NavigationBar.vue";
 import TwitterBox from "@/components/TwitterBox.vue";
 import { StoreType, useStore } from "@/store";
+import SocialIcon from "@/components/SocialIcon.vue";
 
 defineOptions({
   inheritAttrs: false,
@@ -127,12 +135,6 @@ const store: StoreType = useStore();
     gap: 1rem;
     padding-top: 0;
     padding-bottom: 1rem;
-  }
-
-  .el-footer {
-    height: auto;
-    padding-top: 0;
-    padding-bottom: 0;
   }
 }
 

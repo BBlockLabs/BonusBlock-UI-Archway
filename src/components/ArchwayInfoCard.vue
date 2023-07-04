@@ -1,8 +1,7 @@
 <template>
   <el-row class="mt-medium info-container fs-medium" justify="space-between">
-
     <el-col class="info-element" span="-1">
-      <box-wrapper type="white" round class="d-flex flex-grow flex-column archway-orange-bg my-small py-extra-large px-extra-large">
+      <box-wrapper type="white" round class="d-flex flex-grow flex-column archway-orange-bg py-extra-large px-extra-large">
         <el-row class="mb-large">
           <SvgChatBubbleEmpty />
         </el-row>
@@ -27,7 +26,7 @@
     </el-col>
 
     <el-col class="info-element" span="-1">
-      <box-wrapper type="white" round class="my-small d-flex flex-grow flex-column py-extra-large px-extra-large">
+      <box-wrapper type="white" round class="d-flex flex-grow flex-column py-extra-large px-extra-large">
         <el-row class="mb-large">
           <SvgGroup />
         </el-row>
@@ -52,7 +51,7 @@
     </el-col>
 
     <el-col class="info-element" span="-1">
-      <box-wrapper type="white" round class="flex-grow d-flex flex-column my-small py-extra-large px-extra-large">
+      <box-wrapper type="white" round class="flex-grow d-flex flex-column py-extra-large px-extra-large">
         <el-row class="mb-large">
           <SvgOpenBook />
         </el-row>

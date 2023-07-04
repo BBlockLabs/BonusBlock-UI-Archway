@@ -1,5 +1,5 @@
 <template>
-  <el-footer style="height: 5em" class="px-large" :class="classesList">
+  <el-footer class="py-small px-large" :class="classesList">
     <el-row
       justify="space-between"
       class="mb-small is-align-middle d-flex gap-small"

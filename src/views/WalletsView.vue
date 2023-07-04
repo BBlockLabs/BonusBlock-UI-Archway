@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper class="fs-medium">
+  <PageWrapper>
     <!--remove-on-prod-->
     <!--    <el-row class="my-large">-->
     <!--      <el-col>-->
@@ -99,12 +99,7 @@
 </template>
 
 <script setup lang="ts">
-import SvgKeplr from "@/assets/icons/keplr.svg?component";
 import PageWrapper from "@/components/PageWrapper.vue";
-import SvgInfo from "@/assets/icons/info.svg?component";
-import SvgChatBubbleEmpty from "@/assets/icons/chat-bubble-empty.svg";
-import SvgGroup from "@/assets/icons/group.svg";
-import SvgOpenBook from "@/assets/icons/open-book.svg";
 import BoxWrapper from "@/components/BoxWrapper.vue";
 import ProductList from "@/components/ProductList.vue";
 import { store } from "../store";

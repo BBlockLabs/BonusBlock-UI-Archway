@@ -1,4 +1,24 @@
 @use "@/design/vars.scss";
+.explore-archway {
+  font-size: 4em;
+  font-weight: 400;
+}
+
+.welcome-to-archway {
+  font-size: 10vw;
+  @media only screen and (max-width: 768px) {
+    font-size: 12vw;
+  }
+}
+
+.archway-orange {
+  color: vars.$archway-primary-orange;
+}
+
+.archway-orange-bg {
+  background-color: vars.$archway-primary-orange;
+  color: white;
+}
 
 .mission-image {
   width: 100%;
@@ -13,18 +33,22 @@
 }
 
 .product-banner {
-  background-image:
-    linear-gradient(360deg, #FF4D00 50%, rgba(255, 77, 0, 0.00) 75%),
-    url('https://i.ibb.co/8dPn1Jx/5d46428056935579bfe32778350f530e.jpg');
   background-size: cover;
-  color: white;
+  background-position-x: center;
+  color: #fff;
+  min-width: 20em;
 }
 
 .info-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
   gap: 1em;
+  @media only screen and (max-width: 1200px) {
+    flex-direction: column;
+  }
   .info-element {
+    min-width: 20em;
+    flex-grow: 1;
+    flex-basis: 0;
     display: flex;
     flex-direction: column;
   }
@@ -64,6 +88,27 @@
   }
 }
 
+.black-button {
+
+  background: black;
+  color: #fff!important;
+
+  &:hover {
+    background: vars.$archway-black-hover !important;
+    color: #fff !important;
+  }
+
+  &:focus {
+    background: vars.$archway-black-hover;
+    color: #fff;
+  }
+
+  &:active {
+    background: vars.$archway-black-hover;
+    color: #fff
+  }
+}
+
 .el-progress .el-progress-bar__outer {
   border: none!important;
   background-color: vars.$archway-warm-grey;
@@ -91,8 +136,13 @@
   }
 }
 
-.el-tabs__item.is-active {
-  color: #000;
+.el-tabs__item {
+  &.is-active {
+    color: #000;
+  }
+  &:hover {
+    color: vars.$archway-primary-orange;
+  }
 }
 
 .chart-border {
@@ -102,4 +152,72 @@
 
 .el-tabs__active-bar {
   background-color: vars.$archway-primary-orange;
+}
+
+.el-box.id-card-social {
+  background-color: vars.$archway-primary-orange;
+  font-weight: 700;
+  color: white;
+  border: none;
+  &:hover:not(.is-disabled) {
+    background: vars.$archway-hover;
+  }
+  &.is-disabled,
+  &.is-disabled:hover {
+    opacity:.7;
+    cursor:no-drop;
+  }
+
+}
+
+.el-box.twitter-box {
+  background-color: white;
+  border: none;
+  border-radius: 15px;
+}
+
+/*.el-link {
+  --el-link-hover-text-color: vars.$archway-primary-orange!important;
+}*/
+
+
+.el-link {
+  --el-link-hover-text-color: vars.$archway-black-hover;
+}
+
+
+.orange-link.el-link {
+  color: vars.$archway-primary-orange;
+  &:hover {
+    color: vars.$archway-hover;
+  }
+}
+
+.black-link.el-link {
+  &:hover {
+    color: vars.$archway-black-hover;
+  }
+}
+
+.el-menu--horizontal > .el-sub-menu.is-active .el-sub-menu__title {
+  border: none;
+}
+
+.el-menu--horizontal > .el-sub-menu .el-sub-menu__title:hover {
+  background: #ff4d001a;
+  color: vars.$archway-primary-orange
+}
+
+.el-menu--horizontal .el-menu-item:not(.is-disabled):hover, .el-menu--horizontal .el-menu-item:not(.is-disabled):focus, .el-menu--horizontal > .el-sub-menu .el-sub-menu__title:hover, .el-menu--horizontal > .el-sub-menu .el-sub-menu__title:focus {
+  background: #ff4d001a;
+  color: vars.$archway-primary-orange
+}
+
+.el-popper.is-light {
+  border: none;
+  --el-box-shadow-light: none;
+}
+
+.home-view {
+
 }

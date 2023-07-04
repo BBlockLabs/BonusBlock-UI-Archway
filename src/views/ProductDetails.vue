@@ -1,7 +1,7 @@
 <template>
   <PageWrapper>
-    <el-row v-if="selectedProduct" class="fs-medium my-medium">
-      <el-col class="flex-grow mr-medium" :span="-1">
+    <el-row v-if="selectedProduct" class="flex-row fs-medium my-medium">
+      <el-col class="mr-medium" span="-1">
         <SvgChevronLeft class="icon pointer" @click="$router.push('/explore')" />
       </el-col>
       <el-col class="flex-grow" span="-1">
@@ -13,12 +13,13 @@
             class="flex-grow"
           >
             <el-row>
-              <!--            :style="{
-              backgroundImage: 'url(' + selectedProduct.bannerUrl + ')',
-              }"-->
-              <el-col
-                class="p-large product-banner"
-                :span="18"
+              <div
+                class="p-large flex-grow flex-basis-0 product-banner"
+                :style="{
+                  backgroundImage:
+                    'linear-gradient(360deg, #FF4D00 50%, rgba(255, 77, 0, 0.00) 75%),' +
+                    'url(' + selectedProduct.bannerUrl + ')',
+                }"
               >
                 <el-row class="mt-extra-large mb-medium">
                   <h1>{{ selectedProduct.title }}</h1>
@@ -26,8 +27,8 @@
                 <el-row>
                   {{ selectedProduct.description }}
                 </el-row>
-              </el-col>
-              <el-col class="p-large" :span="6">
+              </div>
+              <div class="p-large">
                 <el-row>
                   <h2 class="mt-0">Details</h2>
                 </el-row>
@@ -39,7 +40,7 @@
                   </el-col>
                 </el-row>
                 <el-row>
-                  <el-col span="-1">
+                  <el-col>
                     <el-tag
                       v-for="tag in selectedProduct.tags"
                       :key="tag"
@@ -61,7 +62,7 @@
                       :href="getMainLink(selectedProduct.socials).link"
                       target="_blank"
                       :underline="false"
-                      class="archway-orange fs-medium mr-small"
+                      class="orange-link fs-medium mr-small"
                     >{{ getMainLink(selectedProduct.socials).link }}</el-link
                     >
                   </el-col>
@@ -82,13 +83,13 @@
                       :href="social.link || social.url"
                       target="_blank"
                       :underline="false"
-                      class="archway-orange mr-small mt-small"
+                      class="orange-link mr-small mt-small"
                     >
                       <social-icon :type="social.type" />
                     </el-link>
                   </el-col>
                 </el-row>
-              </el-col>
+              </div>
             </el-row>
           </box-wrapper>
           <el-row class="my-large w-100">
@@ -105,8 +106,8 @@
               <el-row
                 class="mission-image"
                 :style="{
-                backgroundImage: 'url(' + mission.imageUrl + ')',
-              }"
+                  backgroundImage: 'url(' + mission.imageUrl + ')',
+                }"
               ></el-row>
               <el-row class="flex-grow flex-column mission-card-content">
                 <el-row class="mb-medium">
@@ -123,7 +124,7 @@
                       :href="social.link || social.url"
                       target="_blank"
                       :underline="false"
-                      class="mr-small fs-medium"
+                      class="black-link mr-small fs-medium"
                     >
                       <social-icon :type="social.type"/>
                     </el-link>
@@ -136,7 +137,7 @@
                       :href="getMainLink(mission.socials).link"
                       :underline="false"
                     >
-                      <el-button style="background-color: black; color: white" type="primary">{{ getMainLink(mission.socials).title }}</el-button>
+                      <el-button class="black-button" type="primary">{{ getMainLink(mission.socials).title }}</el-button>
                     </el-link>
                   </el-col>
                 </el-row>

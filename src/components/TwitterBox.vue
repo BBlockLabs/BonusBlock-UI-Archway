@@ -2,7 +2,7 @@
   <box-wrapper class="twitter-box py-medium pl-large pr-medium">
     <div class="d-flex flex-row">
       <div class="mx-0 my-auto">
-        <h3 style="line-height: 200%" class="pr-small fs-small m-0">
+        <h3 style="line-height: 150%" class="pr-small fs-small m-0">
           <strong>Spread the word about Archway’s Incentivized Main-net Missions on Twitter!</strong>
         </h3>
       </div>

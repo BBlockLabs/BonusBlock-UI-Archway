@@ -108,18 +108,17 @@ $box: map.merge(
     'border-radius': 8px,
   ),
   $font-size: (
-    'xxl': 3rem,
-    'extra-large': 2.286rem, // 32px
-    'large': 1.429rem, // 20px
-    'medium': 1.286rem, // 18px
-    'slightly-larger': 1.143rem, // 16px
-    'base': 1rem, // 14px
-    'small': 0.929rem, // 13px
-    'extra-small': 0.857rem, //12px
+    'xxl': 3em,
+    'extra-large': 2.286em, // 32px
+    'large': 1.429em, // 20px
+    'medium': 1.286em, // 18px
+    'slightly-larger': 1.143em, // 16px
+    'base': 1em, // 14px
+    'small': 0.929em, // 13px
+    'extra-small': 0.857em, //12px
   ),
   $footer: (
-    'padding': 0,
-    'height': 4em, //56px
+    'padding': 0, //56px
     'bg-color': EPFunctions.getCssVar('color', 'warning'),
   ),
   $menu: (

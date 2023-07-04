@@ -1,14 +1,14 @@
 <template>
+  <SvgHome style="position: absolute; right:0; top: 20vh; height: 80vh; max-width: 60vw"></SvgHome>
   <el-main
-    style="font-size: 1.3vw"
-    class="d-flex mx-extra-large p-0 flex-column"
+    class="d-flex home-view px-extra-large flex-column"
   >
     <el-row justify="end">
       <el-col :span="-1">
         <svg-logo class="title-logo" />
       </el-col>
     </el-row>
-    <el-row class="h-100" align="top" justify="space-between">
+    <el-row align="top" justify="space-between">
       <el-col span="-1">
         <el-row>
           <el-col span="-1" class="welcome-to-archway">
@@ -17,7 +17,7 @@
             <span class="archway-orange">Archway</span>
           </el-col>
         </el-row>
-        <el-row style="font-size: 1.6vw; line-height: 1.2em">
+        <el-row class="fs-medium mt-large" style="line-height: 1.2em">
           <el-col>
             <span>Discover the </span>
             <span class="archway-orange"
@@ -45,9 +45,6 @@
             </el-row>
           </box-wrapper>
         </el-row>
-      </el-col>
-      <el-col class="d-flex" span="-1">
-        <SvgHome style="width: 40vw"></SvgHome>
       </el-col>
     </el-row>
     <dialog-keplr v-model:open="keplrDialog" @connect="onKeplrLogin" />

@@ -9,8 +9,4 @@
   @include EPMixins.when(colored) {
     background-color: EPFunctions.getCssVar('footer', 'bg-color');
   }
-  .archway-link {
-    text-decoration: none;
-    color: vars.$archway-primary-orange;
-  }
 }

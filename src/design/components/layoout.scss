@@ -161,6 +161,10 @@ html .d {
   &-nowrap {
     flex-wrap: nowrap;
   }
+
+  &-basis-0 {
+    flex-basis: 0;
+  }
 }
 
 .float {

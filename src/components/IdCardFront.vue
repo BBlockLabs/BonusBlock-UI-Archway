@@ -6,17 +6,19 @@
       </el-col>
     </el-row>
 
-    <el-row justify="center">
+    <el-row class="mx-extra-large" justify="center">
       <el-col :span="-1">
-        <h2 class="fs-large">
-          {{ blocktopianId }}
-        </h2>
+        <el-tooltip :content="walletAddress" placement="top">
+          <h2 class="of-hidden fs-large">
+            {{ walletAddress }}
+          </h2>
+        </el-tooltip>
       </el-col>
     </el-row>
 
     <el-row>
-      <el-col class="fs-small" style="font-weight: 700">
-        Connect your social profiles to join the quests!
+      <el-col class="fs-small">
+        <strong>Connect your social profiles to join the quests!</strong>
       </el-col>
     </el-row>
 
@@ -32,10 +34,10 @@
             </el-col>
           </el-row>
           <el-col v-else>
-            <el-row justify="space-between" class="is-align-middle flex-row" :gutter="5" style="opacity:.7">
+            <el-row justify="space-between" class="is-align-middle flex-row" @click="unlinkTwitter()" :gutter="5" style="opacity:.7">
               <el-col :span="-1">
                 <el-tooltip content="Unlink" placement="top">
-                  <SvgUnlink style="margin-right: 0.5em" class="pointer" @click="unlinkTwitter()"/>
+                  <SvgUnlink style="margin-right: 0.5em" class="pointer" />
                 </el-tooltip>
                 ID {{ twitterId }}
               </el-col>
@@ -50,9 +52,9 @@
 
     <el-row class="my-small">
       <el-col>
-        <el-tooltip content="Coming soon" placement="top">
-          <box class="id-card-social fs-small px-base py-small">
-            <el-row justify="space-between" class="is-align-middle flex-row" style="opacity:.5;cursor:no-drop" :gutter="5">
+        <el-tooltip content="Coming soon" placement="right">
+          <box disabled class="id-card-social fs-small px-base py-small">
+            <el-row justify="space-between" class="is-align-middle flex-row" :gutter="5">
               <el-col :span="-1" class="fs-base flex-noshrink">
                 Connect Telegram
               </el-col>
@@ -67,9 +69,9 @@
 
     <el-row class="my-small">
       <el-col>
-        <el-tooltip content="Coming soon" placement="top">
-          <box class="id-card-social fs-small px-base py-small">
-            <el-row justify="space-between" class="is-align-middle flex-row" style="opacity:.5;cursor:no-drop" :gutter="5">
+        <el-tooltip content="Coming soon" placement="right">
+          <box disabled class="id-card-social fs-small px-base py-small">
+            <el-row justify="space-between" class="is-align-middle flex-row" :gutter="5">
               <el-col :span="-1" class="fs-base flex-noshrink">
                 Connect Discord
               </el-col>
@@ -84,9 +86,9 @@
 
     <el-row class="my-small">
       <el-col>
-        <el-tooltip content="Coming soon" placement="top">
-          <box class="id-card-social fs-small px-base py-small">
-            <el-row justify="space-between" class="is-align-middle flex-row" style="opacity:.5;cursor:no-drop" :gutter="5">
+        <el-tooltip content="Coming soon" placement="right">
+          <box disabled class="id-card-social fs-small px-base py-small">
+            <el-row justify="space-between" class="is-align-middle flex-row" :gutter="5">
               <el-col :span="-1" class="fs-base flex-noshrink">
                 Connect Reddit
               </el-col>
@@ -136,6 +138,11 @@ const url = computed(() => {
 const twitterId: ComputedRef<string> = computed(
   () => twitterIdRemoved.value ? "" : (store.state.UserModule?.user?.twitter || "")
 );
+
+const walletAddress: ComputedRef<string> = computed(
+  () => store.state.UserModule?.activeWallet?.address || ""
+);
+
 
 async function linkTwitter(): Promise<void> {
   const response: Response = await fetch(

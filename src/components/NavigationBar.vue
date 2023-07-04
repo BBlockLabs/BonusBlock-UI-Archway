@@ -18,7 +18,9 @@
     <el-sub-menu index="menu" class="flex-noshrink">
       <template #title>
         <el-avatar :src="url" class="mr-small"> </el-avatar>
-        {{ userId }}
+        <el-tooltip :content="walletAddress" placement="left">
+          <span style="width: 10em" class="of-hidden">{{ walletAddress }}</span>
+        </el-tooltip>
       </template>
       <el-menu-item index="logout">
         <svg-logout class="icon-base mr-small" />
@@ -51,7 +53,7 @@
       <el-sub-menu index="menu" class="flex-noshrink">
         <template #title>
           <el-avatar :src="url" class="mr-small"> </el-avatar>
-          {{ userId }}
+          {{ walletAddress }}
         </template>
         <el-menu-item index="logout">
           <svg-logout class="icon-base mr-small" />
@@ -80,8 +82,9 @@ const router: Router = useRouter();
 const route = useRoute();
 const store: StoreType = useStore();
 const active: Ref<string> = ref(route.path);
-const userId: ComputedRef<string> = computed(
-  () => store.state.UserModule?.user?.userId || ""
+
+const walletAddress: ComputedRef<string> = computed(
+  () => store.state.UserModule?.activeWallet?.address || ""
 );
 const navClass: ComputedRef<string> = computed(() => props.class || "");
 

@@ -22,6 +22,7 @@ export interface Props {
   round?: boolean;
   circular?: boolean;
   shadow?: boolean;
+  disabled?: boolean;
 }
 
 const props: Props = withDefaults(defineProps<Props>(), {
@@ -29,6 +30,7 @@ const props: Props = withDefaults(defineProps<Props>(), {
   hoverable: false,
   circular: false,
   shadow: false,
+  disabled: false,
 });
 
 const ns = useNamespace("box");
@@ -40,5 +42,6 @@ const classes = normalizeClass([
   unref(ns).is("round", props.round),
   unref(ns).is("circular", props.circular),
   unref(ns).is("shadow", props.shadow),
+  unref(ns).is("disabled", props.disabled),
 ]);
 </script>
