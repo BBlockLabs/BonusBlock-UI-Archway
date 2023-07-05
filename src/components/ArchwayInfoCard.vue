@@ -1,5 +1,5 @@
 <template>
-  <el-row class="mt-medium info-container fs-medium" justify="space-between">
+  <el-row class="mt-medium info-container" justify="space-between">
     <el-col class="info-element" span="-1">
       <box-wrapper type="white" round class="d-flex flex-grow flex-column archway-orange-bg py-extra-large px-extra-large">
         <el-row class="mb-large">

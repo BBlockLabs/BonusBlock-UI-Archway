@@ -1,13 +1,5 @@
 <template>
-  <PageWrapper v-if="currentMode.toLowerCase() === 'production'" full-height>
-    <div
-      class="h-100 d-flex flex-column align-items-center justify-content-center"
-      style="height: 100%"
-    >
-      <h1 class="fs-large">Coming Soon</h1>
-    </div>
-  </PageWrapper>
-  <PageWrapper v-else :full-width="true" :no-padding="true" class="fs-medium py-base">
+  <PageWrapper :full-width="true" :no-padding="true" class="fs-medium py-base">
     <el-dialog v-model="claimModal.open" class="claim-modal">
       <div v-if="claimModal.loading">
         <div class="el-loading-spinner static-spinner mb-small">

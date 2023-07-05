@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper>
+  <PageWrapper class="fs-medium">
     <!--remove-on-prod-->
     <!--    <el-row class="my-large">-->
     <!--      <el-col>-->
@@ -27,7 +27,7 @@
         </el-col>
         <el-col span="-1" class="my-small">
           <el-row>
-            <box-wrapper type="white" round class="fs-large my-small p-large">
+            <box-wrapper type="white" round class="my-small fs-medium p-large">
               <el-row style="text-align: center;">
                 <el-col class="mx-medium" span="8">
                   <el-col class="bold mb-small">

@@ -21,7 +21,7 @@
                     'url(' + selectedProduct.bannerUrl + ')',
                 }"
               >
-                <el-row class="mt-extra-large mb-medium">
+                <el-row style="margin-top: 4em" class="mb-medium">
                   <h1>{{ selectedProduct.title }}</h1>
                 </el-row>
                 <el-row>

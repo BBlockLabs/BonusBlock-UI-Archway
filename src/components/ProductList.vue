@@ -4,7 +4,7 @@
       <div
         v-for="product in products"
         :key="product.id"
-        class="project-card py-small px-medium"
+        class="project-card p-medium"
         style="display: flex"
       >
         <el-row class="mb-medium is-align-middle">
