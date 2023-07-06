@@ -124,7 +124,7 @@
                       :href="social.link || social.url"
                       target="_blank"
                       :underline="false"
-                      class="black-link mr-small fs-medium"
+                      class="black-link mr-small"
                     >
                       <social-icon :type="social.type"/>
                     </el-link>

@@ -126,7 +126,7 @@ let twitterIdRemoved: Ref<boolean> = ref(false);
 const url = computed(() => {
   const result = renderDiscs({
     seed: store.state.UserModule?.user?.userId || "-",
-    base: 0.11,
+    base: 0.06,
     size: 170,
     maxDiscs: 4,
     colorRange: 1,
