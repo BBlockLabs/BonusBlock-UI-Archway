@@ -95,8 +95,7 @@
           <el-row class="my-large w-100">
             <strong>Missions</strong>
           </el-row>
-          <el-row v-if="selectedProduct.missions.length > 0" class="campaign-container mb-base">
-
+          <el-row v-if="selectedProduct.missions.length > 0" class="products-container mb-base">
             <el-col
               v-for="mission in selectedProduct.missions"
               :key="mission.id"
