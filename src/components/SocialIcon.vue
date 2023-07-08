@@ -39,6 +39,11 @@ export default {
           return SvgNewsletter;
         case "blog":
           return SvgBlog;
+        //TODO icons
+        case "app-store":
+          return SvgWebsite;
+        case "google-play":
+          return SvgWebsite;
         default:
           return SvgWebsite;
       }

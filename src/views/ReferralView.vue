@@ -2,7 +2,7 @@
   <PageWrapper>
     <el-row justify="space-between" :gutter="24" class="mt-extra-large">
       <el-col :md="16" :lg="17">
-        <h3 class="fs-medium mt-0">
+        <h3 class="fs-slightly-larger mt-0">
           Stack your first rewards by onboarding more users!
         </h3>
 

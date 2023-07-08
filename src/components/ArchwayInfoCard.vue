@@ -1,12 +1,14 @@
 <template>
   <el-row class="mt-medium info-container" justify="space-between">
     <el-col class="info-element" span="-1">
-      <box-wrapper type="white" round class="d-flex flex-grow flex-column archway-orange-bg py-extra-large px-extra-large">
+      <box-wrapper type="white" round class="archway-orange-bg">
         <el-row class="mb-large">
-          <SvgChatBubbleEmpty />
-        </el-row>
-        <el-row class="fs-large bold mb-large">
-          Reach out
+          <el-col span="-1">
+            <SvgChatBubbleEmpty />
+          </el-col>
+          <el-col class="fs-large bold ml-small mb-small" span="-1">
+            Reach out
+          </el-col>
         </el-row>
         <el-row class="mb-large">
           Want to partner up or build a Dapp?
@@ -26,14 +28,16 @@
     </el-col>
 
     <el-col class="info-element" span="-1">
-      <box-wrapper type="white" round class="d-flex flex-grow flex-column py-extra-large px-extra-large">
+      <box-wrapper type="white" round>
         <el-row class="mb-large">
-          <SvgGroup />
+          <el-col span="-1">
+            <SvgGroup />
+          </el-col>
+          <el-col class="fs-large bold ml-small mb-small" span="-1">
+            Start building
+          </el-col>
         </el-row>
-        <el-row class="fs-large bold mb-large">
-          Start building
-        </el-row>
-        <el-row class="">
+        <el-row class="mb-small">
           Find everything you need to start
           building on archway today.
         </el-row>
@@ -51,14 +55,16 @@
     </el-col>
 
     <el-col class="info-element" span="-1">
-      <box-wrapper type="white" round class="flex-grow d-flex flex-column py-extra-large px-extra-large">
+      <box-wrapper type="white" round>
         <el-row class="mb-large">
-          <SvgOpenBook />
+          <el-col span="-1">
+            <SvgOpenBook />
+          </el-col>
+          <el-col class="fs-large bold ml-small mb-small" span="-1">
+            Join the community
+          </el-col>
         </el-row>
-        <el-row class="fs-large bold mb-large">
-          Join the community
-        </el-row>
-        <el-row>
+        <el-row class="mb-small">
           Connect with people from across the
           ecosystem, Build and grow together.
           Access the community hub

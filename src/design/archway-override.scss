@@ -51,6 +51,12 @@
     flex-basis: 0;
     display: flex;
     flex-direction: column;
+    .el-box {
+      padding: 1.3em;
+      display: flex;
+      flex-grow: 1;
+      flex-direction: column;
+    }
   }
 }
 

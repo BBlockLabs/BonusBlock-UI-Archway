@@ -1,6 +1,6 @@
 <template>
   <PageWrapper>
-    <el-row v-if="selectedProduct" class="flex-row fs-medium my-medium">
+    <el-row v-if="selectedProduct" class="flex-row fs-slightly-larger my-medium">
       <el-col class="mr-medium" span="-1">
         <SvgChevronLeft class="icon pointer" @click="$router.push('/explore')" />
       </el-col>
@@ -21,10 +21,10 @@
                     'url(' + selectedProduct.bannerUrl + ')',
                 }"
               >
-                <el-row style="margin-top: 4em" class="mb-medium">
+                <el-row style="margin-top: 4em" class="fs-medium mb-medium">
                   <h1>{{ selectedProduct.title }}</h1>
                 </el-row>
-                <el-row>
+                <el-row class="fs-medium">
                   {{ selectedProduct.description }}
                 </el-row>
               </div>
@@ -62,14 +62,14 @@
                       :href="getMainLink(selectedProduct.socials).link"
                       target="_blank"
                       :underline="false"
-                      class="orange-link fs-medium mr-small"
+                      class="orange-link fs-slightly-larger mr-small"
                     >{{ getMainLink(selectedProduct.socials).link }}</el-link
                     >
                   </el-col>
                 </el-row>
                 <el-row align="middle">
                   <el-col span="-1">
-                    <h3 class="mb-0">Links</h3>
+                    <h3 class="mb-0">Join our community</h3>
                   </el-col>
                 </el-row>
                 <el-row>
@@ -92,8 +92,8 @@
               </div>
             </el-row>
           </box-wrapper>
-          <el-row class="my-large w-100">
-            <strong>Missions</strong>
+          <el-row class="w-100">
+            <h2>Missions</h2>
           </el-row>
           <el-row v-if="selectedProduct.missions.length > 0" class="products-container mb-base">
             <el-col
@@ -178,7 +178,6 @@ export default {
       .then((product) => {
         this.selectedProduct = product;
       });
-    console.log(this.selectedProduct);
     this.loading = false;
   },
   methods: {

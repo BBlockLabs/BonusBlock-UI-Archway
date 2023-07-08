@@ -76,10 +76,10 @@
         The ARCH tokens will not be offered in the United States or to U.S.
         persons or to residents of certain other prohibited jurisdictions.
         <el-link
-          href="http://example.com"
+          href="https://docs.archway.io/overview/disclaimer"
           target="_blank"
           :underline="false"
-          class="orange-link "
+          class="orange-link"
         >
           <span>Learn more.</span>
         </el-link>

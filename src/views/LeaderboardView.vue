@@ -4,7 +4,10 @@ import ArchwayInfoCard from "@/components/ArchwayInfoCard.vue";
 </script>
 
 <template>
-  <PageWrapper style="justify-content: center" class="d-flex is-justify-center flex-column h-100 fs-medium">
+  <PageWrapper
+    style="justify-content: center"
+    class="d-flex is-justify-center flex-column h-100 fs-slightly-larger"
+  >
     <el-row class="mb-medium" justify="center">
       <el-col span="-1">
         <strong style="font-size: 3em" class="archway-orange">Coming soon</strong>

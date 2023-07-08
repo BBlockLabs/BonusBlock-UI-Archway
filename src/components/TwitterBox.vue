@@ -2,8 +2,8 @@
   <box-wrapper class="twitter-box py-medium pl-large pr-medium">
     <div class="d-flex flex-row">
       <div class="mx-0 my-auto">
-        <h3 style="line-height: 150%" class="pr-small fs-small m-0">
-          <strong>Spread the word about Archway’s Incentivized Main-net Missions on Twitter!</strong>
+        <h3 style="font-weight: normal; text-align: center; line-height: 150%" class="archway-orange pr-small fs-small m-0">
+          Spread the word about Archway's incentivized Mainnet missions on Twitter!
         </h3>
       </div>
 

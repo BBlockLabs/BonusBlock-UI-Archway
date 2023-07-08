@@ -1,5 +1,9 @@
 <template>
-  <PageWrapper :full-width="true" :no-padding="true" class="fs-medium py-base">
+  <PageWrapper
+    :full-width="true"
+    :no-padding="true"
+    class="fs-slightly-larger py-base"
+  >
     <el-dialog v-model="claimModal.open" class="claim-modal">
       <div v-if="claimModal.loading">
         <div class="el-loading-spinner static-spinner mb-small">

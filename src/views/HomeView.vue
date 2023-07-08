@@ -17,7 +17,7 @@
             <span class="archway-orange">Archway</span>
           </el-col>
         </el-row>
-        <el-row class="fs-medium mt-large" style="line-height: 1.2em">
+        <el-row class="fs-slightly-larger mt-large" style="line-height: 1.2em">
           <el-col>
             <span>Discover the </span>
             <span class="archway-orange"

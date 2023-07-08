@@ -2,7 +2,9 @@
   <id-card>
     <el-row justify="center">
       <el-col :span="-1">
-        <el-avatar :src="url" shape="square" :size="170" />
+        <el-link href="https://archway.io/" target="_blank">
+          <el-avatar :src="url" shape="square" :size="170" />
+        </el-link>
       </el-col>
     </el-row>
 
