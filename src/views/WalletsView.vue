@@ -81,44 +81,45 @@
 
   <el-dialog
     v-model="usageConsentVisible"
-    title="Welcome to Archway // BonusBlock"
     align-center
     :show-close="false"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     style="width: 40%; min-width: 500px"
   >
-    <p style="margin-top:2em;">
-      BonusBlock’s ARCH tokens rewards are not intended for access and/or use by users in the United States of America and in certain other Excluded Jurisdictions (as defined
-      below);
-      Accordingly, users from Excluded Jurisdictions should not access or attempt to gain access to this campaign.
-    </p>
-    <p>
-      ARCH TOKENS ARE NOT INTENDED FOR U.S. PERSONS (AS SUCH TERM IS DEFINED IN RULE 902 OF REGULATION S AS PROMULGATED BY THE U.S. SECURITIES AND EXCHANGE COMMISSION) AND
-      HAVE NOT BEEN REGISTERED UNDER THE SECURITIES ACT OF 1933, AS AMENDED, AND MAY NOT BE OFFERED OR SOLD IN THE UNITED STATES OR TO U.S. PERSONS UNLESS THEY ARE REGISTERED UNDER
-      SUCH ACT, OR AN EXEMPTION FROM THE REGISTRATION REQUIREMENTS OF SUCH ACT IS AVAILABLE.
-    </p>
-    <b>EXCLUDED JURISDICTIONS</b>
-    <br>
-    Users from the following countries are restricted from accessing this Site:
-    <ul>
-      <li>United States of America (including its territories)</li>
-      <li>Democratic People’s Republic of Korea</li>
-      <li>Democratic Republic of Congo</li>
-      <li>Cuba</li>
-      <li>Dontesk People’s Republic of Ukraine</li>
-      <li>Iran</li>
-      <li>Iraq</li>
-      <li>Luhansk People’s Republic of Ukraine</li>
-      <li>Crimea Region of Ukraine</li>
-      <li>People’s Republic of China</li>
-      <li>Syrian Arab Republic</li>
-    </ul>
-    <template #footer>
-      <div style="display: flex;flex-wrap: nowrap;justify-content: center;">
-        <el-button primary @click="confirmUsage()">I accept these Terms and confirm I am not from an Excluded Jurisdiction</el-button>
-      </div>
-    </template>
+    <div style="padding-left: .5em;font-size:2em">Welcome to Archway // BonusBlock</div>
+    <div style="padding: 0 1em 0 1em;overflow-y: auto;max-height:300px" id="terms-text">
+      <p>
+        BonusBlock’s ARCH tokens rewards are not intended for access and/or use by users in the United States of America and in certain other Excluded Jurisdictions (as defined
+        below);
+        Accordingly, users from Excluded Jurisdictions should not access or attempt to gain access to this campaign.
+      </p>
+      <p>
+        ARCH TOKENS ARE NOT INTENDED FOR U.S. PERSONS (AS SUCH TERM IS DEFINED IN RULE 902 OF REGULATION S AS PROMULGATED BY THE U.S. SECURITIES AND EXCHANGE COMMISSION) AND
+        HAVE NOT BEEN REGISTERED UNDER THE SECURITIES ACT OF 1933, AS AMENDED, AND MAY NOT BE OFFERED OR SOLD IN THE UNITED STATES OR TO U.S. PERSONS UNLESS THEY ARE REGISTERED
+        UNDER
+        SUCH ACT, OR AN EXEMPTION FROM THE REGISTRATION REQUIREMENTS OF SUCH ACT IS AVAILABLE.
+      </p>
+      <b>EXCLUDED JURISDICTIONS</b>
+      <br>
+      Users from the following countries are restricted from accessing this Site:
+      <ul>
+        <li>United States of America (including its territories)</li>
+        <li>Democratic People’s Republic of Korea</li>
+        <li>Democratic Republic of Congo</li>
+        <li>Cuba</li>
+        <li>Dontesk People’s Republic of Ukraine</li>
+        <li>Iran</li>
+        <li>Iraq</li>
+        <li>Luhansk People’s Republic of Ukraine</li>
+        <li>Crimea Region of Ukraine</li>
+        <li>People’s Republic of China</li>
+        <li>Syrian Arab Republic</li>
+      </ul>
+    </div>
+    <div style="display: flex;flex-wrap: nowrap;justify-content: start;padding:1em;margin-top:1em">
+      <el-button :disabled="termsOkDisabled" class="archway" style="height:3em;color:white;" @click="confirmUsage()">I agree to the Terms</el-button>
+    </div>
   </el-dialog>
 </template>
 
@@ -132,6 +133,7 @@ import {onMounted, ref} from "vue";
 import moment from "moment/moment";
 
 const usageConsentVisible = ref(false);
+const termsOkDisabled = ref(true);
 
 onMounted(() => {
   let consent = localStorage.getItem("usage-consent");
@@ -139,6 +141,17 @@ onMounted(() => {
     localStorage.removeItem("usage-consent");
     usageConsentVisible.value = true;
   }
+  let checkIfScrolled = setInterval(() => {
+    let element = document.getElementById('terms-text');
+    if (element == null) {
+      clearInterval(checkIfScrolled);
+      return;
+    }
+    if(Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) < 1){
+      termsOkDisabled.value = false;
+      clearInterval(checkIfScrolled);
+    }
+  }, 100);
 });
 
 function confirmUsage() {

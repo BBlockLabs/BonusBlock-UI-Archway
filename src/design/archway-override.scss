@@ -20,6 +20,23 @@
   color: white;
 }
 
+button.archway {
+  background-color: vars.$archway-primary-orange !important;
+  color: white;
+  border: 0;
+}
+
+button.archway.is-disabled {
+  opacity:0.3 !important;
+  background-color: vars.$archway-border !important
+}
+
+button.archway:hover {
+  background-color: vars.$archway-hover !important;
+  color: white;
+  border: 0;
+}
+
 .mission-image {
   width: 100%;
   min-height: 10em;
