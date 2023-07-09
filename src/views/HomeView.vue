@@ -79,6 +79,9 @@ const route = useRoute();
 const keplrDialog: Ref<boolean> = ref(false);
 
 setTimeout(() => {
+  if (document.getElementById('cookie-consent') == null) {
+    return;
+  }
   cookieConsentTools.initialize({
     consentBox: {
       container: "cookie-consent",
@@ -107,10 +110,10 @@ async function onKeplrLogin(): Promise<void> {
 const connectWallet = async (): Promise<void> => {
   let chain = new Chain();
   chain.name = "Archway Network";
-  chain.id = "constantine-3";
-  chain.denom = "uarch";
+  chain.id = "archway-1";
+  chain.denom = "aarch";
   chain.source = "Keplr";
-  chain.iconUrl = "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/constantine/chain.png";
+  chain.iconUrl = "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/archway/chain.png";
   store.commit("setLoading", true);
 
   try {

@@ -78,6 +78,48 @@
       </el-footer>
     </template>-->
   </PageWrapper>
+
+  <el-dialog
+    v-model="usageConsentVisible"
+    title="Welcome to Archway // BonusBlock"
+    align-center
+    :show-close="false"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    style="width: 40%; min-width: 500px"
+  >
+    <p style="margin-top:2em;">
+      BonusBlock’s ARCH tokens rewards are not intended for access and/or use by users in the United States of America and in certain other Excluded Jurisdictions (as defined
+      below);
+      Accordingly, users from Excluded Jurisdictions should not access or attempt to gain access to this campaign.
+    </p>
+    <p>
+      ARCH TOKENS ARE NOT INTENDED FOR U.S. PERSONS (AS SUCH TERM IS DEFINED IN RULE 902 OF REGULATION S AS PROMULGATED BY THE U.S. SECURITIES AND EXCHANGE COMMISSION) AND
+      HAVE NOT BEEN REGISTERED UNDER THE SECURITIES ACT OF 1933, AS AMENDED, AND MAY NOT BE OFFERED OR SOLD IN THE UNITED STATES OR TO U.S. PERSONS UNLESS THEY ARE REGISTERED UNDER
+      SUCH ACT, OR AN EXEMPTION FROM THE REGISTRATION REQUIREMENTS OF SUCH ACT IS AVAILABLE.
+    </p>
+    <b>EXCLUDED JURISDICTIONS</b>
+    <br>
+    Users from the following countries are restricted from accessing this Site:
+    <ul>
+      <li>United States of America (including its territories)</li>
+      <li>Democratic People’s Republic of Korea</li>
+      <li>Democratic Republic of Congo</li>
+      <li>Cuba</li>
+      <li>Dontesk People’s Republic of Ukraine</li>
+      <li>Iran</li>
+      <li>Iraq</li>
+      <li>Luhansk People’s Republic of Ukraine</li>
+      <li>Crimea Region of Ukraine</li>
+      <li>People’s Republic of China</li>
+      <li>Syrian Arab Republic</li>
+    </ul>
+    <template #footer>
+      <div style="display: flex;flex-wrap: nowrap;justify-content: center;">
+        <el-button primary @click="confirmUsage()">I accept these Terms and confirm I am not from an Excluded Jurisdiction</el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -86,6 +128,23 @@ import BoxWrapper from "@/components/BoxWrapper.vue";
 import ProductList from "@/components/ProductList.vue";
 import {store} from "../store";
 import ArchwayInfoCard from "@/components/ArchwayInfoCard.vue";
+import {onMounted, ref} from "vue";
+import moment from "moment/moment";
+
+const usageConsentVisible = ref(false);
+
+onMounted(() => {
+  let consent = localStorage.getItem("usage-consent");
+  if (consent == null || moment(consent).add(1, "month").isBefore(new Date())) {
+    localStorage.removeItem("usage-consent");
+    usageConsentVisible.value = true;
+  }
+});
+
+function confirmUsage() {
+  localStorage.setItem("usage-consent", new Date().toISOString());
+  usageConsentVisible.value = false;
+}
 
 store.dispatch("ArchwayHttpModule/getStats");
 </script>
