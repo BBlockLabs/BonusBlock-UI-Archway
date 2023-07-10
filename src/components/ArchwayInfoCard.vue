@@ -1,12 +1,12 @@
 <template>
   <el-row class="mt-medium info-container" justify="space-between">
-    <el-col class="info-element" span="-1">
+    <el-col class="info-element" :span="-1">
       <box-wrapper type="white" round class="archway-orange-bg">
         <el-row class="mb-large">
-          <el-col span="-1">
+          <el-col :span="-1">
             <SvgChatBubbleEmpty />
           </el-col>
-          <el-col class="fs-large bold ml-small mb-small" span="-1">
+          <el-col class="fs-large bold ml-small mb-small" :span="-1">
             Reach out
           </el-col>
         </el-row>
@@ -27,13 +27,13 @@
       </box-wrapper>
     </el-col>
 
-    <el-col class="info-element" span="-1">
+    <el-col class="info-element" :span="-1">
       <box-wrapper type="white" round>
         <el-row class="mb-large">
-          <el-col span="-1">
+          <el-col :span="-1">
             <SvgGroup />
           </el-col>
-          <el-col class="fs-large bold ml-small mb-small" span="-1">
+          <el-col class="fs-large bold ml-small mb-small" :span="-1">
             Start building
           </el-col>
         </el-row>
@@ -54,13 +54,13 @@
       </box-wrapper>
     </el-col>
 
-    <el-col class="info-element" span="-1">
+    <el-col class="info-element" :span="-1">
       <box-wrapper type="white" round>
         <el-row class="mb-large">
-          <el-col span="-1">
+          <el-col :span="-1">
             <SvgOpenBook />
           </el-col>
-          <el-col class="fs-large bold ml-small mb-small" span="-1">
+          <el-col class="fs-large bold ml-small mb-small" :span="-1">
             Join the community
           </el-col>
         </el-row>

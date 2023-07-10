@@ -9,9 +9,9 @@
       </el-col>
     </el-row>
     <el-row align="top" justify="space-between">
-      <el-col span="-1">
+      <el-col :span="-1">
         <el-row>
-          <el-col span="-1" class="welcome-to-archway">
+          <el-col :span="-1" class="welcome-to-archway">
             <span style="">Welcome to </span>
             <br />
             <span class="archway-orange">Archway</span>
@@ -36,10 +36,10 @@
             @click="connectWallet()"
           >
             <el-row class="mx-medium is-align-middle" align="middle">
-              <el-col class="d-flex" span="-1">
+              <el-col class="d-flex" :span="-1">
                 <svg-keplr class="mr-small icon-small" />
               </el-col>
-              <el-col class="fs-base" span="-1">
+              <el-col class="fs-base" :span="-1">
                 <strong>Continue with Keplr</strong>
               </el-col>
             </el-row>

@@ -51,9 +51,11 @@ button.archway:hover {
 
 .product-banner {
   background-size: cover;
-  background-position-x: center;
+  background-repeat: no-repeat;
+  background-position: center;
   color: #fff;
   min-width: 20em;
+  min-height: 20em;
 }
 
 .info-container {
@@ -199,15 +201,9 @@ button.archway:hover {
   border-radius: 15px;
 }
 
-/*.el-link {
-  --el-link-hover-text-color: vars.$archway-primary-orange!important;
-}*/
-
-
 .el-link {
   --el-link-hover-text-color: vars.$archway-black-hover;
 }
-
 
 .orange-link.el-link {
   color: vars.$archway-primary-orange;
@@ -254,4 +250,10 @@ button.archway:hover {
 
 .project-card {
   border: 1px solid #e5e5e5;
+}
+
+.grey-socials.social-links {
+  svg {
+    color: rgb(97 96 95);
+  }
 }

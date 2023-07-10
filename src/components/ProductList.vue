@@ -8,7 +8,7 @@
         style="display: flex"
       >
         <el-row class="mb-medium is-align-middle">
-          <el-col span="-1">
+          <el-col :span="-1">
             <img
               v-if="product.icon"
               style="border-radius: 4px; aspect-ratio: 1; height: 5em"
@@ -17,7 +17,7 @@
             />
             <SvgProductLogoBlank v-else style="width: 5em; height: 5em" />
           </el-col>
-          <el-col class="ml-small" span="-1">
+          <el-col class="ml-small" :span="-1">
             <el-row class="mb-small">
               <strong>{{ product.name }}</strong>
             </el-row>
@@ -70,8 +70,17 @@
             </template>
           </el-card>
         </el-row>
-        <el-row justify="end" align="middle" class="mt-large mb-large">
-          <el-col class="mr-medium is-align-center" span="-1">
+        <el-row align="middle" class="mt-large mb-small">
+          <el-col >
+            <el-col>
+              <span class="fs-extra-small">Reward pool</span>
+            </el-col>
+            <el-row align="middle">
+              <SvgArch class="mr-small" style="height: 1.5em" />
+              <strong>{{ product.rewardPoolSize ? getHumanAmount(product.rewardPoolSize) : "N/A" }} ARCH</strong>
+            </el-row>
+          </el-col>
+          <el-col class="mr-medium ml-auto is-align-center" :span="-1">
             <el-button
               class="is-link"
               type="primary"
@@ -79,7 +88,6 @@
               >View details</el-button
             >
           </el-col>
-
         </el-row>
       </div>
     </div>
@@ -90,6 +98,7 @@ import RawCubeLeft from "@/assets/icons/cube-left.svg?raw";
 import RawCubeRight from "@/assets/icons/cube-right.svg?raw";
 import RawCubeTop from "@/assets/icons/cube-top.svg?raw";
 import EmptyCube from "@/assets/archway/empty-cube.svg";
+import SvgArch from "@/assets/currencies/arch.svg?component";
 import SvgProductLogoBlank from "@/assets/archway/product-logo-blank.svg";
 import { ref } from "vue";
 import { store } from "@/store/index.ts";
@@ -98,6 +107,7 @@ export default {
   components: {
     SvgProductLogoBlank,
     EmptyCube,
+    SvgArch,
   },
   props: {
     topThree: {
@@ -147,6 +157,26 @@ export default {
       const cubes = [RawCubeLeft, RawCubeRight, RawCubeTop];
       const cube = cubes[this.numberFromSeed(seed, cubes.length - 1)];
       return "data:image/svg+xml;base64," + btoa(cube);
+    },
+    getHumanAmount(amount) {
+      let decimal = 8;
+      let integerPart =
+        amount.length > decimal
+          ? amount.substring(0, amount.length - decimal)
+          : "0";
+      let fractionalPart =
+        amount.length > decimal
+          ? amount.substring(amount.length - decimal)
+          : amount;
+      if (fractionalPart !== "0") {
+        while (fractionalPart.length < decimal) {
+          fractionalPart = "0" + fractionalPart;
+        }
+      }
+      fractionalPart = fractionalPart.replace(/0+$/, "");
+      return fractionalPart === ""
+        ? integerPart
+        : integerPart + "." + fractionalPart;
     },
   },
 };

@@ -40,7 +40,7 @@
     <el-container class="h-100" direction="vertical">
       <el-main class="d-flex flex-column gap-base">
         <el-row justify="center">
-          <archway-logo/>
+          <archway-logo style="height: 4em" />
         </el-row>
         <el-row justify="center" class="mb-base">
           <el-col>
@@ -65,28 +65,65 @@
       <navigation-bar />
     </el-header>
 
-    <el-main :class="noPadding ? 'px-0 pt-0' : 'px-large pt-small'">
-      <div id="page-wrapper" :class="fullWidth ? '' : 'limit-width'" :style="fullHeight ? 'height: 100%' : ''" v-bind="$attrs">
+    <el-main class="p-0 d-flex flex-column" :class="noPadding ? 'px-0 pt-0' : 'px-large pt-small'">
+      <div style="margin-bottom: auto" id="page-wrapper" :class="fullWidth ? '' : 'limit-width'" :style="fullHeight ? 'height: 100%' : ''" v-bind="$attrs">
         <slot />
       </div>
+      <el-footer class="mt-auto mx-medium pb-medium">
+        <el-row align="middle">
+          <el-col :span="-1" class="mr-auto">
+            <archway-logo style="height: 3em" />
+          </el-col>
+          <el-col class="mr-medium" :span="-1">
+            <el-link
+              href="https://docs.archway.io/overview/disclaimer"
+              target="_blank"
+              :underline="false"
+            >
+              Privacy policy
+            </el-link>
+          </el-col>
+          <el-col :span="-1">
+            <el-link
+              href="https://docs.archway.io/overview/disclaimer"
+              target="_blank"
+              :underline="false"
+            >
+              Terms of use
+            </el-link>
+          </el-col>
+        </el-row>
+        <el-row class="mb-small" align="middle">
+          <el-col class="mr-auto" :span="-1">
+            © Archway Foundation 2023
+          </el-col>
+          <el-col :span="-1">
+            <social-links
+              class="grey-socials"
+              :twitter="'https://twitter.com/archwayhq'"
+              :telegram="'https://t.me/archway_hq'"
+              :github="'https://github.com/archway-network'"
+              :discord="'https://discord.com/invite/5FVvx3WGfa'"
+              :reddit="'https://www.reddit.com/r/Archway/'"
+            />
+          </el-col>
+        </el-row>
+        <el-row>
+          <span>
+            The ARCH tokens will not be offered in the United States or to U.S.
+            persons or to residents of certain other prohibited jurisdictions.
+            <el-link
+              href="https://docs.archway.io/overview/disclaimer"
+              target="_blank"
+              :underline="false"
+              class="orange-link"
+            >
+              <span>Learn more.</span>
+            </el-link>
+          </span>
+        </el-row>
+      </el-footer>
     </el-main>
-
-    <el-footer class="h-auto mx-small pt-small pb-medium">
-      <span>
-        The ARCH tokens will not be offered in the United States or to U.S.
-        persons or to residents of certain other prohibited jurisdictions.
-        <el-link
-          href="https://docs.archway.io/overview/disclaimer"
-          target="_blank"
-          :underline="false"
-          class="orange-link"
-        >
-          <span>Learn more.</span>
-        </el-link>
-      </span>
-    </el-footer>
-
-    <slot name="footer" />
   </el-container>
 </template>
 
@@ -98,7 +135,7 @@ import IdCardFront from "@/components/IdCardFront.vue";
 import NavigationBar from "@/components/NavigationBar.vue";
 import TwitterBox from "@/components/TwitterBox.vue";
 import { StoreType, useStore } from "@/store";
-import SocialIcon from "@/components/SocialIcon.vue";
+import SocialLinks from "@/components/ExternalLinks.vue";
 
 defineOptions({
   inheritAttrs: false,

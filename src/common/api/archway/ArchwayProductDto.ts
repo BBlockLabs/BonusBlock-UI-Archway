@@ -6,6 +6,7 @@ export default class ArchwayProductDto {
   bannerUrl: string = "";
   description: string = "";
   tags?: string[];
+  rewardPoolSize = "";
   socials: Array<{ type: string; link: string; title?: string }> | null = [];
   missions?: Array<ArchwayMissionDto>;
 }

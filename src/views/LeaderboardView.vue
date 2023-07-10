@@ -9,13 +9,13 @@ import ArchwayInfoCard from "@/components/ArchwayInfoCard.vue";
     class="d-flex is-justify-center flex-column h-100 fs-slightly-larger"
   >
     <el-row class="mb-medium" justify="center">
-      <el-col span="-1">
+      <el-col :span="-1">
         <strong style="font-size: 3em" class="archway-orange">Coming soon</strong>
       </el-col>
     </el-row>
 
     <el-row class="mb-large" justify="center">
-      <el-col span="-1">
+      <el-col :span="-1">
         <span class="fs-medium">Check out the following articles while you wait:</span>
       </el-col>
     </el-row>

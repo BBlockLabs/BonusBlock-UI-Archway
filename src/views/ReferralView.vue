@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper>
+  <PageWrapper class="mx-medium" :full-width="true">
     <el-row justify="space-between" :gutter="24" class="mt-extra-large">
       <el-col :md="16" :lg="17">
         <h3 class="fs-slightly-larger mt-0">
@@ -23,6 +23,10 @@
             new user.
           </b>
         </p>
+
+        <div v-if="!$mq.lg" class="tc mt-large">
+          <img :src="PngReferral" alt style="height: 50vh" />
+        </div>
       </el-col>
 
       <el-col :md="8" :lg="7">
@@ -40,6 +44,10 @@
         <!--        </el-space>-->
         <!--/remove-on-prod-->
       </el-col>
+
+      <div v-if="$mq.lg" class="tc mx-auto mt-large">
+        <img :src="PngReferral" alt style="height: 50vh" />
+      </div>
     </el-row>
   </PageWrapper>
 </template>
@@ -50,6 +58,7 @@ import PageWrapper from "@/components/PageWrapper.vue";
 import CopyBox from "@/components/CopyBox.vue";
 // import BoxWrapper from "@/components/BoxWrapper.vue";
 import InvitationCountCard from "@/components/InvitationCountCard.vue";
+import PngReferral from "@/assets/archway/referral-illustration.png";
 import { useStore, StoreType } from "@/store";
 
 const store: StoreType = useStore();

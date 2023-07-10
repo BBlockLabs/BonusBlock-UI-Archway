@@ -11,6 +11,8 @@ import SvgYoutube from "@/assets/icons/youtube.svg";
 import SvgWebsite from "@/assets/icons/website.svg";
 import SvgNewsletter from "@/assets/icons/newsletter.svg";
 import SvgBlog from "@/assets/icons/blog.svg";
+import SvgAppStore from "@/assets/icons/app-store.svg";
+import SvgGooglePlay from "@/assets/icons/google-play.svg";
 
 export default {
   props: {
@@ -39,11 +41,10 @@ export default {
           return SvgNewsletter;
         case "blog":
           return SvgBlog;
-        //TODO icons
         case "app-store":
-          return SvgWebsite;
+          return SvgAppStore;
         case "google-play":
-          return SvgWebsite;
+          return SvgGooglePlay;
         default:
           return SvgWebsite;
       }

@@ -1,10 +1,13 @@
 <template>
   <PageWrapper>
     <el-row v-if="selectedProduct" class="flex-row fs-slightly-larger my-medium">
-      <el-col class="mr-medium" span="-1">
-        <SvgChevronLeft class="icon pointer" @click="$router.push('/explore')" />
+      <el-col class="mr-medium" :span="-1">
+        <SvgChevronLeft
+          class="icon pointer"
+          @click="$router.push('/explore')"
+        />
       </el-col>
-      <el-col class="flex-grow" span="-1">
+      <el-col class="flex-grow" :span="-1">
         <el-row>
           <box-wrapper
             type="white"
@@ -16,18 +19,9 @@
               <div
                 class="p-large flex-grow flex-basis-0 product-banner"
                 :style="{
-                  backgroundImage:
-                    'linear-gradient(360deg, #FF4D00 50%, rgba(255, 77, 0, 0.00) 75%),' +
-                    'url(' + selectedProduct.bannerUrl + ')',
+                  backgroundImage: 'url(' + selectedProduct.bannerUrl + ')',
                 }"
-              >
-                <el-row style="margin-top: 4em" class="fs-medium mb-medium">
-                  <h1>{{ selectedProduct.title }}</h1>
-                </el-row>
-                <el-row class="fs-medium">
-                  {{ selectedProduct.description }}
-                </el-row>
-              </div>
+              ></div>
               <div class="p-large">
                 <el-row>
                   <h2 class="mt-0">Details</h2>
@@ -35,7 +29,17 @@
                 <hr />
 
                 <el-row align="middle">
-                  <el-col class="mr-small" span="-1">
+                  <el-col class="mr-small" :span="-1">
+                    <h3 class="mb-small">Total reward pool</h3>
+                  </el-col>
+                </el-row>
+                <el-row align="middle">
+                  <SvgArch class="mr-small" style="height: 1.5em" />
+                  <strong>{{ selectedProduct.rewardPoolSize ? getHumanAmount(selectedProduct.rewardPoolSize) : "N/A" }} ARCH</strong>
+                </el-row>
+
+                <el-row align="middle">
+                  <el-col class="mr-small" :span="-1">
                     <h3 class="mb-small">Tags</h3>
                   </el-col>
                 </el-row>
@@ -54,7 +58,7 @@
                   </el-col>
                 </el-row>
                 <el-row>
-                  <el-col span="-1">
+                  <el-col :span="-1">
                     <h3 class="mb-small">Website</h3>
                   </el-col>
                   <el-col class="mb-small archway-orange">
@@ -68,7 +72,7 @@
                   </el-col>
                 </el-row>
                 <el-row align="middle">
-                  <el-col span="-1">
+                  <el-col :span="-1">
                     <h3 class="mb-0">Join our community</h3>
                   </el-col>
                 </el-row>
@@ -76,7 +80,7 @@
                   <el-col
                     v-for="social in selectedProduct.socials"
                     :key="social.type"
-                    span="-1"
+                    :span="-1"
                   >
                     <el-link
                       v-if="social.type !== 'main-link' && social.type !== 'main-label'"
@@ -92,6 +96,12 @@
               </div>
             </el-row>
           </box-wrapper>
+          <el-row class="fs-medium w-100">
+            <h1>{{ selectedProduct.title }}</h1>
+          </el-row>
+          <el-row class="mb-extra-large fs-medium w-100">
+            {{ selectedProduct.description }}
+          </el-row>
           <el-row class="w-100">
             <h2>Missions</h2>
           </el-row>
@@ -117,7 +127,7 @@
                 </el-row>
 
                 <el-row class="mt-auto">
-                  <el-col span="-1" v-for="social in mission.socials" :key="social.type">
+                  <el-col :span="-1" v-for="social in mission.socials" :key="social.type">
                     <el-link
                       v-if="social.type !== 'main-link' && social.type !== 'main-label'"
                       :href="social.link || social.url"
@@ -129,7 +139,7 @@
                     </el-link>
                   </el-col>
 
-                  <el-col class="ml-auto" span="-1">
+                  <el-col class="ml-auto" :span="-1">
                     <el-link
                       class=""
                       target="_blank"
@@ -156,9 +166,11 @@ import SvgChevronLeft from "@/assets/icons/nav-arrow-left.svg?component";
 import { store } from "@/store/index.ts";
 import SocialIcon from "@/components/SocialIcon.vue";
 import PageWrapper from "@/components/PageWrapper.vue";
+import SvgArch from "@/assets/currencies/arch.svg";
 
 export default {
   components: {
+    SvgArch,
     PageWrapper,
     SocialIcon,
     BoxWrapper,
@@ -181,6 +193,26 @@ export default {
     this.loading = false;
   },
   methods: {
+    getHumanAmount(amount) {
+      let decimal = 8;
+      let integerPart =
+        amount.length > decimal
+          ? amount.substring(0, amount.length - decimal)
+          : "0";
+      let fractionalPart =
+        amount.length > decimal
+          ? amount.substring(amount.length - decimal)
+          : amount;
+      if (fractionalPart !== "0") {
+        while (fractionalPart.length < decimal) {
+          fractionalPart = "0" + fractionalPart;
+        }
+      }
+      fractionalPart = fractionalPart.replace(/0+$/, "");
+      return fractionalPart === ""
+        ? integerPart
+        : integerPart + "." + fractionalPart;
+    },
     getMainLink(socials) {
       let mainLink = socials.find(
         (social) => social.type === "main" || social.type === "main-link"

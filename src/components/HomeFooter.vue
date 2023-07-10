@@ -18,7 +18,7 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col span="-1" class="fs-extra-small">
+      <el-col :span="-1" class="fs-extra-small">
         <span>
           The information on this website is intended solely for general
           informational purposes and should not be regarded as a formal offer to

@@ -21,22 +21,22 @@
     <!--/remove-on-prod-->
 
     <el-row justify="space-between" class="is-align-middle">
-      <el-col span="-1" class="explore-archway">
+      <el-col :span="-1" class="explore-archway">
         <span style="">Explore </span>
         <span class="archway-orange">Archway</span>
       </el-col>
-      <el-col span="-1" class="my-small">
+      <el-col :span="-1" class="my-small">
         <el-row>
           <box-wrapper type="white" round class="p-medium">
             <el-row gutter="10" style="text-align: center;">
-              <el-col span="-1">
+              <el-col :span="-1">
                 <el-col class="bold mb-small">
                   {{ store.state.archwayStats.products }}
                 </el-col>
                 <el-col class="archway-orange"> Products </el-col>
               </el-col>
 
-              <el-col span="-1">
+              <el-col :span="-1">
                 <el-col class="bold mb-small">
                   {{ store.state.archwayStats.missions }}
                 </el-col>

@@ -7,6 +7,7 @@ import type Chain from "@/common/Chain";
 import VueCommonMixin from "@/common/Mixin";
 import VueApexCharts from "vue3-apexcharts";
 import moment from "moment";
+import mq from "./common/mq";
 
 // ISO-8601, Europe
 moment.updateLocale("en", {
@@ -29,6 +30,7 @@ app.use(router);
 app.use(store, key);
 app.use(ElementPlus);
 app.use(VueApexCharts);
+app.use(mq);
 app.mount("#app");
 
 const chains: Array<Chain> = JSON.parse(

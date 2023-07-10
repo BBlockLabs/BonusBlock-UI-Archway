@@ -117,11 +117,6 @@ const props = defineProps<Props>();
     height: 1.714em;
   }
 
-  .icon-discord {
-    position: relative;
-    top: 0.15em;
-  }
-
   .icon-youtube {
     position: relative;
     top: 0.15em;
