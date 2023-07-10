@@ -119,9 +119,9 @@
                 }"
               ></el-row>
               <el-row class="flex-grow flex-column mission-card-content">
-                <el-row class="mb-medium">
+<!--                <el-row class="mb-medium">
                   <strong>{{ mission.title }}</strong>
-                </el-row>
+                </el-row>-->
                 <el-row class="mb-small">
                   {{ mission.description }}
                 </el-row>

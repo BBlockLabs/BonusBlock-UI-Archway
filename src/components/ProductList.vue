@@ -61,9 +61,9 @@
             </el-row>
 
             <template v-if="product.featuredMission">
-              <el-row class="mb-medium">
+<!--              <el-row class="mb-medium">
                 <strong>{{ product.featuredMission.title }}</strong>
-              </el-row>
+              </el-row>-->
               <el-row class="h-auto" style="word-break: break-word">
                 {{ product.featuredMission.shortDescription }}
               </el-row>

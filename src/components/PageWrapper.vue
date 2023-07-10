@@ -65,11 +65,11 @@
       <navigation-bar />
     </el-header>
 
-    <el-main class="p-0 d-flex flex-column" :class="noPadding ? 'px-0 pt-0' : 'px-large pt-small'">
+    <el-main class="d-flex flex-column" :class="noPadding ? 'px-0 pt-0' : 'px-large pt-small'">
       <div style="margin-bottom: auto" id="page-wrapper" :class="fullWidth ? '' : 'limit-width'" :style="fullHeight ? 'height: 100%' : ''" v-bind="$attrs">
         <slot />
       </div>
-      <el-footer class="mt-auto mx-medium pb-medium">
+      <el-footer class="mt-auto">
         <el-row align="middle">
           <el-col :span="-1" class="mr-auto">
             <archway-logo style="height: 3em" />
