@@ -146,7 +146,7 @@
                       :href="getMainLink(mission.socials).link"
                       :underline="false"
                     >
-                      <el-button class="black-button" type="primary">{{ getMainLink(mission.socials).title }}</el-button>
+                      <el-button type="primary">{{ getMainLink(mission.socials).title }}</el-button>
                     </el-link>
                   </el-col>
                 </el-row>

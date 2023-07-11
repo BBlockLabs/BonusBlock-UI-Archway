@@ -53,7 +53,9 @@
 }
 
 .el-button:not(.is-link) {
-  box-shadow: none;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0px 2px 18px 0px #e5e5e5;
   color: vars.$archway-primary-orange;
 }
 

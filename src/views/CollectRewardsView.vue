@@ -1,7 +1,6 @@
 <template>
   <PageWrapper
     :full-width="true"
-    :no-padding="true"
     class="fs-slightly-larger py-base"
   >
     <el-dialog v-model="claimModal.open" class="claim-modal">

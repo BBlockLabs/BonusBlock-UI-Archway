@@ -21,6 +21,7 @@
 }
 
 button.archway {
+  box-shadow: 10px 5px 5px red;
   background-color: vars.$archway-primary-orange !important;
   color: white;
   border: 0;
@@ -111,27 +112,6 @@ button.archway:hover {
   svg {
     margin-right: 0.75em;
     font-size: 0.75em;
-  }
-}
-
-.black-button {
-
-  background: black;
-  color: #fff!important;
-
-  &:hover {
-    background: vars.$archway-black-hover !important;
-    color: #fff !important;
-  }
-
-  &:focus {
-    background: vars.$archway-black-hover;
-    color: #fff;
-  }
-
-  &:active {
-    background: vars.$archway-black-hover;
-    color: #fff
   }
 }
 
