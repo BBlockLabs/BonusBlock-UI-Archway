@@ -43,6 +43,11 @@ const router = createRouter({
       name: "Leaderboard",
       component: () => import("@/views/LeaderboardView.vue"),
     },
+    {
+      path: "/archway",
+      name: "Archway",
+      component: () => import("@/views/ArchwayInfo.vue"),
+    },
   ],
 });
 

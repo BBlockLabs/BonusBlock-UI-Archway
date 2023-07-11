@@ -5,6 +5,7 @@ import type PaginationRequest from "@/common/api/PaginationRequest";
 import type ReducedArchwayProductDto from "@/common/api/archway/ReducedArchwayProductDto";
 import type ArchwayProductDto from "@/common/api/archway/ArchwayProductDto";
 import type ArchwayStatsDto from "@/common/api/archway/ArchwayStatsDto";
+import type ArchwayInfoRow from "@/common/api/archway/ArchwayInfoRow";
 export type Context = ActionContext<{}, RootStateInterface>;
 export type HttpAction = Action<{}, RootStateInterface>;
 
@@ -28,6 +29,12 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
       this: Store<RootStateInterface>,
       context: Context
     ) => Promise<void>);
+
+  getInfo: HttpAction &
+    ((
+      this: Store<RootStateInterface>,
+      context: Context
+    ) => Promise<Array<ArchwayInfoRow>>)
 }
 
 export default class Actions implements ActionsInterface {
@@ -95,5 +102,26 @@ export default class Actions implements ActionsInterface {
     );
 
     context.commit("setArchwayStats", responseData.payload, {root: true});
+  };
+
+  getInfo = async (
+      context: Context
+  ): Promise<Array<ArchwayInfoRow>> => {
+    const response: Response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/archway/test-mainnet`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "X-Auth-Token": context.rootState.UserModule?.token || "",
+        },
+        method: "POST",
+      }
+    );
+
+    const responseData = await HttpResponse.fromResponse<Array<ArchwayInfoRow>>(
+      response
+    );
+
+    return responseData.payload;
   };
 }
