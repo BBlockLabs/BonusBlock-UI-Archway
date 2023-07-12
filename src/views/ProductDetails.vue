@@ -30,16 +30,6 @@
 
                 <el-row align="middle">
                   <el-col class="mr-small" :span="-1">
-                    <h3 class="mb-small">Total reward pool</h3>
-                  </el-col>
-                </el-row>
-                <el-row align="middle">
-                  <SvgArch class="mr-small" style="height: 1.5em" />
-                  <strong>{{ selectedProduct.rewardPoolSize ? getHumanAmount(selectedProduct.rewardPoolSize) : "N/A" }} ARCH</strong>
-                </el-row>
-
-                <el-row align="middle">
-                  <el-col class="mr-small" :span="-1">
                     <h3 class="mb-small">Tags</h3>
                   </el-col>
                 </el-row>
@@ -193,26 +183,6 @@ export default {
     this.loading = false;
   },
   methods: {
-    getHumanAmount(amount) {
-      let decimal = 8;
-      let integerPart =
-        amount.length > decimal
-          ? amount.substring(0, amount.length - decimal)
-          : "0";
-      let fractionalPart =
-        amount.length > decimal
-          ? amount.substring(amount.length - decimal)
-          : amount;
-      if (fractionalPart !== "0") {
-        while (fractionalPart.length < decimal) {
-          fractionalPart = "0" + fractionalPart;
-        }
-      }
-      fractionalPart = fractionalPart.replace(/0+$/, "");
-      return fractionalPart === ""
-        ? integerPart
-        : integerPart + "." + fractionalPart;
-    },
     getMainLink(socials) {
       let mainLink = socials.find(
         (social) => social.type === "main" || social.type === "main-link"

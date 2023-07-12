@@ -4,7 +4,6 @@ export default class ReducedArchwayProductDto {
   title: string = "";
   icon: string = "";
   tags?: string[];
-  rewardPoolSize = "";
   shortDescription: string = "";
   featuredMission?: ReducedArchwayMissionDto;
   createdOn: string = "";

@@ -71,15 +71,6 @@
           </el-card>
         </el-row>
         <el-row align="middle" class="mt-large mb-small">
-          <el-col >
-            <el-col>
-              <span class="fs-extra-small">Reward pool</span>
-            </el-col>
-            <el-row align="middle">
-              <SvgArch class="mr-small" style="height: 1.5em" />
-              <strong>{{ product.rewardPoolSize ? getHumanAmount(product.rewardPoolSize) : "N/A" }} ARCH</strong>
-            </el-row>
-          </el-col>
           <el-col class="mr-medium ml-auto is-align-center" :span="-1">
             <el-button
               class="is-link"
@@ -107,7 +98,6 @@ export default {
   components: {
     SvgProductLogoBlank,
     EmptyCube,
-    SvgArch,
   },
   props: {
     topThree: {
@@ -157,26 +147,6 @@ export default {
       const cubes = [RawCubeLeft, RawCubeRight, RawCubeTop];
       const cube = cubes[this.numberFromSeed(seed, cubes.length - 1)];
       return "data:image/svg+xml;base64," + btoa(cube);
-    },
-    getHumanAmount(amount) {
-      let decimal = 8;
-      let integerPart =
-        amount.length > decimal
-          ? amount.substring(0, amount.length - decimal)
-          : "0";
-      let fractionalPart =
-        amount.length > decimal
-          ? amount.substring(amount.length - decimal)
-          : amount;
-      if (fractionalPart !== "0") {
-        while (fractionalPart.length < decimal) {
-          fractionalPart = "0" + fractionalPart;
-        }
-      }
-      fractionalPart = fractionalPart.replace(/0+$/, "");
-      return fractionalPart === ""
-        ? integerPart
-        : integerPart + "." + fractionalPart;
     },
   },
 };

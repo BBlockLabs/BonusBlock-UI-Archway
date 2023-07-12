@@ -47,6 +47,23 @@
         </el-row>
       </el-col>
     </el-row>
+
+    <el-row>
+      <box-wrapper type="white" round class="w-100 my-small px-large">
+        <el-row align="middle">
+          <el-col class="mr-auto" :span="-1">
+            <h2>Total Reward Pool</h2>
+          </el-col>
+          <el-col :span="-1">
+            <SvgArch class="mr-small" style="height: 2em" />
+          </el-col>
+          <el-col :span="-1">
+            <h2>{{ store.state.archwayStats.totalRewardPoolAmount ? getHumanAmount(store.state.archwayStats.totalRewardPoolAmount) : "N/A" }} ARCH</h2>
+          </el-col>
+        </el-row>
+      </box-wrapper>
+    </el-row>
+
     <archway-info-card/>
 
     <el-row>
@@ -131,6 +148,7 @@ import {store} from "../store";
 import ArchwayInfoCard from "@/components/ArchwayInfoCard.vue";
 import {onMounted, ref} from "vue";
 import moment from "moment/moment";
+import SvgArch from "@/assets/currencies/arch.svg";
 
 const usageConsentVisible = ref(false);
 const termsOkDisabled = ref(true);
@@ -153,6 +171,27 @@ onMounted(() => {
     }
   }, 100);
 });
+
+function getHumanAmount(amount: string) {
+  let decimal = 12;
+  let integerPart =
+    amount.length > decimal
+      ? amount.substring(0, amount.length - decimal)
+      : "0";
+  let fractionalPart =
+    amount.length > decimal
+      ? amount.substring(amount.length - decimal)
+      : amount;
+  if (fractionalPart !== "0") {
+    while (fractionalPart.length < decimal) {
+      fractionalPart = "0" + fractionalPart;
+    }
+  }
+  fractionalPart = fractionalPart.replace(/0+$/, "");
+  return fractionalPart === ""
+    ? integerPart
+    : integerPart + "." + fractionalPart;
+}
 
 function confirmUsage() {
   localStorage.setItem("usage-consent", new Date().toISOString());
