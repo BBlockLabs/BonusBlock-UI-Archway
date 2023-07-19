@@ -62,11 +62,32 @@
       </el-sub-menu>
     </el-sub-menu>
   </el-menu>
+  <el-dialog
+    v-model="showLogout"
+    style="background: #f2efed; max-width: 22em"
+    :show-close="false"
+    center
+    align-center
+  >
+    <div style="text-align: center">
+      <svg-logout-image style="width: 250px; color:#F2EFED"/>
+    </div>
+    <div style="text-align: center; margin-top:1em;">
+      <b>Come back soon!</b>
+    </div>
+    <div style="margin-top: 0.8em; font-size: 0.9em; text-align: center">
+      Are you sure you want to Log out?
+    </div>
+    <div style="margin-top: 2em; display: flex; justify-content: space-around;">
+      <el-button style="width: 8em" @click="cancelLogout">Cancel</el-button>
+      <el-button class="archway" style="width:8em;color:white" @click="logout">Log out</el-button>
+    </div>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import SvgLogout from "@/assets/icons/logout.svg?component";
-import { ElMessageBox } from "element-plus";
+import SvgLogoutImage from "@/assets/images/logout_pic.svg?component";
 import { Router, useRoute, useRouter } from "vue-router";
 import { computed, ComputedRef, Ref, ref } from "vue";
 import { useStore, StoreType } from "@/store";
@@ -87,6 +108,7 @@ const walletAddress: ComputedRef<string> = computed(
   () => store.state.UserModule?.activeWallet?.address || ""
 );
 const navClass: ComputedRef<string> = computed(() => props.class || "");
+const showLogout = ref();
 
 const url = computed(() => {
   const result = renderDiscs({
@@ -103,7 +125,7 @@ const url = computed(() => {
 function onMenuAction(index: string): void {
   if (index === "logout") {
     active.value = route.path;
-    logout();
+    showLogout.value = true;
 
     return;
   }
@@ -124,16 +146,11 @@ function onMenuAction(index: string): void {
   router.push(index);
 }
 
-async function logout(): Promise<void> {
-  try {
-    await ElMessageBox.confirm("Are you sure you want to logout?", "Logout", {
-      confirmButtonText: "Logout",
-      cancelButtonText: "Cancel",
-    });
-  } catch (e: any) {
-    return;
-  }
+function cancelLogout(): void {
+  showLogout.value = false;
+}
 
+async function logout(): Promise<void> {
   await store.dispatch("UserModule/logout");
   await router.push("/");
 }
