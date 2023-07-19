@@ -71,6 +71,7 @@ import LinkActionPayload from "@/common/LinkActionPayload";
 import FormattedError from "@/common/errors/FormattedError";
 import { ElMessageBox } from "element-plus";
 import HttpUnauthorizedError from "@/common/errors/HttpUnauthorizedError";
+import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 
 const store: StoreType = useStore();
 const router: Router = useRouter();
@@ -109,11 +110,15 @@ async function onKeplrLogin(): Promise<void> {
 
 const connectWallet = async (): Promise<void> => {
   let chain = new Chain();
-  chain.name = "Archway Network";
-  chain.id = "archway-1";
-  chain.denom = "aarch";
+  let currentChain = ArchwayKeplrClient.getChain();
+  let currentCurrency = ArchwayKeplrClient.getCurrency();
+
+  chain.name = currentChain.chainName;
+  chain.id = currentChain.chainId;
+  chain.denom = currentCurrency.coinMinimalDenom;
   chain.source = "Keplr";
   chain.iconUrl = "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/archway/chain.png";
+
   store.commit("setLoading", true);
 
   try {

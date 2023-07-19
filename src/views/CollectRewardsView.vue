@@ -203,12 +203,14 @@ import SvgMedal from "@/assets/images/congratulations_medal.svg?component";
 import SvgCubeTop from "@/assets/icons/cube-top.svg?component";
 import ClaimSharingBackground from "@/assets/images/claim-sharing-image-template.svg?raw";
 import moment from "moment";
-import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
+import CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
 import MetamaskClient from "@/common/MetamaskClient";
 import detectEthereumProvider from "@metamask/detect-provider";
 import InteractionsChart from "@/components/InteractionsChart.vue";
 import router from "@/router";
 import ProductList from "@/components/ProductList.vue";
+import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
+import Toast from "@/common/Toast";
 
 const currencyIcons = {
   ARY: SvgAry,
@@ -289,6 +291,25 @@ function openCampaignDetails(campaign: CampaignWithRewardDto): void {
 async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
   claimModal.campaign = campaign;
   claimModal.loading = true;
+  if (campaign.smartContractAddress.startsWith("archway")) {
+    try {
+      let result = await ArchwayKeplrClient.claimArchwayReward(campaign.id);
+      console.log(result);
+      if (result) {
+        await store.dispatch("HttpModule/claimRewardInit", {
+          campaignId: campaign.id,
+        });
+        claimModal.open = true;
+      } else {
+        throw new Error("Failed to claim reward, please try again later")
+      }
+    } catch (e: any) {
+      claimModal.open = false;
+      Toast.make("Claim failure!", e.message, "error", false, 3000);
+    }
+    claimModal.loading = false;
+    return;
+  }
 
   try {
     const response = await store.dispatch("HttpModule/claimReward", {
