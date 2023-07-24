@@ -1,5 +1,6 @@
 import type { OfflineAminoSigner } from "@keplr-wallet/types";
 import { SigningArchwayClient } from "@archwayhq/arch3.js";
+import type { Coin } from "@cosmjs/stargate";
 
 export default class ArchwayKeplrClient {
   static testnetCurrency = {
@@ -62,45 +63,41 @@ export default class ArchwayKeplrClient {
     features: ["cosmwasm", "ibc-transfer", "ibc-go"],
   };
 
-  static async chainExists(chainId: string) {
-    try {
-      if (window.keplr) {
-        await window.keplr.enable(chainId);
-        return true;
+  static async checkChain(chain: any) {
+    if (window.keplr) {
+      try {
+        await window.keplr.enable(chain.chainId);
+      } catch (e) {
+        await window.keplr.experimentalSuggestChain(this.getChain());
+        await window.keplr.enable(chain.chainId);
       }
-    } catch (e) {
-      return false;
+    } else {
+      throw new Error("Keplr is not detected");
+    }
+  }
+
+  static async chainExists(chainId: string) {
+    if (window.keplr) {
+      await window.keplr.enable(chainId);
+    } else {
+      throw new Error("Keplr is not detected");
     }
   }
 
   static async suggestChain() {
-    try {
-      if (window.keplr) {
-        await window.keplr.experimentalSuggestChain(this.getChain());
-        return true;
-      }
-      return true;
-    } catch (e) {
-      console.error(e);
-      console.log("suggestChain", this.getChain());
-      return false;
+    if (window.keplr) {
+      await window.keplr.experimentalSuggestChain(this.getChain());
+    } else {
+      throw new Error("Keplr is not detected");
     }
   }
 
   static async getAccounts(offlineSigner: OfflineAminoSigner) {
-    try {
-      const ret = await offlineSigner.getAccounts();
-      if (!ret) {
-        // @ts-ignore
-        console.log("getAccounts", offlineSigner.chainId, offlineSigner, ret);
-      }
-      return ret;
-    } catch (e) {
-      console.error(e);
-      // @ts-ignore
-      console.log("getAccounts", offlineSigner.chainId, offlineSigner);
-      return false;
+    const ret = await offlineSigner.getAccounts();
+    if (!ret) {
+      throw new Error("Failed to get accounts");
     }
+    return ret;
   }
 
   static async getOfflineSigner() {
@@ -117,11 +114,57 @@ export default class ArchwayKeplrClient {
     }
     return ret;
   }
+  static async queryContract(
+    contractAddress: string,
+    queryMsg: any,
+    chainId: string
+  ) {
+    if (!window.keplr) {
+      throw new Error("Keplr is not detected");
+    }
+    window.keplr.defaultOptions = {
+      sign: {
+        preferNoSetFee: true,
+        preferNoSetMemo: true,
+      },
+    };
+
+    await window.keplr.enable(chainId);
+
+    const offlineSigner = await this.getOfflineSigner();
+    if (!offlineSigner) {
+      throw new Error("Failed to get offline signer");
+    }
+
+    const userAccounts = await this.getAccounts(offlineSigner);
+    if (!userAccounts) {
+      throw new Error("Failed to get user accounts");
+    }
+
+    const signingArchwayClient = await this.getArchwayClient(offlineSigner);
+    if (!signingArchwayClient) {
+      throw new Error("Failed to get signing Archway Client");
+    }
+
+    let result;
+    try {
+      result = await signingArchwayClient.queryContractSmart(
+        contractAddress,
+        queryMsg
+      );
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+    return result;
+  }
+
   static async executeContractMsg(
     contractAddress: string,
     executeMsg: any,
     chainId: string,
-    memo?: string
+    memo?: string,
+    funds?: Coin[]
   ) {
     if (!window.keplr) {
       return false;
@@ -137,17 +180,17 @@ export default class ArchwayKeplrClient {
 
     const offlineSigner = await this.getOfflineSigner();
     if (!offlineSigner) {
-      return false;
+      throw new Error("Failed to get offline signer");
     }
 
     const userAccounts = await this.getAccounts(offlineSigner);
     if (!userAccounts) {
-      return false;
+      throw new Error("Failed to get user accounts");
     }
 
     const signingArchwayClient = await this.getArchwayClient(offlineSigner);
     if (!signingArchwayClient) {
-      return false;
+      throw new Error("Failed to get signing Archway Client");
     }
 
     try {
@@ -156,13 +199,13 @@ export default class ArchwayKeplrClient {
         contractAddress,
         executeMsg,
         "auto",
-        memo
+        memo,
+        funds
       );
     } catch (e) {
       console.error(e);
-      return false;
+      throw e;
     }
-    return true;
   }
 
   static async getArchwayClient(offlineSigner: OfflineAminoSigner) {
@@ -190,23 +233,55 @@ export default class ArchwayKeplrClient {
     }
   }
 
-  static async claimArchwayReward(campaignId: string) {
+  static async claimArchwayReward(
+    contractAddress: string,
+    campaignId: string,
+    claimFee: string
+  ) {
     const currentChain = this.getChain();
-    if (!(await this.chainExists(currentChain.chainId))) {
-      await this.suggestChain();
-    }
+
+    await this.checkChain(this.getChain());
 
     const executeMsg = {
       claim: {
         campaign_id: campaignId,
       },
     };
-
-    const contractAddress = import.meta.env.VITE_ARCHWAY_REWARD_POOL_CONTRACT;
     return await ArchwayKeplrClient.executeContractMsg(
       contractAddress,
       executeMsg,
-      currentChain.chainId
+      currentChain.chainId,
+      undefined,
+      [
+        {
+          amount: claimFee,
+          denom: currentChain.feeCurrencies[0].coinMinimalDenom,
+        },
+      ]
     );
+  }
+
+  static async getRewardClaimFee(contractAddress: string) {
+    const currentChain = this.getChain();
+
+    await this.checkChain(this.getChain());
+
+    const queryMsg = {
+      get_claim_fee: {},
+    };
+    let result;
+    try {
+      result = await ArchwayKeplrClient.queryContract(
+        contractAddress,
+        queryMsg,
+        currentChain.chainId
+      );
+    } catch (e) {
+      console.error(
+        "Failed to get reward claim fee for contract " + contractAddress
+      );
+      throw e;
+    }
+    return result;
   }
 }

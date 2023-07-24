@@ -292,19 +292,24 @@ async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
   claimModal.campaign = campaign;
   claimModal.loading = true;
   if (campaign.smartContractAddress.startsWith("archway")) {
+    let claimFee;
+    try {
+      claimFee = await ArchwayKeplrClient.getRewardClaimFee(campaign.smartContractAddress)
+    } catch (e: any) {
+      Toast.make("Claim failure!", e.message, "error", false, 3000);
+      return;
+    }
+
     try {
       await store.dispatch("HttpModule/claimRewardInit", {
         campaignId: campaign.id,
       });
-      let result = await ArchwayKeplrClient.claimArchwayReward(campaign.id);
-      if (result) {
-        let index = campaigns.indexOf(campaign);
-        campaigns.splice(index, 1);
+      await ArchwayKeplrClient.claimArchwayReward(campaign.smartContractAddress, campaign.id, claimFee);
 
-        claimModal.open = true;
-      } else {
-        throw new Error("Failed to claim reward, please try again later");
-      }
+      let index = campaigns.indexOf(campaign);
+      campaigns.splice(index, 1);
+
+      claimModal.open = true;
     } catch (e: any) {
       claimModal.open = false;
       Toast.make("Claim failure!", e.message, "error", false, 3000);
