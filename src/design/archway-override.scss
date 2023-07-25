@@ -9,6 +9,12 @@
   @media only screen and (max-width: 768px) {
     font-size: 12vw;
   }
+  @media only screen and (min-aspect-ratio: 2/1) {
+    font-size: 8vw;
+  }
+  @media only screen and (min-aspect-ratio: 3/1) {
+    font-size: 6.5vw;
+  }
 }
 
 .archway-orange {
@@ -40,6 +46,9 @@ button.archway:hover {
 
 .el-button:not(.is-link) {
   box-shadow: none;
+  border-radius: 0.6em;
+  height: auto;
+  padding: 0.6em 0.9em;
 
   &.el-button--primary {
     color: #FFF;
