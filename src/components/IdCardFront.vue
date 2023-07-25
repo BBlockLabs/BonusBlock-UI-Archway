@@ -1,9 +1,9 @@
 <template>
-  <id-card>
+  <id-card class="id-card">
     <el-row justify="center">
       <el-col :span="-1">
         <el-link href="https://archway.io/" target="_blank">
-          <el-avatar :src="url" shape="square" :size="170" />
+          <el-avatar class="no-border" :src="url" shape="square" :size="170" />
         </el-link>
       </el-col>
     </el-row>
@@ -19,8 +19,8 @@
     </el-row>
 
     <el-row>
-      <el-col class="fs-small">
-        <strong>Connect your social profiles to join the quests!</strong>
+      <el-col class="fs-extra-small tc my-small">
+        Connect your social profiles to join the quests!
       </el-col>
     </el-row>
 
@@ -31,7 +31,7 @@
             <el-col :span="-1" class="fs-base flex-noshrink">
               Connect Twitter
             </el-col>
-            <el-col :span="-1" class="of-hidden">
+            <el-col :span="-1">
               <SvgTwitter class="icon-base"/>
             </el-col>
           </el-row>
@@ -43,7 +43,7 @@
                 </el-tooltip>
                 ID {{ twitterId }}
               </el-col>
-              <el-col :span="-1" class="of-hidden">
+              <el-col :span="-1">
                 <SvgTwitter class="icon-base"/>
               </el-col>
             </el-row>
@@ -55,12 +55,12 @@
     <el-row class="my-small">
       <el-col>
         <el-tooltip content="Coming soon" placement="right">
-          <box disabled class="id-card-social fs-small px-base py-small">
+          <box disabled class="id-card-social fs-small px-base py-small white">
             <el-row justify="space-between" class="is-align-middle flex-row" :gutter="5">
               <el-col :span="-1" class="fs-base flex-noshrink">
                 Connect Telegram
               </el-col>
-              <el-col :span="-1" class="of-hidden">
+              <el-col :span="-1">
                 <SvgTelegram class="icon-base"/>
               </el-col>
             </el-row>
@@ -72,12 +72,12 @@
     <el-row class="my-small">
       <el-col>
         <el-tooltip content="Coming soon" placement="right">
-          <box disabled class="id-card-social fs-small px-base py-small">
+          <box disabled class="id-card-social fs-small px-base py-small white">
             <el-row justify="space-between" class="is-align-middle flex-row" :gutter="5">
               <el-col :span="-1" class="fs-base flex-noshrink">
                 Connect Discord
               </el-col>
-              <el-col :span="-1" class="of-hidden">
+              <el-col :span="-1">
                 <SvgDiscord class="icon-base"/>
               </el-col>
             </el-row>
@@ -89,7 +89,7 @@
     <el-row class="my-small">
       <el-col>
         <el-tooltip content="Coming soon" placement="right">
-          <box disabled class="id-card-social fs-small px-base py-small">
+          <box disabled class="id-card-social fs-small px-base py-small white">
             <el-row justify="space-between" class="is-align-middle flex-row" :gutter="5">
               <el-col :span="-1" class="fs-base flex-noshrink">
                 Connect Reddit

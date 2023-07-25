@@ -172,6 +172,13 @@ button.archway:hover {
   background-color: vars.$archway-primary-orange;
 }
 
+.id-card {
+  .el-card__body {
+    padding-left: 1.2em;
+    padding-right: 1.2em;
+  }
+}
+
 .el-box.id-card-social {
   background-color: vars.$archway-primary-orange;
   font-weight: 700;
@@ -182,10 +189,13 @@ button.archway:hover {
   }
   &.is-disabled,
   &.is-disabled:hover {
-    opacity:.7;
     cursor:no-drop;
   }
-
+  &.white {
+    background-color: #FFF;
+    color: vars.$archway-primary-orange;
+    box-shadow: 3px 9px 32px -4px rgba(0, 0, 0, 0.07);
+  }
 }
 
 .el-box.twitter-box {
