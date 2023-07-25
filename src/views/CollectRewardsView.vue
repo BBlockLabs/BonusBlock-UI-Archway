@@ -286,6 +286,7 @@ function openCampaignDetails(campaign: CampaignWithRewardDto): void {
 }
 
 async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
+  console.log("asdasd");
   claimModal.campaign = campaign;
   claimModal.loading = true;
   if (campaign.smartContractAddress.startsWith("archway")) {
@@ -309,9 +310,15 @@ async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
       claimModal.open = true;
     } catch (e: any) {
       claimModal.open = false;
+      console.log("1312323");
       Toast.make("Claim failure!", e.message, "error", false, 3000);
     }
     claimModal.loading = false;
+    console.log("1312323");
+    try {
+      console.log("123");
+      await store.dispatch("HttpModule/claimRewardCheck", {});
+    }catch (error: any){}
     return;
   }
 

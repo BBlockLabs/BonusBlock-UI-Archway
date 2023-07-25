@@ -87,6 +87,9 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
       payload: { campaignId: string }
     ) => Promise<null>);
 
+  claimRewardCheck: HttpAction &
+    ((this: Store<RootStateInterface>, context: Context) => Promise<null>);
+
   loadAnalytics: HttpAction &
     ((
       this: Store<RootStateInterface>,
@@ -389,10 +392,26 @@ export default class Actions implements ActionsInterface {
     context: Context,
     payload: { campaignId: string }
   ): Promise<null> => {
+    console.log("123123123");
     const response: Response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/claim/init`,
       {
         body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+          "X-Auth-Token": context.rootState.UserModule?.token || "",
+        },
+        method: "POST",
+      }
+    );
+    await HttpResponse.fromResponse<never>(response);
+    return null;
+  };
+
+  claimRewardCheck = async (context: Context): Promise<null> => {
+    const response: Response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/claim/check`,
+      {
         headers: {
           "Content-Type": "application/json",
           "X-Auth-Token": context.rootState.UserModule?.token || "",
