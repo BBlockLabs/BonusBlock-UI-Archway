@@ -22,7 +22,7 @@
             href="https://docs.google.com/forms/d/e/1FAIpQLSfJL3E12uD0kmivVHF4Naxab7DR4CYdYKXf7ouQJznOlmUn9Q/viewform"
             :underline="false"
           >
-            <el-button style="box-shadow: none" type="primary" > Get in touch</el-button>
+            <el-button style="box-shadow: none" type="secondary"> Get in touch</el-button>
           </el-link>
         </el-row>
       </box-wrapper>

@@ -276,6 +276,15 @@ function updateRewards() {
       }
 
     }
+    let dummy: CampaignWithRewardDto = new CampaignWithRewardDto();
+    dummy.id = "archway-constantine-3-c-1";
+    dummy.amount = "10000";
+    dummy.currency = "ARCH";
+    dummy.decimal = 18;
+    dummy.name = "Dummy Campaign";
+    dummy.smartContractAddress = "archway199pm2h5htkam7c7kcfmmgf3xe0vhpsrpm9wuqx8ffwwk98vptl5qef07y3";
+    campaigns.push(dummy);
+
     localTimeOffsetMs = moment().diff(data.now);
     campaignsLoading.value = false;
   });

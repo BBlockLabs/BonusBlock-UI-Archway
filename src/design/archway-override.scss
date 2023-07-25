@@ -38,6 +38,60 @@ button.archway:hover {
   border: 0;
 }
 
+.el-button:not(.is-link) {
+  box-shadow: none;
+
+  &.el-button--primary {
+    color: #FFF;
+    background-color: vars.$archway-primary-orange;
+    border: 2px solid transparent;
+
+    &:hover {
+      background-color: #E14400;
+    }
+    &:active {
+      background-color: #C63C00;
+    }
+    &:focus {
+      background-color: #E14400;
+      border: 2px solid #FFF;
+    }
+  }
+  &.el-button--secondary {
+    color: vars.$archway-primary-orange;
+    background-color: #FFF;
+    border: 2px solid transparent;
+
+    &:hover,
+    &:active,
+    &:focus{
+      color: #FFF;
+      background-color: rgba(255, 77, 0, 0.16);
+    }
+    &:focus {
+      border: 2px solid #E14400;
+    }
+  }
+  &.el-button--tertiary {
+    color: vars.$archway-primary-orange;
+    background-color: transparent;
+    border: 2px solid transparent;
+
+    &:hover,
+    &:active,
+    &:focus{
+      background-color: rgba(255, 77, 0, 0.16);
+    }
+    &:focus {
+      border: 2px solid #E14400;
+    }
+  }
+
+  &.is-disabled {
+    opacity: 0.7;
+  }
+}
+
 .mission-image {
   width: 100%;
   min-height: 10em;
@@ -95,29 +149,6 @@ button.archway:hover {
 
 .archway-orange-button {
   border: none;
-  background: vars.$archway-primary-orange;
-  color: #fff!important;
-
-  &:hover {
-    background: vars.$archway-hover!important;
-    color: #fff!important;
-  }
-
-  &:focus {
-    background: vars.$archway-primary-orange;
-    color: #fff;
-  }
-
-  &:active {
-    background: vars.$archway-primary-orange;
-    color: #fff
-  }
-
-  &.is-disabled,
-  &.is-disabled:hover {
-    background: #a8abb2!important;
-    color: #000!important;
-  }
 
   svg {
     margin-right: 0.75em;

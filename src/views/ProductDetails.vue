@@ -118,7 +118,7 @@
                 </el-row>
                 <hr class="w-100 mt-auto"/>
                 <el-row align="middle" class="mt-small">
-                  <el-col :span="12">
+                  <el-col :span="-1">
                     <el-row class="fs-small mb-small">
                       Community XP
                     </el-row>
