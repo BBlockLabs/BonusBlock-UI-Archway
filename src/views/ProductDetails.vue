@@ -110,14 +110,14 @@
                 }"
               ></el-row>
               <el-row class="flex-grow flex-column mission-card-content">
-                <el-row class="mb-medium">
+                <el-row class="mx-medium mb-medium">
                   <strong>{{ mission.title }}</strong>
                 </el-row>
-                <el-row class="mb-medium">
+                <el-row class="mx-medium mb-medium">
                   {{ mission.description }}
                 </el-row>
                 <hr class="w-100 mt-auto"/>
-                <el-row align="middle" class="mt-small">
+                <el-row align="middle" class="mx-medium mt-small">
                   <el-col :span="-1">
                     <el-row class="fs-small mb-small">
                       Community XP
