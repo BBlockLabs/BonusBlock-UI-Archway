@@ -26,6 +26,7 @@ import { Plugins } from "@/common/Plugins";
 import MetamaskClient from "@/common/MetamaskClient";
 import Chain from "@/common/Chain";
 import Toast from "@/common/Toast";
+import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 
 export type Context = ActionContext<StateInterface, RootStateInterface>;
 export type UserAction = Action<StateInterface, RootStateInterface>;
@@ -253,7 +254,7 @@ export default class Actions implements ActionsInterface {
     const keplr: Keplr = window.keplr;
 
     try {
-      await keplr.enable(payload.chain.id);
+      await ArchwayKeplrClient.checkChain({ chainId: payload.chain.id });
     } catch (error: any | Error) {
       throw new FormattedError(
         `Could not authorize against network ${payload.chain.id}`
