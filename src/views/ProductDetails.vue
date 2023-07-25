@@ -15,18 +15,24 @@
             style="overflow: hidden"
             class="flex-grow"
           >
-            <el-row>
+            <el-row class="product-banner-card">
               <div
-                class="p-large flex-grow flex-basis-0 product-banner"
+                class="p-large product-banner"
                 :style="{
                   backgroundImage: 'url(' + selectedProduct.bannerUrl + ')',
                 }"
               ></div>
-              <div class="p-large">
+              <div class="p-large product-description">
                 <el-row>
-                  <h2 class="mt-0">Details</h2>
+                  <h2 class="mt-0 mb-extra-small">{{ selectedProduct.title }}</h2>
                 </el-row>
                 <hr />
+
+                <el-row align="middle">
+                  <el-col :span="-1">
+                    {{ selectedProduct.description }}
+                  </el-col>
+                </el-row>
 
                 <el-row align="middle">
                   <el-col class="mr-small" :span="-1">
@@ -86,12 +92,6 @@
               </div>
             </el-row>
           </box-wrapper>
-          <el-row class="fs-medium w-100">
-            <h1>{{ selectedProduct.title }}</h1>
-          </el-row>
-          <el-row class="mb-extra-large fs-medium w-100">
-            {{ selectedProduct.description }}
-          </el-row>
           <el-row class="w-100">
             <h2>Missions</h2>
           </el-row>
