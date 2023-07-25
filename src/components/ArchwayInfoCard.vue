@@ -1,12 +1,14 @@
 <template>
-  <el-row class="mt-medium info-container" justify="space-between">
+  <el-row class="mt-medium mb-large info-container" justify="space-between">
     <el-col class="info-element" :span="-1">
       <box-wrapper type="white" round class="archway-orange-bg">
         <el-row class="mb-large">
           <el-col :span="-1">
             <SvgChatBubbleEmpty />
           </el-col>
-          <el-col class="fs-large bold ml-small mb-small" :span="-1">
+        </el-row>
+        <el-row class="mb-large">
+          <el-col class="fs-large bold mb-small" :span="-1">
             Reach out
           </el-col>
         </el-row>
@@ -16,7 +18,6 @@
         </el-row>
         <el-row class="mt-auto">
           <el-link
-            class="ml-auto"
             target="_blank"
             href="https://docs.google.com/forms/d/e/1FAIpQLSfJL3E12uD0kmivVHF4Naxab7DR4CYdYKXf7ouQJznOlmUn9Q/viewform"
             :underline="false"
@@ -33,7 +34,9 @@
           <el-col :span="-1">
             <SvgGroup />
           </el-col>
-          <el-col class="fs-large bold ml-small mb-small" :span="-1">
+        </el-row>
+        <el-row class="mb-large">
+          <el-col class="fs-large bold mb-small" :span="-1">
             Start building
           </el-col>
         </el-row>
@@ -43,7 +46,6 @@
         </el-row>
         <el-row class="mt-auto">
           <el-link
-            class="ml-auto"
             target="_blank"
             href="https://archway.io/community"
             :underline="false"
@@ -60,7 +62,9 @@
           <el-col :span="-1">
             <SvgOpenBook />
           </el-col>
-          <el-col class="fs-large bold ml-small mb-small" :span="-1">
+        </el-row>
+        <el-row class="mb-large">
+          <el-col class="fs-large bold mb-small" :span="-1">
             Join the community
           </el-col>
         </el-row>
@@ -71,7 +75,6 @@
         </el-row>
         <el-row class="mt-auto">
           <el-link
-            class="ml-auto"
             target="_blank"
             href="https://docs.archway.io/"
             :underline="false"
@@ -87,17 +90,18 @@
 <script>
 
 import {defineComponent} from "vue";
-import SvgKeplr from "@/assets/icons/keplr.svg";
-import SvgInfo from "@/assets/icons/info.svg";
 import SvgOpenBook from "@/assets/icons/open-book.svg";
 import BoxWrapper from "@/components/BoxWrapper.vue";
 import SvgChatBubbleEmpty from "@/assets/icons/chat-bubble-empty.svg";
 import SvgGroup from "@/assets/icons/group.svg";
 
 export default defineComponent({
-  components: {SvgGroup, SvgChatBubbleEmpty, BoxWrapper, SvgOpenBook}
+  components: {SvgGroup, SvgChatBubbleEmpty, BoxWrapper, SvgOpenBook},
+
 })
+
 </script>
+
 
 <style scoped lang="scss">
 

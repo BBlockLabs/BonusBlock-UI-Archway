@@ -4,10 +4,10 @@
       <div
         v-for="product in products"
         :key="product.id"
-        class="project-card p-medium"
+        class="project-card py-medium"
         style="display: flex"
       >
-        <el-row class="mb-medium is-align-middle">
+        <el-row class="mb-medium px-medium is-align-middle">
           <el-col :span="-1">
             <img
               v-if="product.icon"
@@ -34,25 +34,25 @@
             </el-row>
           </el-col>
         </el-row>
-        <el-row class="mb-large">
+        <el-row class="px-medium mb-large">
           <el-col style="word-break: break-word; height: 3.5em">
             {{ product.shortDescription }}
           </el-col>
         </el-row>
-        <el-row justify="center" align="middle" class="h-100">
+        <el-row justify="center" align="middle" class="px-medium h-100">
           <el-card class="w-100 h-100 mission-preview">
             <el-row class="p-0 mb-medium" justify="center">
               <el-col
                 style="
                   justify-content: center;
                   align-content: center;
-                  aspect-ratio: 1.36/1
+                  aspect-ratio: 1.7;
                 "
                 class="d-flex"
               >
                 <img
                   v-if="product.featuredMission && product.featuredMission.imageUrl"
-                  style="border-radius: 4px; aspect-ratio: 1.36/1"
+                  style="border-radius: 4px; aspect-ratio: 1.7"
                   :src="product.featuredMission.imageUrl"
                   alt="Product"
                 />
@@ -70,8 +70,27 @@
             </template>
           </el-card>
         </el-row>
-        <el-row align="middle" class="mt-large mb-small">
-          <el-col class="mr-medium ml-auto is-align-center" :span="-1">
+        <el-row class="px-medium mt-large">
+          <el-col :span="12">
+            <el-row class="fs-small mb-small">
+              Total XP
+            </el-row>
+            <el-row class="bold">
+              {{ product.totalXpPoints }} XP
+            </el-row>
+          </el-col>
+          <el-col :span="12">
+            <el-row class="fs-small mb-small">
+              Missions
+            </el-row>
+            <el-row class="bold">
+              {{ product.missionCount }}
+            </el-row>
+          </el-col>
+        </el-row>
+        <hr class="w-100 mt-medium"/>
+        <el-row align="middle" class="mt-small">
+          <el-col class="mx-auto is-align-center" :span="-1">
             <el-button
               class="is-link"
               type="primary"

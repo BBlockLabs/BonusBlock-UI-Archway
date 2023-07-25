@@ -74,7 +74,6 @@
           v-for="campaign in campaigns"
           :key="campaign.id"
           class="campaign-card"
-          style="background: white; border: none;"
         >
           <div class="top-half">
             <el-row justify="space-between" align="middle">
@@ -133,7 +132,7 @@
                 :is="currencyIcons[campaign.currency] ?? 'div'"
                 class="currency-icon"
               />
-              <div v-if="campaign.amount" class="flex-grow ml-small">
+              <div v-if="campaign.amount" class="bold flex-grow ml-small">
                 {{ getHumanAmount(campaign).substring(0, 17) }}
                 {{ campaign.currency }}
               </div>
@@ -151,7 +150,7 @@
                 <div>
                   <el-button
                     type="primary"
-                    class="archway-claim-button"
+                    class="archway-orange-button"
                     :disabled="!campaign.amount"
                     @click="claimCampaign(campaign)"
                   >
@@ -222,12 +221,10 @@ const currencyIcons = {
   POWR: SvgPowr,
   UNI: SvgUni,
   ARCH: SvgArch,
+  CONST: SvgArch,
 };
 
 let localTimeOffsetMs: number = 0;
-const currentMode = computed(() => {
-  return import.meta.env.MODE;
-});
 const now = ref(Math.ceil((new Date().valueOf() - localTimeOffsetMs) / 1000));
 const timer = setInterval(() => {
   now.value = Math.ceil((new Date().valueOf() - localTimeOffsetMs) / 1000);
@@ -277,6 +274,7 @@ function updateRewards() {
       for (let campaign of data.payload) {
         campaigns.push(campaign);
       }
+
     }
     localTimeOffsetMs = moment().diff(data.now);
     campaignsLoading.value = false;

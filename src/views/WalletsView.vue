@@ -64,12 +64,12 @@
       </box-wrapper>
     </el-row>
 
-    <archway-info-card/>
-
     <el-row>
       <h2>Products</h2>
     </el-row>
-    <product-list/>
+    <product-list class="mb-extra-large"/>
+
+    <archway-info-card/>
 
     <!--    <template #footer>
       <el-footer height="unset" class="px-large pb-medium">

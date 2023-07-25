@@ -1,12 +1,13 @@
 <template>
   <PageWrapper>
-    <el-row v-if="selectedProduct" class="flex-row fs-slightly-larger my-medium">
-      <el-col class="mr-medium" :span="-1">
-        <SvgChevronLeft
-          class="icon pointer"
-          @click="$router.push('/explore')"
-        />
+    <el-row class="w-auto archway-orange my-medium" :span="-1">
+      <el-col class="d-flex flex-center-y pointer" span="-1" @click="$router.push('/explore')">
+        <SvgChevronLeft class="icon" />
+        <span>All products</span>
       </el-col>
+    </el-row>
+
+    <el-row v-if="selectedProduct" class="flex-row fs-slightly-larger my-medium">
       <el-col class="flex-grow" :span="-1">
         <el-row>
           <box-wrapper
@@ -109,24 +110,21 @@
                 }"
               ></el-row>
               <el-row class="flex-grow flex-column mission-card-content">
-<!--                <el-row class="mb-medium">
+                <el-row class="mb-medium">
                   <strong>{{ mission.title }}</strong>
-                </el-row>-->
-                <el-row class="mb-small">
+                </el-row>
+                <el-row class="mb-medium">
                   {{ mission.description }}
                 </el-row>
-
-                <el-row class="mt-auto">
-                  <el-col :span="-1" v-for="social in mission.socials" :key="social.type">
-                    <el-link
-                      v-if="social.type !== 'main-link' && social.type !== 'main-label'"
-                      :href="social.link || social.url"
-                      target="_blank"
-                      :underline="false"
-                      class="black-link mr-small"
-                    >
-                      <social-icon :type="social.type"/>
-                    </el-link>
+                <hr class="w-100 mt-auto"/>
+                <el-row align="middle" class="mt-small">
+                  <el-col :span="12">
+                    <el-row class="fs-small mb-small">
+                      Community XP
+                    </el-row>
+                    <el-row class="bold">
+                      {{ mission.xpPoints }} XP
+                    </el-row>
                   </el-col>
 
                   <el-col class="ml-auto" :span="-1">
@@ -136,7 +134,7 @@
                       :href="getMainLink(mission.socials).link"
                       :underline="false"
                     >
-                      <el-button type="primary">{{ getMainLink(mission.socials).title }}</el-button>
+                      <el-button class="archway-orange-button">{{ getMainLink(mission.socials).title }}</el-button>
                     </el-link>
                   </el-col>
                 </el-row>
@@ -156,11 +154,9 @@ import SvgChevronLeft from "@/assets/icons/nav-arrow-left.svg?component";
 import { store } from "@/store/index.ts";
 import SocialIcon from "@/components/SocialIcon.vue";
 import PageWrapper from "@/components/PageWrapper.vue";
-import SvgArch from "@/assets/currencies/arch.svg";
 
 export default {
   components: {
-    SvgArch,
     PageWrapper,
     SocialIcon,
     BoxWrapper,

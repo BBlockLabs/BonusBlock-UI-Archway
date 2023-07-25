@@ -252,12 +252,14 @@ export default class ArchwayKeplrClient {
       executeMsg,
       currentChain.chainId,
       undefined,
-      [
-        {
-          amount: claimFee,
-          denom: currentChain.feeCurrencies[0].coinMinimalDenom,
-        },
-      ]
+      Number(claimFee) > 0
+        ? [
+            {
+              amount: claimFee,
+              denom: currentChain.feeCurrencies[0].coinMinimalDenom,
+            },
+          ]
+        : undefined
     );
   }
 

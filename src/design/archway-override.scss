@@ -85,7 +85,7 @@ button.archway:hover {
     display: flex;
     flex-direction: column;
     .el-box {
-      padding: 1.3em;
+      padding: 2em;
       display: flex;
       flex-grow: 1;
       flex-direction: column;
@@ -93,10 +93,8 @@ button.archway:hover {
   }
 }
 
-.archway-claim-button {
+.archway-orange-button {
   border: none;
-  width: 7.71em;
-  font-weight: bold;
   background: vars.$archway-primary-orange;
   color: #fff!important;
 
@@ -134,23 +132,23 @@ button.archway:hover {
 
 .el-progress .el-progress-bar__inner {
   border: none!important;
-  background-color: #000;
+  background-color: vars.$archway-primary-orange!important;
 }
 .el-progress.is-warning .el-progress-bar__inner {
-  background-color: vars.$archway-primary-orange;
-}
-
-.el-progress.is-success .el-progress__text,
-.el-progress.is-warning .el-progress__text,
-.el-progress.is-exception .el-progress__text {
-  color: #000;
+  background-color: #000;
 }
 
 .campaign-card {
+
   border-radius: 0.75em;
-  .top-half,
-  .bottom-half {
+  .top-half {
+    background-color: white;;
     border: none;
+  }
+  .bottom-half {
+    color: black;
+    border: none;
+    background-color: #F7F7F7;
   }
 }
 
