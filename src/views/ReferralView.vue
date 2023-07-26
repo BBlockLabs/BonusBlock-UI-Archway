@@ -25,7 +25,7 @@
         </p>
 
         <div v-if="!$mq.lg" class="tc mt-large">
-          <img :src="PngReferral" alt style="height: 50vh" />
+          <img :src="PngReferral" alt style="height: 80vh" />
         </div>
       </el-col>
 
