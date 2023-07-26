@@ -1,42 +1,264 @@
 <template>
-  <PageWrapper
-    style="justify-content: center"
-    class="d-flex is-justify-center flex-column h-100 fs-slightly-larger"
-  >
-    <el-row class="mb-medium" justify="center">
-      <el-col :span="-1">
-        <strong style="font-size: 3em" class="archway-orange">Coming soon</strong>
-      </el-col>
-    </el-row>
+  <PageWrapper full-width class="m-0 fs-slightly-larger">
+    <div class="limit-width">
+      <box-wrapper type="white" round class="p-large">
+        <el-row align="middle" justify="space-between">
+          <el-col class="fs-medium bold" :span="-1">
+            <el-row class="flex-nowrap" align="middle">
+              <el-avatar :src="getAvatar(walletAddress)" class="mr-small">
+              </el-avatar>
 
-    <el-row class="mb-large" justify="center">
-      <el-col :span="-1">
-        <span class="fs-medium">Check out the following articles while you wait:</span>
-      </el-col>
-    </el-row>
+              <el-col :span="-1">
+                <span class="m-auto">{{ walletAddress }}</span>
+              </el-col>
+            </el-row>
+          </el-col>
+          <el-col class="pointer" :span="-1">
+            <el-button class="mr-small is-link" type="primary"
+              >Share progress on Twitter
+              <svg-twitter class="ml-small icon-small" />
+            </el-button>
+          </el-col>
+        </el-row>
+        <el-row class="fs-medium mt-large" justify="space-between">
+          <el-col :span="-1">
+            <el-row> Your rank </el-row>
+            <el-row class="fs-extra-large archway-orange"> #{{ 8 }} </el-row>
+          </el-col>
+          <el-col :span="-1">
+            <el-row>
+              <span> Your XP </span>
+            </el-row>
+            <el-row class="fs-extra-large">
+              <span class="mx-auto">
+                {{ 0 }}
+              </span>
+            </el-row>
+          </el-col>
+          <el-col :span="-1">
+            <el-row> Your top dApp </el-row>
+            <el-row class="fs-extra-large">
+              {{ "PeerSwap" }}
+            </el-row>
+          </el-col>
+        </el-row>
+        <hr />
 
-    <el-row>
-      <el-col>
-        <ArchwayInfoCard />
-      </el-col>
-    </el-row>
+        <el-row class="mb-large">TODO</el-row>
+        <el-row justify="space-between">
+          <el-col :span="-1">
+            <el-row>
+              <strong class="fs-medium">Mint badge progress</strong>
+            </el-row>
+            <el-row class="archway-orange"> {{ 1234 }} / {{ 1234 }} XP </el-row>
+          </el-col>
+
+          <el-col :span="-1">
+            <el-button class="mr-small is-link" type="primary"
+              >Share badge</el-button
+            >
+            <el-button type="primary">Mint badge</el-button>
+          </el-col>
+        </el-row>
+      </box-wrapper>
+
+      <el-row align="middle" justify="space-between">
+        <el-col :span="-1">
+          <h2>Leaderboard</h2>
+        </el-col>
+        <el-col class="archway-orange pointer" :span="-1">
+          How calculations work?</el-col
+        >
+      </el-row>
+
+      <el-row class="fs-medium bold leaderboard-header">
+        <el-col class="m-auto" :span="-1">Rank</el-col>
+        <el-col class="m-auto" :span="-1">User</el-col>
+        <el-col class="m-auto" :span="-1">Total on-chain</el-col>
+        <el-col class="m-auto" :span="-1">Top dApp</el-col>
+        <el-col class="m-auto" :span="-1">Community XP</el-col>
+      </el-row>
+      <template v-if="leaderboard.searchResults.length > 0">
+        <el-row
+          v-for="(leaderboardItem, index) in leaderboard.searchResults"
+          :key="leaderboardItem.walletAddress"
+          class="leaderboard-element"
+        >
+          <el-col class="m-auto" :span="-1">
+            <strong class="fs-large bold archway-orange">{{
+              index + 1 + (perPage * page - perPage)
+            }}</strong>
+          </el-col>
+          <el-col class="fs-medium bold" :span="-1">
+            <el-row class="flex-nowrap" align="middle">
+              <el-avatar
+                :src="getAvatar(leaderboardItem.walletAddress)"
+                class="mr-small"
+              >
+              </el-avatar>
+
+              <el-col :span="-1">
+                <span class="m-auto">{{ leaderboardItem.walletAddress }}</span>
+              </el-col>
+            </el-row>
+          </el-col>
+          <el-col class="m-auto fs-medium" :span="-1">{{
+            leaderboardItem.totalOnChain
+          }}</el-col>
+          <el-col class="m-auto fs-medium" :span="-1">{{
+            leaderboardItem.topDapp
+          }}</el-col>
+          <el-col class="m-auto fs-medium bold archway-orange" :span="-1">{{
+            leaderboardItem.score
+          }}</el-col>
+        </el-row>
+        <el-row justify="space-between" class="px-large my-large">
+          <el-col :span="-1" class="bold">
+            showing
+            <span class="archway-orange"
+              >{{ page * perPage - perPage + 1 }}-{{
+                page * perPage - perPage + leaderboard.searchResults.length
+              }}</span
+            >
+            of {{ leaderboard.totalRows }} results
+          </el-col>
+          <el-col :span="-1">
+            <el-pagination
+              class="fs-extra-large"
+              layout="prev, pager, next"
+              :total="leaderboard.totalRows"
+              :page-size="perPage"
+              @current-change="currentPageChange"
+            />
+          </el-col>
+          <el-col :span="-1">
+            <strong>Results per page: </strong>
+            <strong class="archway-orange">{{ perPage }}</strong>
+            <el-dropdown
+              class="dropdown"
+              placement="top-end"
+              :hide-on-click="true"
+              @command="perPageChange"
+            >
+              <span class="el-dropdown-link">
+                <el-icon class="el-icon--right">
+                  <svg-chevron-up />
+                </el-icon>
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item :command="15">15</el-dropdown-item>
+                  <el-dropdown-item :command="50">50</el-dropdown-item>
+                  <el-dropdown-item :command="75">75</el-dropdown-item>
+                  <el-dropdown-item :command="100">100</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </el-col>
+        </el-row>
+      </template>
+      <template v-else>
+        <el-row class="fs-large mt-extra-large" justify="center"
+          >No data</el-row
+        >
+      </template>
+    </div>
   </PageWrapper>
-
 </template>
 
 <script setup lang="ts">
 import PageWrapper from "@/components/PageWrapper.vue";
-import ArchwayInfoCard from "@/components/ArchwayInfoCard.vue";
+import SvgChevronUp from "@/assets/icons/nav-arrow-up.svg?component";
 import { store } from "@/store";
 import PaginationRequest from "@/common/api/PaginationRequest";
-import type ArchwayLeaderboardResponse from "@/common/api/archway/ArchwayLeaderboardResponse";
+import ArchwayLeaderboardResponse from "@/common/api/archway/ArchwayLeaderboardResponse";
+import BoxWrapper from "@/components/BoxWrapper.vue";
+import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
+import { renderDiscs } from "@whi/identicons";
+import ArchwayLeaderboardRecordDto from "@/common/api/archway/ArchwayLeaderboardRecordDto";
+import SvgTwitter from "@/assets/icons/twitter.svg";
+
+let page = ref(1);
+let perPage = ref(15);
+let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
+  new ArchwayLeaderboardResponse()
+);
+let myLeaderboardSpot: Ref<ArchwayLeaderboardRecordDto | undefined> = ref(
+  new ArchwayLeaderboardRecordDto()
+);
 
 async function getLeaderboard() {
-  let pagination: PaginationRequest = new PaginationRequest(1, 15);
-  let leaderboardResponse: ArchwayLeaderboardResponse = await store.dispatch("ArchwayHttpModule/getLeaderboard", pagination);
-  console.log(leaderboardResponse);
+  let pagination: PaginationRequest = new PaginationRequest(
+    page.value,
+    perPage.value
+  );
+  let ret: ArchwayLeaderboardResponse = await store.dispatch(
+    "ArchwayHttpModule/getLeaderboard",
+    pagination
+  );
+
+  //TODO update backend
+  myLeaderboardSpot.value = ret.searchResults.find(
+    (row) => (row.walletAddress = walletAddress.value)
+  );
+
+  leaderboard.value = ret;
 }
+
+const walletAddress: ComputedRef<string> = computed(
+  () => store.state.UserModule?.activeWallet?.address || ""
+);
+
+function currentPageChange(newVal: number) {
+  page.value = newVal;
+  getLeaderboard();
+}
+
+function perPageChange(newVal: number) {
+  perPage.value = newVal;
+  getLeaderboard();
+}
+
+function getAvatar(userWallet: string) {
+  return renderDiscs({
+    seed: userWallet,
+    base: 0.06,
+    size: 170,
+    maxDiscs: 4,
+    colorRange: 1,
+  }).dataURL;
+}
+
+onMounted(() => {
+  // @ts-ignore
+  getLeaderboard();
+});
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+@use "@/design/vars.scss";
+.leaderboard-header {
+  display: grid;
+  grid-template-columns: 1fr 6fr 2fr 2fr 2fr;
+  align-items: center;
+  padding: 0.6em;
+}
+
+.leaderboard-element {
+  display: grid;
+  grid-template-columns: 1fr 6fr 2fr 2fr 2fr;
+  background-color: white;
+  margin-bottom: 1em;
+  border-radius: 16px;
+  padding: 0.6em;
+}
+
+.el-dropdown-menu__item:not(.is-disabled) {
+  font-size: 1.5em;
+  font-weight: 700;
+  &:focus,
+  &:hover {
+    color: vars.$archway-primary-orange;
+  }
+}
 </style>

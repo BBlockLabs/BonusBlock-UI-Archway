@@ -305,3 +305,23 @@ button.archway:hover {
     color: rgb(97 96 95);
   }
 }
+
+.el-pagination {
+  --el-pagination-bg-color: vars.$archway-warm-grey;
+  --el-pagination-button-disabled-color: vars.$archway-warm-grey;
+  --el-pagination-button-disabled-bg-color: vars.$archway-warm-grey;
+  --el-pagination-hover-color: #FF4D00;
+
+  .el-pager li {
+    font-weight: 700;
+    font-size: 18px;
+    &.is-active {
+      text-decoration: underline;
+      text-underline-offset: 6px;
+      text-decoration-thickness: 2px;
+    }
+  }
+  .btn-prev .el-icon, .btn-next .el-icon {
+    font-size: 1.6em;
+  }
+}
