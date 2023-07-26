@@ -1,8 +1,3 @@
-<script setup lang="ts">
-import PageWrapper from "@/components/PageWrapper.vue";
-import ArchwayInfoCard from "@/components/ArchwayInfoCard.vue";
-</script>
-
 <template>
   <PageWrapper
     style="justify-content: center"
@@ -29,4 +24,19 @@ import ArchwayInfoCard from "@/components/ArchwayInfoCard.vue";
 
 </template>
 
-<style scoped lang="scss"></style>
+<script setup lang="ts">
+import PageWrapper from "@/components/PageWrapper.vue";
+import ArchwayInfoCard from "@/components/ArchwayInfoCard.vue";
+import { store } from "@/store";
+import PaginationRequest from "@/common/api/PaginationRequest";
+import type ArchwayLeaderboardResponse from "@/common/api/archway/ArchwayLeaderboardResponse";
+
+async function getLeaderboard() {
+  let pagination: PaginationRequest = new PaginationRequest(1, 15);
+  let leaderboardResponse: ArchwayLeaderboardResponse = await store.dispatch("ArchwayHttpModule/getLeaderboard", pagination);
+  console.log(leaderboardResponse);
+}
+</script>
+
+<style scoped lang="scss">
+</style>

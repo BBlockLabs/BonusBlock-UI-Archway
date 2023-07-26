@@ -6,6 +6,7 @@ import type ReducedArchwayProductDto from "@/common/api/archway/ReducedArchwayPr
 import type ArchwayProductDto from "@/common/api/archway/ArchwayProductDto";
 import type ArchwayStatsDto from "@/common/api/archway/ArchwayStatsDto";
 import type ArchwayInfoRow from "@/common/api/archway/ArchwayInfoRow";
+import type ArchwayLeaderboardResponse from "@/common/api/archway/ArchwayLeaderboardResponse";
 export type Context = ActionContext<{}, RootStateInterface>;
 export type HttpAction = Action<{}, RootStateInterface>;
 
@@ -29,6 +30,13 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
       this: Store<RootStateInterface>,
       context: Context
     ) => Promise<void>);
+
+  getLeaderboard: HttpAction &
+    ((
+      this: Store<RootStateInterface>,
+      context: Context,
+      payload: PaginationRequest
+    ) => Promise<ArchwayLeaderboardResponse>);
 
   getInfo: HttpAction &
     ((
@@ -102,6 +110,29 @@ export default class Actions implements ActionsInterface {
     );
 
     context.commit("setArchwayStats", responseData.payload, {root: true});
+  };
+
+  getLeaderboard = async (
+    context: Context,
+    payload: PaginationRequest
+  ): Promise<ArchwayLeaderboardResponse> => {
+    const response: Response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/archway/leaderboard`,
+      {
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+          "X-Auth-Token": context.rootState.UserModule?.token || "",
+        },
+        method: "POST",
+      }
+    );
+
+    const responseData = await HttpResponse.fromResponse<ArchwayLeaderboardResponse>(
+      response
+    );
+
+    return responseData.payload;
   };
 
   getInfo = async (
