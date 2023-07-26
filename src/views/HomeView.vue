@@ -1,5 +1,5 @@
 <template>
-  <SvgHome style="position: absolute; right:0; top: 20vh; height: 80vh; max-width: 60vw"></SvgHome>
+  <SvgHome style="position: absolute; right:0; top: -4vh; height: 110vh; max-width: 80vw"></SvgHome>
   <el-main
     class="d-flex home-view px-extra-large flex-column"
   >
@@ -17,22 +17,17 @@
             <span class="archway-orange">Archway</span>
           </el-col>
         </el-row>
-        <el-row class="fs-slightly-larger mt-large" style="line-height: 1.2em">
+        <el-row class="subtitle-text mt-large " style="line-height: 1.2em">
           <el-col>
-            <span>Discover the </span>
-            <span class="archway-orange"
-              ><strong>Archway Ecosystem</strong></span
-            >
-            <br />
-            <span>with BonusBlock and earn <strong>$ARCH</strong></span>
+            <span>Your value capture chain. Discover the Archway <br> Ecosystem with BonusBlock and earn <strong>$ARCH</strong></span>
           </el-col>
         </el-row>
         <el-row class="mt-large">
           <box-wrapper
-            style="border-radius: 4px"
+            style="border-radius: 16px"
             type="white"
             round
-            class="pointer fs-large my-small p-small"
+            class="keplr-button pointer fs-large my-small p-small"
             @click="connectWallet()"
           >
             <el-row class="mx-medium is-align-middle" align="middle">
@@ -177,6 +172,18 @@ const connectWallet = async (): Promise<void> => {
   @media only screen and (max-width: 400px) {
     font-size: 8em;
   }
+}
+
+.subtitle-text{
+font-size: 2.2857em; //32px
+}
+
+.keplr-button{
+  padding-left: 1.6em;
+  padding-top: 1em;
+  padding-right: 1.6em;
+  padding-bottom: 1em;
+  box-shadow: 4px 24px 32px -4px rgba(0, 0, 0, 0.04);
 }
 
 .title-number {
