@@ -19,6 +19,7 @@ import ColoredCard from "@/components/ColoredCard.vue";
   width: 64px;
   height: 16px;
   background: v.$archway-warm-grey;
-  border-radius: 8px;
+  border-radius: 16px;
+  box-shadow: -8px 40px 70px -20px rgba(0, 0, 0, 0.2);
 }
 </style>
