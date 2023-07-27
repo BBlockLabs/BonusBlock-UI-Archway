@@ -338,7 +338,7 @@ onMounted(async () => {
 @use "@/design/vars.scss";
 
 .limit-width.leaderboard {
-  max-width: 850px;
+  max-width: 1000px;
 }
 
 .leaderboard-table {
