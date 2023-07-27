@@ -1,16 +1,12 @@
 <template>
   <PageWrapper full-width class="m-0 fs-slightly-larger">
-    <div class="limit-width">
+    <div class="limit-width leaderboard">
       <box-wrapper type="white" round class="p-large">
         <el-row align="middle" justify="space-between">
           <el-col class="fs-medium bold" :span="-1">
             <el-row class="flex-nowrap" align="middle">
-              <el-avatar :src="getAvatar(walletAddress)" class="mr-small">
-              </el-avatar>
-
-              <el-col :span="-1">
-                <span class="m-auto">{{ walletAddress }}</span>
-              </el-col>
+              <el-avatar :src="getAvatar(walletAddress)" class="mr-small"/>
+              <span class="m-auto">{{ walletAddress }}</span>
             </el-row>
           </el-col>
           <el-col class="pointer" :span="-1">
@@ -62,7 +58,7 @@
         </el-row>
       </box-wrapper>
 
-      <el-row align="middle" justify="space-between">
+      <el-row align="middle" justify="space-between" class="mt-medium">
         <el-col :span="-1">
           <h2>Leaderboard</h2>
         </el-col>
@@ -71,55 +67,56 @@
         >
       </el-row>
 
-      <el-row class="fs-medium bold leaderboard-header">
-        <el-col class="m-auto" :span="-1">Rank</el-col>
-        <el-col class="m-auto" :span="-1">User</el-col>
-        <el-col class="m-auto" :span="-1">Total on-chain</el-col>
-        <el-col class="m-auto" :span="-1">Top dApp</el-col>
-        <el-col class="m-auto" :span="-1">Community XP</el-col>
-      </el-row>
-      <template v-if="leaderboard.searchResults.length > 0">
-        <el-row
-          v-for="(leaderboardItem, index) in leaderboard.searchResults"
-          :key="leaderboardItem.walletAddress"
-          class="leaderboard-element"
-        >
-          <el-col class="m-auto" :span="-1">
-            <strong class="fs-large bold archway-orange">{{
-              index + 1 + (perPage * page - perPage)
-            }}</strong>
-          </el-col>
-          <el-col class="fs-medium bold" :span="-1">
-            <el-row class="flex-nowrap" align="middle">
+      <div class="leaderboard-table">
+        <div class="leaderboard-header">Rank</div>
+        <div class="leaderboard-header">User</div>
+        <div class="leaderboard-header"></div>
+        <div class="leaderboard-header">Total on-chain</div>
+        <div class="leaderboard-header">Top dApp</div>
+        <div class="leaderboard-header">Community XP</div>
+        <template v-if="leaderboard.searchResults.length > 0">
+          <template
+            v-for="(leaderboardItem, index) in leaderboard.searchResults"
+            :key="leaderboardItem.walletAddress"
+          >
+            <div class="leaderboard-element first">
+              <strong class="fs-large bold archway-orange">
+                {{ index + 1 + (perPage * page - perPage) }}
+              </strong>
+            </div>
+            <div class="leaderboard-element fs-medium bold">
               <el-avatar
                 :src="getAvatar(leaderboardItem.walletAddress)"
                 class="mr-small"
               >
               </el-avatar>
-
-              <el-col :span="-1">
-                <span class="m-auto">{{ leaderboardItem.walletAddress }}</span>
-              </el-col>
-            </el-row>
-          </el-col>
-          <el-col class="m-auto fs-medium" :span="-1">{{
-            leaderboardItem.totalOnChain
-          }}</el-col>
-          <el-col class="m-auto fs-medium" :span="-1">{{
-            leaderboardItem.topDapp
-          }}</el-col>
-          <el-col class="m-auto fs-medium bold archway-orange" :span="-1">{{
-            leaderboardItem.score
-          }}</el-col>
-        </el-row>
-        <el-row justify="space-between" class="px-large my-large">
+              <el-tooltip :content="leaderboardItem.walletAddress" placement="top">
+                <span style="width: 8em">
+                  {{ shortWallet(leaderboardItem.walletAddress) }}
+                </span>
+              </el-tooltip>
+            </div>
+            <div class="leaderboard-element">
+            </div>
+            <div class="leaderboard-element fs-medium">
+              {{ leaderboardItem.totalOnChain }}
+            </div>
+            <div class="leaderboard-element fs-medium">
+              {{ leaderboardItem.topDapp }}
+            </div>
+            <div class="leaderboard-element last fs-medium bold archway-orange">
+              {{ leaderboardItem.score }}
+            </div>
+          </template>
+        </template>
+      </div>
+      <template v-if="leaderboard.searchResults.length > 0">
+        <el-row justify="space-between" align="middle" class="px-large my-large">
           <el-col :span="-1" class="bold">
             showing
-            <span class="archway-orange"
-              >{{ page * perPage - perPage + 1 }}-{{
-                page * perPage - perPage + leaderboard.searchResults.length
-              }}</span
-            >
+            <span class="archway-orange">
+              {{ page * perPage - perPage + 1 }}-{{ page * perPage - perPage + leaderboard.searchResults.length }}
+            </span>
             of {{ leaderboard.totalRows }} results
           </el-col>
           <el-col :span="-1">
@@ -157,10 +154,10 @@
           </el-col>
         </el-row>
       </template>
-      <template v-else>
-        <el-row class="fs-large mt-extra-large" justify="center"
-          >No data</el-row
-        >
+      <template v-if="leaderboard.searchResults.length < 1">
+        <el-row class="fs-large mt-extra-large" justify="center">
+          No data
+        </el-row>
       </template>
     </div>
   </PageWrapper>
@@ -198,6 +195,13 @@ const walletAddress: ComputedRef<string> = computed(
   () => store.state.UserModule?.activeWallet?.address || ""
 );
 
+function shortWallet(str: any) {
+  if (typeof str !== "string" || str.length < 15) {
+    return str;
+  }
+  return str.substring(0, 10) + "..." + str.substring(str.length - 2);
+}
+
 function currentPageChange(newVal: number) {
   page.value = newVal;
   getLeaderboard();
@@ -226,20 +230,44 @@ onMounted(() => {
 
 <style lang="scss">
 @use "@/design/vars.scss";
-.leaderboard-header {
-  display: grid;
-  grid-template-columns: 1fr 6fr 2fr 2fr 2fr;
-  align-items: center;
-  padding: 0.6em;
+
+.limit-width.leaderboard {
+  max-width: 850px;
 }
 
-.leaderboard-element {
+.leaderboard-table {
   display: grid;
-  grid-template-columns: 1fr 6fr 2fr 2fr 2fr;
-  background-color: white;
-  margin-bottom: 1em;
-  border-radius: 16px;
-  padding: 0.6em;
+  grid-template-columns: 1.5fr 6fr 1fr 3fr 3fr 3fr;
+  row-gap: 1em;
+
+  .el-avatar {
+    width: 2em;
+    height: 2em;
+  }
+
+  > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4em 0;
+
+    &.first {
+      border-bottom-left-radius: 1em;
+      border-top-left-radius: 1em;
+    }
+    &.last {
+      border-bottom-right-radius: 1em;
+      border-top-right-radius: 1em;
+    }
+  }
+
+  .leaderboard-header {
+    font-weight: bold;
+  }
+
+  .leaderboard-element {
+    background: #fff;
+  }
 }
 
 .el-dropdown-menu__item:not(.is-disabled) {

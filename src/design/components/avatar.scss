@@ -5,3 +5,7 @@
   border: 1px solid EPFunctions.getCssVar('avatar', 'border-color');
   flex-shrink: 0;
 }
+
+.el-avatar {
+  border: none;
+}
