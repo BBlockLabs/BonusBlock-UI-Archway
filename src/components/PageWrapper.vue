@@ -137,9 +137,10 @@ import TwitterBox from "@/components/TwitterBox.vue";
 import { StoreType, useStore } from "@/store";
 import SocialLinks from "@/components/ExternalLinks.vue";
 
-defineOptions({
-  inheritAttrs: false,
-});
+// 2023-07-27 - commented out since it causes an error on every page
+// defineOptions({
+//   inheritAttrs: false,
+// });
 
 interface Props {
   cardBack?: boolean;

@@ -28,7 +28,7 @@
             type="white"
             round
             class="keplr-button pointer fs-large my-small p-small"
-            @click="connectWallet()"
+            @click="connectWallet('keplr')"
           >
             <el-row class="mx-medium is-align-middle" align="middle">
               <el-col class="d-flex" :span="-1">
@@ -36,6 +36,23 @@
               </el-col>
               <el-col class="fs-base" :span="-1">
                 <strong>Continue with Keplr</strong>
+              </el-col>
+            </el-row>
+          </box-wrapper>
+
+          <box-wrapper
+            style="border-radius: 16px"
+            type="white"
+            round
+            class="keplr-button pointer fs-large my-small p-small ml-small"
+            @click="connectWallet('leap')"
+          >
+            <el-row class="mx-medium is-align-middle" align="middle">
+              <el-col class="d-flex" :span="-1">
+                <svg-leap-wallet class="mr-small icon-small w-auto" />
+              </el-col>
+              <el-col class="fs-base" :span="-1">
+                <strong>Continue with Leap</strong>
               </el-col>
             </el-row>
           </box-wrapper>
@@ -53,6 +70,7 @@ import DialogKeplr from "@/components/KeplrDialog.vue";
 import FooterComponent from "@/components/HomeFooter.vue";
 import SvgLogo from "@/assets/archway/archway-logo.svg";
 import SvgKeplr from "@/assets/icons/keplr.svg?component";
+import SvgLeapWallet from "@/assets/icons/leap-wallet.svg?component"
 import SvgHome from "@/assets/archway/home-illustration.svg";
 import type { Ref } from "vue";
 import { ref } from "vue";
@@ -103,7 +121,7 @@ async function onKeplrLogin(): Promise<void> {
   await router.push("/explore");
 }
 
-const connectWallet = async (): Promise<void> => {
+const connectWallet = async (wallet: "keplr" | "leap"): Promise<void> => {
   let chain = new Chain();
   let currentChain = ArchwayKeplrClient.getChain();
   let currentCurrency = ArchwayKeplrClient.getCurrency();
@@ -116,9 +134,20 @@ const connectWallet = async (): Promise<void> => {
 
   store.commit("setLoading", true);
 
+  let dispatch: string;
+
+  switch (wallet) {
+    case "keplr":
+      dispatch = 'UserModule/keplrLogin';
+      break;
+    case "leap":
+      dispatch = 'UserModule/leapLogin';
+      break;
+  }
+
   try {
     await store.dispatch(
-      "UserModule/keplrLogin",
+      dispatch,
       new LinkActionPayload(
         chain,
         route.query.ref

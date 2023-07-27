@@ -27,6 +27,7 @@ import MetamaskClient from "@/common/MetamaskClient";
 import Chain from "@/common/Chain";
 import Toast from "@/common/Toast";
 import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
+import type LeapWallet from "@/common/LeapWallet";
 
 export type Context = ActionContext<StateInterface, RootStateInterface>;
 export type UserAction = Action<StateInterface, RootStateInterface>;
@@ -346,4 +347,69 @@ export default class Actions implements ActionsInterface {
       await context.dispatch("removeSession");
     }
   };
+
+  leapLogin = async (
+    context: Context,
+    payload: LinkActionPayload
+  ): Promise<void> => {
+    if (!window.leap) {
+      throw new FormattedError(
+        "Leap wallet extension not reachable. Enable or install it first and reload the page."
+      );
+    }
+
+    const leap: LeapWallet = window.leap
+
+    const offlineSigner: OfflineAminoSigner = await leap.getOfflineSignerOnlyAmino(payload.chain.id);
+
+    const accounts = await offlineSigner.getAccounts();
+
+    if (accounts.length === 0) {
+      throw new NoKeplrAccountsError();
+    }
+
+    let nonce: string;
+    try {
+      nonce = crypto.randomUUID();
+    } catch (e) {
+      nonce = new Date().valueOf() + "-" + Math.random();
+    }
+
+    const ticket: string = await context.dispatch(
+      "HttpModule/getAuthTicket",
+      nonce,
+      { root: true }
+    );
+
+    let signResponse: AminoSignResponse;
+
+    try {
+      signResponse = await window.leap.signAmino(
+        payload.chain.id,
+        accounts[0].address,
+        new KeplrLoginSignDoc(payload.chain.id, payload.chain.denom, ticket),
+        new LoginSignOptions()
+      );
+    } catch (error: any | Error) {
+      if (error.message === "Request rejected") {
+        throw new FormattedError("Sign request rejected, can't connect.");
+      } else {
+        console.error(error);
+
+        throw new FormattedError("Could not sign the connection request");
+      }
+    }
+
+    const loginResponse: LoginResponse = await context.dispatch(
+      "HttpModule/keplrCheckResponse",
+      new KeplrCheckResponseRequest(
+        JSON.stringify(signResponse),
+        nonce,
+        payload.referral
+      ),
+      { root: true }
+    );
+
+    await context.dispatch("setLoginResponseData", loginResponse);
+  }
 }
