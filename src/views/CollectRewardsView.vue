@@ -152,7 +152,17 @@
                     type="primary"
                     class="archway-orange-button"
                     :disabled="!campaign.amount"
-                    @click="claimCampaign(campaign)"
+                    @click="claimCampaign(campaign, 'keplr')"
+                  >
+                    <svg-lock v-if="!campaign.amount" />
+                    Claim with keplr
+                  </el-button>
+
+                  <el-button
+                    type="primary"
+                    class="archway-orange-button"
+                    :disabled="!campaign.amount"
+                    @click="claimCampaign(campaign, 'leap')"
                   >
                     <svg-lock v-if="!campaign.amount" />
                     Claim
@@ -210,6 +220,7 @@ import router from "@/router";
 import ProductList from "@/components/ProductList.vue";
 import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 import Toast from "@/common/Toast";
+import {ArchwayLeapClient} from "@/common/ArchwayLeapClient";
 
 const currencyIcons = {
   ARY: SvgAry,
@@ -285,14 +296,15 @@ function openCampaignDetails(campaign: CampaignWithRewardDto): void {
   router.push("/campaign/" + campaign.id);
 }
 
-async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
-  console.log("asdasd");
+async function claimCampaign(campaign: CampaignWithRewardDto, walletClient: "keplr" | "leap"): Promise<void> {
+  const client = walletClient === "keplr" ? ArchwayKeplrClient : ArchwayLeapClient;
+
   claimModal.campaign = campaign;
   claimModal.loading = true;
   if (campaign.smartContractAddress.startsWith("archway")) {
     let claimFee;
     try {
-      claimFee = await ArchwayKeplrClient.getRewardClaimFee(campaign.smartContractAddress)
+      claimFee = await client.getRewardClaimFee(campaign.smartContractAddress)
     } catch (e: any) {
       Toast.make("Claim failure!", e.message, "error", false, 3000);
       return;
@@ -302,7 +314,7 @@ async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
       await store.dispatch("HttpModule/claimRewardInit", {
         campaignId: campaign.id,
       });
-      await ArchwayKeplrClient.claimArchwayReward(campaign.smartContractAddress, campaign.id, claimFee);
+      await client.claimArchwayReward(campaign.smartContractAddress, campaign.id, claimFee);
 
       let index = campaigns.indexOf(campaign);
       campaigns.splice(index, 1);

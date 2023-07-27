@@ -1,4 +1,4 @@
-import type { OfflineAminoSigner } from "@keplr-wallet/types";
+import type {AccountData, Keplr, OfflineAminoSigner} from "@keplr-wallet/types";
 import { SigningArchwayClient } from "@archwayhq/arch3.js";
 import type { Coin } from "@cosmjs/stargate";
 
@@ -63,33 +63,35 @@ export default class ArchwayKeplrClient {
     features: ["cosmwasm", "ibc-transfer", "ibc-go"],
   };
 
-  static async checkChain(chain: any) {
-    if (window.keplr) {
-      try {
-        await window.keplr.enable(chain.chainId);
-      } catch (e) {
-        await window.keplr.experimentalSuggestChain(this.getChain());
-        await window.keplr.enable(chain.chainId);
-      }
-    } else {
+  public static get client(): Keplr {
+    if (!window.keplr) {
       throw new Error("Keplr is not detected");
+    }
+
+    return window.keplr;
+  }
+
+  static async checkChain(chain: any) {
+    const client: Keplr = this.client;
+
+    try {
+      await client.enable(chain.chainId);
+    } catch (e) {
+      await client.experimentalSuggestChain(this.getChain());
+      await client.enable(chain.chainId);
     }
   }
 
   static async chainExists(chainId: string) {
-    if (window.keplr) {
-      await window.keplr.enable(chainId);
-    } else {
-      throw new Error("Keplr is not detected");
-    }
+    const client: Keplr = this.client;
+
+    await client.enable(chainId);
   }
 
   static async suggestChain() {
-    if (window.keplr) {
-      await window.keplr.experimentalSuggestChain(this.getChain());
-    } else {
-      throw new Error("Keplr is not detected");
-    }
+    const client: Keplr = this.client;
+
+    await client.experimentalSuggestChain(this.getChain());
   }
 
   static async getAccounts(offlineSigner: OfflineAminoSigner) {
@@ -103,12 +105,12 @@ export default class ArchwayKeplrClient {
   static async getOfflineSigner() {
     // @ts-ignore
     const ret = window.getOfflineSignerOnlyAmino(
-      ArchwayKeplrClient.getChain().chainId
+      this.getChain().chainId
     );
     if (!ret) {
       console.log(
         "getOfflineSigner",
-        ArchwayKeplrClient.getChain().chainId,
+        this.getChain().chainId,
         ret
       );
     }
@@ -119,32 +121,18 @@ export default class ArchwayKeplrClient {
     queryMsg: any,
     chainId: string
   ) {
-    if (!window.keplr) {
-      throw new Error("Keplr is not detected");
-    }
-    window.keplr.defaultOptions = {
+    const client: Keplr = this.client;
+
+    client.defaultOptions = {
       sign: {
         preferNoSetFee: true,
         preferNoSetMemo: true,
       },
     };
 
-    await window.keplr.enable(chainId);
+    await client.enable(chainId);
 
-    const offlineSigner = await this.getOfflineSigner();
-    if (!offlineSigner) {
-      throw new Error("Failed to get offline signer");
-    }
-
-    const userAccounts = await this.getAccounts(offlineSigner);
-    if (!userAccounts) {
-      throw new Error("Failed to get user accounts");
-    }
-
-    const signingArchwayClient = await this.getArchwayClient(offlineSigner);
-    if (!signingArchwayClient) {
-      throw new Error("Failed to get signing Archway Client");
-    }
+    const signingArchwayClient = await this.getSigningClinet();
 
     let result;
     try {
@@ -158,7 +146,6 @@ export default class ArchwayKeplrClient {
     }
     return result;
   }
-
   static async executeContractMsg(
     contractAddress: string,
     executeMsg: any,
@@ -166,32 +153,25 @@ export default class ArchwayKeplrClient {
     memo?: string,
     funds?: Coin[]
   ) {
-    if (!window.keplr) {
+    let client: Keplr;
+
+    try {
+      client = this.client;
+    } catch {
       return false;
     }
-    window.keplr.defaultOptions = {
+
+    client.defaultOptions = {
       sign: {
         preferNoSetFee: true,
         preferNoSetMemo: true,
       },
     };
 
-    await window.keplr.enable(chainId);
+    await client.enable(chainId);
 
-    const offlineSigner = await this.getOfflineSigner();
-    if (!offlineSigner) {
-      throw new Error("Failed to get offline signer");
-    }
-
-    const userAccounts = await this.getAccounts(offlineSigner);
-    if (!userAccounts) {
-      throw new Error("Failed to get user accounts");
-    }
-
-    const signingArchwayClient = await this.getArchwayClient(offlineSigner);
-    if (!signingArchwayClient) {
-      throw new Error("Failed to get signing Archway Client");
-    }
+    const userAccounts = await this.getUserAccounts();
+    const signingArchwayClient = await this.getSigningClinet();
 
     try {
       await signingArchwayClient.execute(
@@ -247,7 +227,8 @@ export default class ArchwayKeplrClient {
         campaign_id: campaignId,
       },
     };
-    return await ArchwayKeplrClient.executeContractMsg(
+
+    return await this.executeContractMsg(
       contractAddress,
       executeMsg,
       currentChain.chainId,
@@ -273,7 +254,7 @@ export default class ArchwayKeplrClient {
     };
     let result;
     try {
-      result = await ArchwayKeplrClient.queryContract(
+      result = await this.queryContract(
         contractAddress,
         queryMsg,
         currentChain.chainId
@@ -286,4 +267,37 @@ export default class ArchwayKeplrClient {
     }
     return result;
   }
+
+  private static async getSigningClinet(): Promise<SigningArchwayClient> {
+    const offlineSigner = await this.getOfflineSigner();
+
+    if (!offlineSigner) {
+      throw new Error("Failed to get offline signer");
+    }
+
+    const signingArchwayClient = await this.getArchwayClient(offlineSigner);
+
+    if (!signingArchwayClient) {
+      throw new Error("Failed to get signing Archway Client");
+    }
+
+    return signingArchwayClient;
+  }
+
+  private static async getUserAccounts(): Promise<readonly AccountData[]> {
+    const offlineSigner = await this.getOfflineSigner();
+
+    if (!offlineSigner) {
+      throw new Error("Failed to get offline signer");
+    }
+
+    const userAccounts = await this.getAccounts(offlineSigner);
+
+    if (!userAccounts) {
+      throw new Error("Failed to get user accounts");
+    }
+
+    return userAccounts;
+  }
+
 }
