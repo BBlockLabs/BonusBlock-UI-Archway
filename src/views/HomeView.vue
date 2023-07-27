@@ -17,7 +17,7 @@
             <span class="archway-orange">Archway</span>
           </el-col>
         </el-row>
-        <el-row class="subtitle-text mt-large " style="line-height: 1.2em">
+        <el-row class="fs-extra-large mt-large" style="line-height: 1.2em">
           <el-col>
             <span>Your value capture chain. Discover the Archway <br> Ecosystem with BonusBlock and earn <strong>$ARCH</strong></span>
           </el-col>
@@ -70,7 +70,7 @@ import DialogKeplr from "@/components/KeplrDialog.vue";
 import FooterComponent from "@/components/HomeFooter.vue";
 import SvgLogo from "@/assets/archway/archway-logo.svg";
 import SvgKeplr from "@/assets/icons/keplr.svg?component";
-import SvgLeapWallet from "@/assets/icons/leap-wallet.svg?component"
+import SvgLeapWallet from "@/assets/archway/leap.svg?component";
 import SvgHome from "@/assets/archway/home-illustration.svg";
 import type { Ref } from "vue";
 import { ref } from "vue";
@@ -203,15 +203,8 @@ const connectWallet = async (wallet: "keplr" | "leap"): Promise<void> => {
   }
 }
 
-.subtitle-text{
-font-size: 2.2857em; //32px
-}
-
-.keplr-button{
-  padding-left: 1.6em;
-  padding-top: 1em;
-  padding-right: 1.6em;
-  padding-bottom: 1em;
+.keplr-button {
+  padding: 1em 1.6em;
   box-shadow: 4px 24px 32px -4px rgba(0, 0, 0, 0.04);
 }
 
