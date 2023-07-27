@@ -322,15 +322,12 @@ async function claimCampaign(campaign: CampaignWithRewardDto, walletClient: "kep
       claimModal.open = true;
     } catch (e: any) {
       claimModal.open = false;
-      console.log("1312323");
       Toast.make("Claim failure!", e.message, "error", false, 3000);
     }
     claimModal.loading = false;
-    console.log("1312323");
     try {
-      console.log("123");
       await store.dispatch("HttpModule/claimRewardCheck", {});
-    }catch (error: any){}
+    }catch (ignoredError: any){}
     return;
   }
 

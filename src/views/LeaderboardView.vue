@@ -175,7 +175,6 @@ import ArchwayLeaderboardResponse from "@/common/api/archway/ArchwayLeaderboardR
 import BoxWrapper from "@/components/BoxWrapper.vue";
 import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
 import { renderDiscs } from "@whi/identicons";
-import ArchwayLeaderboardRecordDto from "@/common/api/archway/ArchwayLeaderboardRecordDto";
 import SvgTwitter from "@/assets/icons/twitter.svg";
 
 let page = ref(1);
@@ -183,26 +182,16 @@ let perPage = ref(15);
 let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
   new ArchwayLeaderboardResponse()
 );
-let myLeaderboardSpot: Ref<ArchwayLeaderboardRecordDto | undefined> = ref(
-  new ArchwayLeaderboardRecordDto()
-);
 
 async function getLeaderboard() {
   let pagination: PaginationRequest = new PaginationRequest(
     page.value,
     perPage.value
   );
-  let ret: ArchwayLeaderboardResponse = await store.dispatch(
+  leaderboard.value = await store.dispatch(
     "ArchwayHttpModule/getLeaderboard",
     pagination
   );
-
-  //TODO update backend
-  myLeaderboardSpot.value = ret.searchResults.find(
-    (row) => (row.walletAddress = walletAddress.value)
-  );
-
-  leaderboard.value = ret;
 }
 
 const walletAddress: ComputedRef<string> = computed(
