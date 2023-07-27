@@ -1,13 +1,42 @@
 <template>
   <PageWrapper full-width class="m-0 fs-slightly-larger">
+    <el-dialog
+      :show-close="false"
+      v-model="calculationDialog"
+      class="fs-large calculation-dialog"
+    >
+      <el-row justify="center">
+          <h2 class="w-100 tc">How calculations work?</h2>
+          <img style="border-radius: 18px" class="w-100" :src="JpgMissionCardSample" alt="Example mission">
+
+        <div class="tc fs-medium mt-large mx-large">
+          <div>
+            Accomplish missions to earn <span class="archway-orange">Community XP</span>, which will elevate your rank as you gain more experience.
+          </div>
+          <div class="mt-small">
+            <span class="archway-orange">Community XP</span> serves the additional purpose of unlocking various community badges!
+          </div>
+          <el-button
+            style="width: 100%"
+            class="mt-small"
+            @click="calculationDialog = false"
+            type="secondary"
+          >
+            Close</el-button
+          >
+        </div>
+      </el-row>
+    </el-dialog>
+
     <div class="limit-width leaderboard">
-      {{ leaderboard }}
-      <box-wrapper type="white" round class="p-large">
+      <box-wrapper type="white" round class="mt-large p-large">
         <el-row align="middle" justify="space-between">
           <el-col class="fs-medium bold" :span="-1">
             <el-row class="flex-nowrap" align="middle">
               <el-avatar :src="getAvatar(walletAddress)" class="mr-small"/>
-              <span class="m-auto">{{ walletAddress }}</span>
+              <el-tooltip :content="walletAddress" placement="top">
+                <span class="m-auto">{{ shortWallet(walletAddress) }}</span>
+              </el-tooltip>
             </el-row>
           </el-col>
           <el-col v-if="leaderboard.myLeaderboardSpot" class="pointer" :span="-1">
@@ -18,7 +47,7 @@
           </el-col>
         </el-row>
         <el-row class="fs-medium mt-large" justify="space-between">
-          <el-col :span="-1">
+          <el-col class="flex-grow flex-basis-0" :span="-1">
             <el-row> Your rank </el-row>
             <el-row class="fs-extra-large archway-orange">
               {{
@@ -42,7 +71,7 @@
               </span>
             </el-row>
           </el-col>
-          <el-col :span="-1">
+          <el-col style="align-items: flex-end;" class="d-flex flex-basis-0 flex-column flex-grow" :span="-1">
             <el-row> Your top dApp </el-row>
             <el-row class="fs-extra-large">
               {{
@@ -55,36 +84,50 @@
         </el-row>
         <hr />
 
-        <el-row style="margin-top: 6em" class="mb-large mr-large">
-          <el-col class="mr-large">
+        <el-row style="margin-top: 7em" class="m-large">
+          <el-col style="position: relative;">
+
+            <el-progress
+              :percentage="
+                leaderboard.myLeaderboardSpot
+                  ? getXpPercentage(leaderboard.myLeaderboardSpot.score)
+                  : 0
+              "
+              status="success"
+              :stroke-width="6"
+              :show-text="false"
+            ></el-progress>
+
             <span
               v-for="value in BADGE_XP"
               :key="value"
-              style="position: absolute"
+              style="position: absolute; top: 0"
               :style="'left: ' + getXpPercentage(value) + '%'"
-            >
 
+            >
               <component
                 :is="getBadgeForXp(value)"
                 style="
                   position: absolute;
                   height: 5em;
-                  bottom: 0.5em;
-                  left: -2em;
+                  bottom: 0.8em;
+                  left: -2.5em;
                 "
               />
+              <SvgCircle
+                style="
+                  position: absolute;
+                  width: 0.8em;
+                  left: -0.4em;
+                  top: -0.16em;
+                "
+                :class="circleOrangeForXp(value) ? 'archway-orange' : ''"
+                :style="circleOrangeForXp(value) ? '' : 'color: #F2EFED;'"
+              />
             </span>
-          </el-col>
-          <el-col>
-            <el-progress
-              :percentage="getXpPercentage"
-              status="success"
-              :stroke-width="6"
-              :show-text="false"
-            ></el-progress>
-          </el-col>
 
 
+          </el-col>
         </el-row>
         <el-row justify="space-between">
           <el-col :span="-1">
@@ -107,7 +150,7 @@
             </el-row>
           </el-col>
 
-          <el-col :span="-1">
+          <el-col v-if="leaderboard.myLeaderboardSpot" :span="-1">
             <el-button class="mr-small is-link" type="primary"
               >Share badge</el-button
             >
@@ -120,7 +163,7 @@
         <el-col :span="-1">
           <h2>Leaderboard</h2>
         </el-col>
-        <el-col class="archway-orange pointer" :span="-1">
+        <el-col @click="calculationDialog = true" class="archway-orange pointer" :span="-1">
           How calculations work?</el-col
         >
       </el-row>
@@ -134,12 +177,12 @@
         <div class="leaderboard-header">Community XP</div>
         <template v-if="leaderboard.searchResults.length > 0">
           <template
-            v-for="(leaderboardItem, index) in leaderboard.searchResults"
+            v-for="leaderboardItem in leaderboard.searchResults"
             :key="leaderboardItem.walletAddress"
           >
             <div class="leaderboard-element first">
               <strong class="fs-large bold archway-orange">
-                {{ index + 1 + (perPage * page - perPage) }}
+                {{ leaderboardItem.rank }}
               </strong>
             </div>
             <div class="leaderboard-element fs-medium bold">
@@ -239,7 +282,11 @@ import SvgBadge5000 from "@/assets/badges/5000.svg";
 import SvgBadge5000Lock from "@/assets/badges/5000-locked.svg";
 import SvgBadge10000 from "@/assets/badges/10000.svg";
 import SvgBadge10000Lock from "@/assets/badges/10000-locked.svg";
+import SvgCircle from "@/assets/archway/circle.svg";
+import JpgMissionCardSample from "@/assets/archway/mission-card-sample.jpg";
 
+
+let calculationDialog = ref(false);
 let page = ref(1);
 let perPage = ref(15);
 let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
@@ -319,6 +366,13 @@ function getBadgeForXp(givenXp: number){
   }
 }
 
+function circleOrangeForXp(givenXp: number): boolean {
+  let currentXp: number = leaderboard.value.myLeaderboardSpot
+    ? leaderboard.value.myLeaderboardSpot.score
+    : 0;
+  return currentXp >= givenXp;
+}
+
 function getAvatar(userWallet: string) {
   return renderDiscs({
     seed: userWallet,
@@ -384,5 +438,10 @@ onMounted(async () => {
   &:hover {
     color: vars.$archway-primary-orange;
   }
+}
+
+.calculation-dialog {
+  background-color: vars.$archway-warm-grey;
+  max-width: 20em;
 }
 </style>

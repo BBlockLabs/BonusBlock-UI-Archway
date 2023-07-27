@@ -392,7 +392,6 @@ export default class Actions implements ActionsInterface {
     context: Context,
     payload: { campaignId: string }
   ): Promise<null> => {
-    console.log("123123123");
     const response: Response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/claim/init`,
       {
