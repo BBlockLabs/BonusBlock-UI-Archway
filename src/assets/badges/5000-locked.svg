@@ -1,0 +1,148 @@
+<svg viewBox="0 0 57 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <mask id="c" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="57" height="55">
+        <path d="M17.05 44.9c3.58 6.88 5.46 8.15 7.86 9.27 2.09.98 5.3.98 7.38 0 2.4-1.12 4.17-3.57 7.75-10.46l12.32-24c3.14-6.05 4.1-10.06 3.76-12.53a7.84 7.84 0 0 0-3.22-5.34C50.88.4 47.48.4 40.68.4H15.73C8.93.4 5.53.4 3.51 1.84A7.84 7.84 0 0 0 .28 7.18c-.33 2.47.08 6.1 3.23 12.16l13.54 25.55Z" fill="url(#a)"/>
+        <path d="M17.05 44.9c3.58 6.88 5.46 8.15 7.86 9.27 2.09.98 5.3.98 7.38 0 2.4-1.12 4.17-3.57 7.75-10.46l12.32-24c3.14-6.05 4.1-10.06 3.76-12.53a7.84 7.84 0 0 0-3.22-5.34C50.88.4 47.48.4 40.68.4H15.73C8.93.4 5.53.4 3.51 1.84A7.84 7.84 0 0 0 .28 7.18c-.33 2.47.08 6.1 3.23 12.16l13.54 25.55Z" fill="url(#b)" fill-opacity=".5"/>
+    </mask>
+    <g mask="url(#c)">
+        <g filter="url(#d)">
+            <path d="M5.99 23.98C1.85 16.16-.21 12.26.2 9.08a10.08 10.08 0 0 1 4.16-6.91C6.99.3 11.4.3 20.24.3h15.61c8.7 0 13.05 0 15.66 1.83 2.28 1.6 3.8 4.07 4.19 6.82.45 3.16-1.53 7.04-5.48 14.8l-7.65 15.03c-4.56 8.96-6.85 13.44-9.94 14.9a10.08 10.08 0 0 1-8.53.08C21 52.34 18.64 47.9 13.94 39L5.99 23.98Z" fill="#FF4D00"/>
+            <path d="M5.99 23.98C1.85 16.16-.21 12.26.2 9.08a10.08 10.08 0 0 1 4.16-6.91C6.99.3 11.4.3 20.24.3h15.61c8.7 0 13.05 0 15.66 1.83 2.28 1.6 3.8 4.07 4.19 6.82.45 3.16-1.53 7.04-5.48 14.8l-7.65 15.03c-4.56 8.96-6.85 13.44-9.94 14.9a10.08 10.08 0 0 1-8.53.08C21 52.34 18.64 47.9 13.94 39L5.99 23.98Z" fill="url(#e)" fill-opacity=".4"/>
+            <g opacity=".3" filter="url(#f)">
+                <path d="M52.68 5.92c.32 1.24 2.75 4.65-.05 10.03-1.72 3.3-12.67 24.81-15.3 29.86-3.34 6.4-6.8 6.65-7.78 7.22 1.05-1.22 4.7-2.86 6.14-5.61l12.9-25.13 4.42-8.6c1.39-2.67-.45-6.2-.33-7.77Z" fill="#fff"/>
+            </g>
+            <g filter="url(#g)">
+                <path d="M12.42 1.9c-2.98 0-5.61 1.7-6.56 2.56 1.44-.62 3.66-2.08 6.56-2.08h29.04c3.1 0 7.02.95 8.58 1.32-.96-.6-4.03-1.8-8.58-1.8H12.42Z" fill="url(#h)"/>
+            </g>
+            <g filter="url(#i)">
+                <path d="M21.26 48.44c1.6 3.76 5.5 4.4 5.5 4.4l-.17-.09a16.5 16.5 0 0 1-5.33-4.3Z" fill="url(#j)"/>
+            </g>
+            <g opacity=".6" filter="url(#k)">
+                <path d="M52.52 8.98c-.97-3.97-4.71-5.24-4.71-5.24l.16.12a16.5 16.5 0 0 1 4.55 5.12Z" fill="url(#l)"/>
+            </g>
+        </g>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M8.77 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M10.12 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M11.48 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M12.84 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M14.2 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M15.55 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M16.91 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M18.27 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M19.63 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M20.98 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M22.34 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M23.7 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M25.06 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M26.41 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M27.77 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M29.13 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M30.49 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M31.85 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M33.2 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M34.56 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M35.92 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M37.28 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M38.63 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M39.99 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M41.35 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M42.71 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M44.06 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M45.42 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M46.78 4.64v5.43"/>
+        <path stroke="#fff" stroke-opacity=".2" stroke-width=".34" d="M48.14 4.64v5.43"/>
+        <mask id="o" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="57" height="55">
+            <path d="M17.05 44.9c3.58 6.88 5.46 8.15 7.86 9.27 2.09.98 5.3.98 7.38 0 2.4-1.12 4.17-3.57 7.75-10.46l12.32-24c3.14-6.05 4.1-10.06 3.76-12.53a7.83 7.83 0 0 0-3.22-5.34C50.88.4 47.48.4 40.68.4H15.73C8.93.4 5.53.4 3.51 1.84A7.83 7.83 0 0 0 .28 7.18c-.33 2.47.08 6.1 3.23 12.16l13.54 25.55Z" fill="url(#m)"/>
+            <path d="M17.05 44.9c3.58 6.88 5.46 8.15 7.86 9.27 2.09.98 5.3.98 7.38 0 2.4-1.12 4.17-3.57 7.75-10.46l12.32-24c3.14-6.05 4.1-10.06 3.76-12.53a7.83 7.83 0 0 0-3.22-5.34C50.88.4 47.48.4 40.68.4H15.73C8.93.4 5.53.4 3.51 1.84A7.83 7.83 0 0 0 .28 7.18c-.33 2.47.08 6.1 3.23 12.16l13.54 25.55Z" fill="url(#n)" fill-opacity=".5"/>
+        </mask>
+        <g filter="url(#p)" mask="url(#o)">
+            <path d="M9.8 14.86a2.72 2.72 0 0 1 2.63-2.07h31.36c1.26 0 2.35.86 2.64 2.07l8.87 36.66a2.72 2.72 0 0 1-2.64 3.35H3.56a2.72 2.72 0 0 1-2.64-3.35L9.8 14.86Z" fill="#fff" fill-opacity=".2"/>
+        </g>
+        <path d="M18.5 21.02c.05.4.24.69.57.84.17.08.37.12.6.12.42 0 .73-.13.94-.4.2-.27.3-.57.3-.9 0-.4-.12-.7-.36-.92a1.26 1.26 0 0 0-.87-.33c-.25 0-.46.05-.64.14-.18.1-.33.23-.45.4l-.62-.03.43-3.07h2.96v.7h-2.42l-.24 1.57c.13-.1.26-.17.38-.22.2-.09.45-.13.73-.13.52 0 .97.16 1.33.5.36.34.54.76.54 1.28a2.2 2.2 0 0 1-.5 1.43c-.33.4-.86.61-1.59.61-.46 0-.87-.13-1.23-.39s-.56-.66-.6-1.2h.75Zm4.13 2.28c.18-.03.31-.16.38-.39a1.1 1.1 0 0 0 .06-.4v-.04h-.44v-.87h.85v.8c0 .32-.06.6-.2.84-.12.24-.34.38-.65.44v-.38Zm3.71-6.53c.74 0 1.27.3 1.6.91.25.47.38 1.12.38 1.93 0 .78-.11 1.42-.34 1.92-.34.73-.88 1.1-1.64 1.1-.69 0-1.2-.3-1.53-.9a4.08 4.08 0 0 1-.42-2c0-.64.09-1.2.25-1.66.32-.86.88-1.3 1.7-1.3Zm0 5.2c.36 0 .66-.16.88-.5.22-.32.33-.93.33-1.83 0-.65-.08-1.18-.24-1.6-.16-.41-.47-.62-.92-.62-.43 0-.74.2-.93.6-.2.39-.3.97-.3 1.74 0 .59.07 1.05.2 1.4.19.54.51.81.97.81Zm4.45-5.2c.74 0 1.27.3 1.6.91.26.47.38 1.12.38 1.93 0 .78-.11 1.42-.34 1.92-.34.73-.88 1.1-1.64 1.1-.68 0-1.2-.3-1.53-.9a4.08 4.08 0 0 1-.41-2c0-.64.08-1.2.25-1.66.3-.86.88-1.3 1.7-1.3Zm0 5.2c.37 0 .66-.16.88-.5.22-.32.33-.93.33-1.83 0-.65-.08-1.18-.24-1.6-.15-.41-.46-.62-.92-.62-.42 0-.73.2-.93.6-.2.39-.29.97-.29 1.74 0 .59.06 1.05.19 1.4.19.54.52.81.98.81Zm4.46-5.2c.73 0 1.27.3 1.6.91.25.47.38 1.12.38 1.93 0 .78-.12 1.42-.35 1.92-.33.73-.88 1.1-1.64 1.1-.68 0-1.19-.3-1.52-.9a4.08 4.08 0 0 1-.42-2c0-.64.08-1.2.25-1.66.31-.86.88-1.3 1.7-1.3Zm-.01 5.2c.37 0 .67-.16.89-.5.22-.32.33-.93.33-1.83 0-.65-.08-1.18-.24-1.6-.16-.41-.47-.62-.93-.62-.42 0-.73.2-.93.6-.19.39-.29.97-.29 1.74 0 .59.07 1.05.2 1.4.18.54.5.81.97.81Z" fill="#fff"/>
+        <path d="M20.03 25.83a.8.8 0 0 1 .57.2c.14.12.21.27.23.43h-.26a.53.53 0 0 0-.17-.3.55.55 0 0 0-.37-.1c-.2 0-.35.06-.47.2-.11.13-.17.34-.17.62 0 .23.05.41.16.55.1.14.26.21.47.21a.5.5 0 0 0 .45-.22c.05-.08.1-.18.12-.3h.26c-.03.2-.1.37-.23.5a.81.81 0 0 1-.63.26.83.83 0 0 1-.57-.2c-.2-.19-.3-.47-.3-.85 0-.28.08-.52.23-.7.16-.2.39-.3.68-.3Zm1.64 1.84c.16 0 .27-.06.33-.18a.9.9 0 0 0 .09-.4.71.71 0 0 0-.07-.32c-.06-.13-.18-.2-.34-.2-.15 0-.26.06-.32.17a.77.77 0 0 0-.1.4c0 .16.03.28.1.38.06.1.17.15.31.15Zm.01-1.3c.19 0 .34.06.47.18.12.12.19.3.19.54 0 .23-.06.41-.17.56-.11.15-.28.23-.52.23a.59.59 0 0 1-.46-.2.79.79 0 0 1-.18-.53c0-.24.06-.43.18-.57a.61.61 0 0 1 .5-.21Zm.91.04h.24v.2a.8.8 0 0 1 .15-.15.46.46 0 0 1 .27-.09c.11 0 .2.03.27.09.04.03.08.08.11.14a.51.51 0 0 1 .19-.17.52.52 0 0 1 .24-.05c.19 0 .32.06.39.2.04.08.05.18.05.3v.95h-.24v-.99c0-.1-.03-.16-.07-.2a.28.28 0 0 0-.18-.05c-.1 0-.17.03-.24.1-.07.06-.1.16-.1.31v.83h-.24v-.93c0-.1-.01-.17-.04-.21-.03-.07-.1-.1-.2-.1a.35.35 0 0 0-.25.1c-.07.07-.1.2-.1.38v.76h-.25V26.4Zm2.24 0h.23v.2a.8.8 0 0 1 .16-.15.46.46 0 0 1 .27-.09c.11 0 .2.03.27.09.04.03.07.08.1.14a.51.51 0 0 1 .2-.17.52.52 0 0 1 .23-.05c.2 0 .32.06.4.2.03.08.05.18.05.3v.95h-.25v-.99c0-.1-.02-.16-.07-.2a.28.28 0 0 0-.17-.05c-.1 0-.18.03-.25.1-.06.06-.1.16-.1.31v.83h-.24v-.93c0-.1-.01-.17-.03-.21-.04-.07-.1-.1-.2-.1a.35.35 0 0 0-.25.1c-.08.07-.11.2-.11.38v.76h-.24V26.4Zm2.47 0v.94c0 .07.01.13.04.18.04.08.12.12.23.12.17 0 .28-.07.34-.22a.88.88 0 0 0 .05-.33v-.7h.24v1.43h-.22v-.21a.48.48 0 0 1-.12.13.5.5 0 0 1-.33.12c-.2 0-.34-.07-.41-.2a.6.6 0 0 1-.06-.3v-.96h.24Zm1.25 0h.22v.2a.64.64 0 0 1 .22-.18.57.57 0 0 1 .25-.05c.2 0 .34.07.4.2.05.08.06.2.06.34v.9h-.24v-.89a.49.49 0 0 0-.04-.2c-.04-.1-.12-.14-.23-.14-.05 0-.1 0-.14.02a.36.36 0 0 0-.17.11.36.36 0 0 0-.08.15l-.01.21v.75h-.24V26.4Zm1.48 0h.24v1.42h-.24V26.4Zm0-.53h.24v.27h-.24v-.27Zm.63.13h.24v.4h.22v.2h-.22v.92c0 .05.02.08.05.1l.1.01h.07v.19a.8.8 0 0 1-.18.02c-.1 0-.18-.03-.22-.09a.38.38 0 0 1-.06-.22v-.94h-.2v-.2h.2v-.39Zm1.56.4h.27a82.1 82.1 0 0 0-.44 1.22c-.14.36-.24.58-.3.66-.05.08-.15.12-.29.12a.6.6 0 0 1-.14-.02v-.22a.83.83 0 0 0 .14.03l.1-.02a.19.19 0 0 0 .05-.06l.05-.1.06-.15-.53-1.46h.27l.38 1.15.38-1.15Zm1.04 0h.31l.33.5.33-.5h.29l-.48.69.5.73h-.3l-.36-.54-.34.54h-.3l.5-.73-.48-.7Zm2.07 1.26c.1 0 .2-.05.27-.14.08-.1.11-.24.11-.42a.78.78 0 0 0-.04-.3c-.07-.15-.18-.23-.34-.23-.17 0-.28.08-.34.25a.98.98 0 0 0 0 .62c.06.14.17.22.34.22Zm-.62-1.26h.23v.2a.5.5 0 0 1 .44-.23c.16 0 .3.05.41.18.11.12.17.3.17.53 0 .3-.08.53-.24.66a.55.55 0 0 1-.36.12c-.1 0-.2-.02-.27-.07a.62.62 0 0 1-.14-.13v.72h-.24v-1.98Z" fill="#fff"/>
+        <path d="M26.25 41.14c0-1.22.98-2.22 2.2-2.22 1.22 0 2.2 1 2.2 2.22v2.2a2.2 2.2 0 0 0-4.4 0v-2.2Z" fill="#fff"/>
+        <path opacity=".6" fill="#000" d="M-22-22H78V78H-22z"/>
+    </g>
+    <path d="M21.25 26.5c-.22 0-.4.07-.54.21a.73.73 0 0 0-.21.54v9c0 .22.07.4.21.54.14.14.32.21.54.21h13.5c.22 0 .4-.07.54-.21a.73.73 0 0 0 .21-.54v-9c0-.22-.07-.4-.21-.54a.73.73 0 0 0-.54-.21h-13.5Zm0-1.5h13.5A2.24 2.24 0 0 1 37 27.25v9a2.24 2.24 0 0 1-2.25 2.25h-13.5A2.24 2.24 0 0 1 19 36.25v-9A2.24 2.24 0 0 1 21.25 25ZM28 28.75c.22 0 .4.07.54.21.14.14.21.32.21.54V34c0 .22-.07.4-.21.54a.73.73 0 0 1-.54.21.73.73 0 0 1-.54-.21.73.73 0 0 1-.21-.54v-4.5c0-.22.07-.4.21-.54a.73.73 0 0 1 .54-.21ZM32.5 25v-1.5a4.49 4.49 0 0 0-7.69-3.19 4.49 4.49 0 0 0-1.31 3.19V25h9ZM28 17.5a6 6 0 0 1 6 6v3H22v-3a6 6 0 0 1 6-6Z" fill="#fff"/>
+    <defs>
+        <filter id="d" x="-9.69" y="-6.26" width="73.63" height="73.5" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+            <feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+            <feOffset dx="-1.09" dy="2.19"/>
+            <feGaussianBlur stdDeviation="4.38"/>
+            <feComposite in2="hardAlpha" operator="out"/>
+            <feColorMatrix values="0 0 0 0 0.0904167 0 0 0 0 0.105917 0 0 0 0 0.129167 0 0 0 0.2 0"/>
+            <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_1674_8594"/>
+            <feBlend in="SourceGraphic" in2="effect1_dropShadow_1674_8594" result="shape"/>
+            <feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+            <feOffset dx="2.19" dy="-2.19"/>
+            <feGaussianBlur stdDeviation="1.64"/>
+            <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+            <feColorMatrix values="0 0 0 0 0.780392 0 0 0 0 0.243137 0 0 0 0 0.0117647 0 0 0 0.7 0"/>
+            <feBlend in2="shape" result="effect2_innerShadow_1674_8594"/>
+            <feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+            <feOffset dx="-1.09" dy="1.09"/>
+            <feGaussianBlur stdDeviation="1.09"/>
+            <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+            <feColorMatrix values="0 0 0 0 0.779167 0 0 0 0 0.244343 0 0 0 0 0.0129861 0 0 0 0.9 0"/>
+            <feBlend in2="effect2_innerShadow_1674_8594" result="effect3_innerShadow_1674_8594"/>
+        </filter>
+        <filter id="f" x="28.9" y="5.27" width="25.72" height="48.43" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+            <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+            <feGaussianBlur stdDeviation=".33" result="effect1_foregroundBlur_1674_8594"/>
+        </filter>
+        <filter id="g" x="5.64" y="1.67" width="44.63" height="3.01" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+            <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+            <feGaussianBlur stdDeviation=".11" result="effect1_foregroundBlur_1674_8594"/>
+        </filter>
+        <filter id="i" x="21.04" y="48.23" width="5.94" height="4.84" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+            <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+            <feGaussianBlur stdDeviation=".11" result="effect1_foregroundBlur_1674_8594"/>
+        </filter>
+        <filter id="k" x="47.59" y="3.52" width="5.15" height="5.68" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+            <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+            <feGaussianBlur stdDeviation=".11" result="effect1_foregroundBlur_1674_8594"/>
+        </filter>
+        <filter id="p" x="-15.45" y="-3.5" width="87.11" height="74.67" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+            <feGaussianBlur in="BackgroundImageFix" stdDeviation="8.15"/>
+            <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_1674_8594"/>
+            <feBlend in="SourceGraphic" in2="effect1_backgroundBlur_1674_8594" result="shape"/>
+        </filter>
+        <radialGradient id="b" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(15.5 39.27 -40.02 15.8 7.19 4.7)">
+            <stop stop-color="#fff"/>
+            <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="e" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="scale(-33.23) rotate(-58 -1.06 .84)">
+            <stop stop-color="#fff"/>
+            <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="h" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0 2.4 -41.37 0 27.95 2.06)">
+            <stop stop-color="#fff"/>
+            <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="n" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(15.5 39.27 -40.02 15.8 7.19 4.7)">
+            <stop stop-color="#fff"/>
+            <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="a" x1="28.2" y1=".4" x2="28.2" y2="54.91" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FF4D00"/>
+            <stop offset="1" stop-color="#FF4D00"/>
+        </linearGradient>
+        <linearGradient id="j" x1="23.03" y1="51" x2="26.75" y2="52.47" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#fff"/>
+            <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="l" x1="51.19" y1="6.17" x2="47.77" y2="4.11" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#fff"/>
+            <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="m" x1="28.2" y1=".4" x2="28.2" y2="54.91" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FF4D00"/>
+            <stop offset="1" stop-color="#FF4D00"/>
+        </linearGradient>
+    </defs>
+</svg>
