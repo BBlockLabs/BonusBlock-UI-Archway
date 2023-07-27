@@ -1,6 +1,7 @@
 <template>
   <PageWrapper full-width class="m-0 fs-slightly-larger">
     <div class="limit-width leaderboard">
+      {{ leaderboard }}
       <box-wrapper type="white" round class="p-large">
         <el-row align="middle" justify="space-between">
           <el-col class="fs-medium bold" :span="-1">
@@ -9,7 +10,7 @@
               <span class="m-auto">{{ walletAddress }}</span>
             </el-row>
           </el-col>
-          <el-col class="pointer" :span="-1">
+          <el-col v-if="leaderboard.myLeaderboardSpot" class="pointer" :span="-1">
             <el-button class="mr-small is-link" type="primary"
               >Share progress on Twitter
               <svg-twitter class="ml-small icon-small" />
@@ -19,34 +20,91 @@
         <el-row class="fs-medium mt-large" justify="space-between">
           <el-col :span="-1">
             <el-row> Your rank </el-row>
-            <el-row class="fs-extra-large archway-orange"> #{{ 8 }} </el-row>
+            <el-row class="fs-extra-large archway-orange">
+              {{
+                leaderboard.myLeaderboardSpot
+                  ? "#" + leaderboard.myLeaderboardSpot.rank
+                  : "-"
+              }}
+            </el-row>
           </el-col>
           <el-col :span="-1">
             <el-row>
-              <span> Your XP </span>
+              <span class="mx-auto"> Your XP </span>
             </el-row>
             <el-row class="fs-extra-large">
               <span class="mx-auto">
-                {{ 0 }}
+                {{
+                  leaderboard.myLeaderboardSpot
+                    ? leaderboard.myLeaderboardSpot.score
+                    : "0"
+                }}
               </span>
             </el-row>
           </el-col>
           <el-col :span="-1">
             <el-row> Your top dApp </el-row>
             <el-row class="fs-extra-large">
-              {{ "PeerSwap" }}
+              {{
+                leaderboard.myLeaderboardSpot
+                  ? leaderboard.myLeaderboardSpot.topDapp
+                  : "-"
+              }}
             </el-row>
           </el-col>
         </el-row>
         <hr />
 
-        <el-row class="mb-large">TODO</el-row>
+        <el-row style="margin-top: 6em" class="mb-large mr-large">
+          <el-col class="mr-large">
+            <span
+              v-for="value in BADGE_XP"
+              :key="value"
+              style="position: absolute"
+              :style="'left: ' + getXpPercentage(value) + '%'"
+            >
+
+              <component
+                :is="getBadgeForXp(value)"
+                style="
+                  position: absolute;
+                  height: 5em;
+                  bottom: 0.5em;
+                  left: -2em;
+                "
+              />
+            </span>
+          </el-col>
+          <el-col>
+            <el-progress
+              :percentage="getXpPercentage"
+              status="success"
+              :stroke-width="6"
+              :show-text="false"
+            ></el-progress>
+          </el-col>
+
+
+        </el-row>
         <el-row justify="space-between">
           <el-col :span="-1">
             <el-row>
               <strong class="fs-medium">Mint badge progress</strong>
             </el-row>
-            <el-row class="archway-orange"> {{ 1234 }} / {{ 1234 }} XP </el-row>
+            <el-row class="archway-orange">
+              {{
+                leaderboard.myLeaderboardSpot
+                  ? leaderboard.myLeaderboardSpot.score
+                  : "0"
+              }}
+              /
+              {{
+                leaderboard.myLeaderboardSpot
+                  ? getClosestNextBadgeXp(leaderboard.myLeaderboardSpot.score)
+                  : getClosestNextBadgeXp(undefined)
+              }}
+              XP
+            </el-row>
           </el-col>
 
           <el-col :span="-1">
@@ -173,12 +231,22 @@ import BoxWrapper from "@/components/BoxWrapper.vue";
 import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
 import { renderDiscs } from "@whi/identicons";
 import SvgTwitter from "@/assets/icons/twitter.svg";
+import SvgBadge1000 from "@/assets/badges/1000.svg";
+import SvgBadge1000Lock from "@/assets/badges/1000-locked.svg";
+import SvgBadge2000 from "@/assets/badges/2000.svg";
+import SvgBadge2000Lock from "@/assets/badges/2000-locked.svg";
+import SvgBadge5000 from "@/assets/badges/5000.svg";
+import SvgBadge5000Lock from "@/assets/badges/5000-locked.svg";
+import SvgBadge10000 from "@/assets/badges/10000.svg";
+import SvgBadge10000Lock from "@/assets/badges/10000-locked.svg";
 
 let page = ref(1);
 let perPage = ref(15);
 let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
   new ArchwayLeaderboardResponse()
 );
+
+const BADGE_XP: number[] = [1000, 2000, 5000, 10000];
 
 async function getLeaderboard() {
   let pagination: PaginationRequest = new PaginationRequest(
@@ -212,6 +280,45 @@ function perPageChange(newVal: number) {
   getLeaderboard();
 }
 
+function getClosestNextBadgeXp(currentXp: number | undefined) {
+  if (currentXp == undefined || currentXp <= BADGE_XP[0]) {
+    return BADGE_XP[0];
+  }
+  if (currentXp <= BADGE_XP[1]) {
+    return BADGE_XP[1];
+  }
+  if (currentXp <= BADGE_XP[2]) {
+    return BADGE_XP[2];
+  }
+  if (currentXp <= BADGE_XP[3]) {
+    return BADGE_XP[3];
+  }
+}
+
+function getXpPercentage(givenXp: number): number {
+  let maxXp = BADGE_XP[BADGE_XP.length - 1];
+  if (givenXp >= maxXp) {
+    return 100;
+  }
+  return Math.floor(100 - (maxXp - givenXp) / 100);
+}
+
+function getBadgeForXp(givenXp: number){
+  let currentXp: number = leaderboard.value.myLeaderboardSpot
+    ? leaderboard.value.myLeaderboardSpot.score
+    : 0;
+  switch (givenXp) {
+    case 1000:
+      return currentXp >= givenXp ? SvgBadge1000 : SvgBadge1000Lock;
+    case 2000:
+      return currentXp >= givenXp ? SvgBadge2000 : SvgBadge2000Lock;
+    case 5000:
+      return currentXp >= givenXp ? SvgBadge5000 : SvgBadge5000Lock;
+    case 10000:
+      return currentXp >= givenXp ? SvgBadge10000 : SvgBadge10000Lock;
+  }
+}
+
 function getAvatar(userWallet: string) {
   return renderDiscs({
     seed: userWallet,
@@ -222,9 +329,8 @@ function getAvatar(userWallet: string) {
   }).dataURL;
 }
 
-onMounted(() => {
-  // @ts-ignore
-  getLeaderboard();
+onMounted(async () => {
+  await getLeaderboard();
 });
 </script>
 

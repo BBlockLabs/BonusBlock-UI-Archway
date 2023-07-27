@@ -3,4 +3,5 @@ export default class ArchwayLeaderboardRecordDto {
   topDapp: string = "";
   score: number = 0;
   totalOnChain: number = 0;
+  rank: number = 0;
 }
