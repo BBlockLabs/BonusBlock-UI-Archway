@@ -214,10 +214,12 @@ button.archway:hover {
   .el-card__body {
     padding-left: 1.2em;
     padding-right: 1.2em;
-    box-shadow: -8px 40px 70px -20px rgba(0, 0, 0, 0.6);
   }
   border-radius: 1em;
-  box-shadow: -8px 40px 70px -20px rgba(0, 0, 0, 0.6);
+}
+
+.el-card.is-always-shadow.id-card {
+  box-shadow: -8px 40px 70px -20px rgba(0, 0, 0, 0.2);
 }
 
 .el-box.id-card-social {
