@@ -34,6 +34,7 @@
 
     <el-dialog
       v-model="newBadgeDialog"
+      :before-close="newBadgeMint"
       :show-close="false"
       class="px-medium pt-medium fs-large calculation-dialog"
     >
@@ -196,7 +197,13 @@
             <!--            <el-button class="mr-small is-link" type="primary"
               >Share badge</el-button
             >-->
-            <el-button @click="newBadgeMint" type="primary">Mint badge</el-button>
+            <el-button
+              :loading="mintBadgeLoading"
+              :disabled="mintBadgeLoading"
+              @click="newBadgeMint"
+              type="primary"
+              >Mint badge</el-button
+            >
           </el-col>
         </el-row>
       </box-wrapper>
@@ -350,6 +357,7 @@ import Toast from "@/common/Toast";
 
 let calculationDialog = ref(false);
 let newBadgeDialog = ref(false);
+let mintBadgeLoading = ref(false);
 let page = ref(1);
 let perPage = ref(15);
 let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
@@ -391,12 +399,14 @@ async function newBadgeAcknowledge() {
 
 async function newBadgeMint() {
   newBadgeDialog.value = false;
+  mintBadgeLoading.value = true;
   await store.dispatch("ArchwayHttpModule/mintBadgeInit");
   try {
     await ArchwayKeplrClient.mintBadge();
   } catch (e: any) {
     if (!e.toString().includes("Already Minted")) {
       Toast.make("Mint failure", e.toString(), "error", false, 0);
+      mintBadgeLoading.value = false;
       return;
     } else {
       Toast.make("Badge already claimed", "You have already claimed this badge", "warning", true, 1000);
@@ -406,6 +416,8 @@ async function newBadgeMint() {
   if (leaderboard.value.myLeaderboardSpot) {
     leaderboard.value.myLeaderboardSpot.badgeClaimed = true;
   }
+
+  mintBadgeLoading.value = false;
 
   await store.dispatch("ArchwayHttpModule/mintBadgeOk");
 }
@@ -475,16 +487,16 @@ function getNewBadgeImage(){
     ? leaderboard.value.myLeaderboardSpot.position.score
     : 0;
 
-  if (currentXp > BADGE_XP[3]) {
+  if (currentXp >= BADGE_XP[3]) {
     return SvgNewBadge4;
   }
-  if (currentXp > BADGE_XP[2]) {
+  if (currentXp >= BADGE_XP[2]) {
     return SvgNewBadge3;
   }
-  if (currentXp > BADGE_XP[1]) {
+  if (currentXp >= BADGE_XP[1]) {
     return SvgNewBadge2;
   }
-  if (currentXp > BADGE_XP[0]) {
+  if (currentXp >= BADGE_XP[0]) {
     return SvgNewBadge1;
   }
 }
