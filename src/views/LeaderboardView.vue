@@ -306,7 +306,7 @@ const shareProgressLink: ComputedRef<string> = computed((): string => {
   let message: string;
 
   if (leaderboard.value.myLeaderboardSpot) {
-    message = `Just hit Rank #${leaderboard.value.myLeaderboardSpot.rank} with ${leaderboard.value.myLeaderboardSpot.score} XP on Archway community missions! Join me and let’s climb the ranks together! ${referral}`;
+    message = `Just hit Rank ${leaderboard.value.myLeaderboardSpot.rank} with ${leaderboard.value.myLeaderboardSpot.score} XP on Archway community missions! Join me and let’s climb the ranks together! ${referral}`;
   } else {
     message = `Just started ranking on Archway community missions! Join me and let’s climb the ranks together! ${referral}`;
   }
