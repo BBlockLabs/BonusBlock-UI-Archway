@@ -40,7 +40,7 @@
             </el-row>
           </el-col>
           <el-col v-if="leaderboard.myLeaderboardSpot" class="pointer" :span="-1">
-            <el-button class="mr-small is-link" type="primary"
+            <el-button class="mr-small" type="primary"
               >Share progress on Twitter
               <svg-twitter class="ml-small icon-small" />
             </el-button>
@@ -94,7 +94,7 @@
                   : 0
               "
               status="success"
-              :stroke-width="6"
+              :stroke-width="7"
               :show-text="false"
             ></el-progress>
 
@@ -119,10 +119,10 @@
                   position: absolute;
                   width: 0.8em;
                   left: -0.4em;
-                  top: -0.16em;
+                  top: -0.17em;
                 "
                 :class="circleOrangeForXp(value) ? 'archway-orange' : ''"
-                :style="circleOrangeForXp(value) ? '' : 'color: #F2EFED;'"
+                :style="circleOrangeForXp(value) ? '' : 'color: #CCCCCC'"
               />
             </span>
 
