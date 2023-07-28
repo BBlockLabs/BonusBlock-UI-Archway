@@ -26,10 +26,7 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
     ) => Promise<ArchwayProductDto>);
 
   getStats: HttpAction &
-    ((
-      this: Store<RootStateInterface>,
-      context: Context
-    ) => Promise<void>);
+    ((this: Store<RootStateInterface>, context: Context) => Promise<void>);
 
   getLeaderboard: HttpAction &
     ((
@@ -42,7 +39,16 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
     ((
       this: Store<RootStateInterface>,
       context: Context
-    ) => Promise<Array<ArchwayInfoRow>>)
+    ) => Promise<Array<ArchwayInfoRow>>);
+
+  badgeAcknowledge: HttpAction &
+    ((this: Store<RootStateInterface>, context: Context) => Promise<void>);
+
+  mintBadgeInit: HttpAction &
+    ((this: Store<RootStateInterface>, context: Context) => Promise<void>);
+
+  mintBadgeOk: HttpAction &
+    ((this: Store<RootStateInterface>, context: Context) => Promise<void>);
 }
 
 export default class Actions implements ActionsInterface {
@@ -91,9 +97,7 @@ export default class Actions implements ActionsInterface {
     return responseData.payload;
   };
 
-  getStats = async (
-    context: Context,
-  ): Promise<void> => {
+  getStats = async (context: Context): Promise<void> => {
     const response: Response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/archway/stats`,
       {
@@ -109,7 +113,7 @@ export default class Actions implements ActionsInterface {
       response
     );
 
-    context.commit("setArchwayStats", responseData.payload, {root: true});
+    context.commit("setArchwayStats", responseData.payload, { root: true });
   };
 
   getLeaderboard = async (
@@ -128,16 +132,13 @@ export default class Actions implements ActionsInterface {
       }
     );
 
-    const responseData = await HttpResponse.fromResponse<ArchwayLeaderboardResponse>(
-      response
-    );
+    const responseData =
+      await HttpResponse.fromResponse<ArchwayLeaderboardResponse>(response);
 
     return responseData.payload;
   };
 
-  getInfo = async (
-      context: Context
-  ): Promise<Array<ArchwayInfoRow>> => {
+  getInfo = async (context: Context): Promise<Array<ArchwayInfoRow>> => {
     const response: Response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/archway/test-mainnet`,
       {
@@ -154,5 +155,35 @@ export default class Actions implements ActionsInterface {
     );
 
     return responseData.payload;
+  };
+
+  badgeAcknowledge = async (context: Context): Promise<void> => {
+    await fetch(`${import.meta.env.VITE_BACKEND_URL}/archway/mint/badge-ack`, {
+      headers: {
+        "Content-Type": "application/json",
+        "X-Auth-Token": context.rootState.UserModule?.token || "",
+      },
+      method: "POST",
+    });
+  };
+
+  mintBadgeInit = async (context: Context): Promise<void> => {
+    await fetch(`${import.meta.env.VITE_BACKEND_URL}/archway/mint/init`, {
+      headers: {
+        "Content-Type": "application/json",
+        "X-Auth-Token": context.rootState.UserModule?.token || "",
+      },
+      method: "POST",
+    });
+  };
+
+  mintBadgeOk = async (context: Context): Promise<void> => {
+    await fetch(`${import.meta.env.VITE_BACKEND_URL}/archway/mint/ok`, {
+      headers: {
+        "Content-Type": "application/json",
+        "X-Auth-Token": context.rootState.UserModule?.token || "",
+      },
+      method: "POST",
+    });
   };
 }

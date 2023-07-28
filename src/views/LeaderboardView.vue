@@ -22,14 +22,49 @@
             <span class="archway-orange">Community XP</span> serves the additional purpose of unlocking various community badges!
           </div>
           <el-button
-            style="width: 100%"
-            class="mt-small"
+            class="mt-small w-100"
             type="secondary"
             @click="calculationDialog = false"
           >
             Close</el-button
           >
         </div>
+      </el-row>
+    </el-dialog>
+
+    <el-dialog
+      v-model="newBadgeDialog"
+      :show-close="false"
+      class="px-medium pt-medium fs-large calculation-dialog"
+    >
+      <el-row justify="center">
+        <component
+          :is="getNewBadgeImage()"
+          style="height: 35em; border-radius: 18px; border: 1px solid #CCCCCC"
+        />
+
+        <h2 class="tc">Congratulations!</h2>
+        <span class="fs-medium tc">You have unlocked a new mint badge.</span>
+        <el-row class="mt-medium w-100" gutter="10">
+          <el-col :span="12">
+            <el-button
+              class="mt-small w-100"
+              type="secondary"
+              @click="newBadgeAcknowledge"
+            >
+              Close
+            </el-button>
+          </el-col>
+          <el-col :span="12">
+            <el-button
+              class="mt-small w-100"
+              type="primary"
+              @click="newBadgeMint"
+            >
+              Mint
+            </el-button>
+          </el-col>
+        </el-row>
       </el-row>
     </el-dialog>
 
@@ -60,7 +95,7 @@
             <el-row class="fs-extra-large archway-orange">
               {{
                 leaderboard.myLeaderboardSpot
-                  ? "#" + leaderboard.myLeaderboardSpot.rank
+                  ? "#" + leaderboard.myLeaderboardSpot.position.rank
                   : "-"
               }}
             </el-row>
@@ -73,7 +108,7 @@
               <span class="mx-auto">
                 {{
                   leaderboard.myLeaderboardSpot
-                    ? leaderboard.myLeaderboardSpot.score
+                    ? leaderboard.myLeaderboardSpot.position.score
                     : "0"
                 }}
               </span>
@@ -84,7 +119,7 @@
             <el-row class="fs-extra-large">
               {{
                 leaderboard.myLeaderboardSpot
-                  ? leaderboard.myLeaderboardSpot.topDapp
+                  ? leaderboard.myLeaderboardSpot.position.topDapp
                   : "-"
               }}
             </el-row>
@@ -98,7 +133,7 @@
             <el-progress
               :percentage="
                 leaderboard.myLeaderboardSpot
-                  ? getXpPercentage(leaderboard.myLeaderboardSpot.score)
+                  ? getXpPercentage(leaderboard.myLeaderboardSpot.position.score)
                   : 0
               "
               status="success"
@@ -145,24 +180,23 @@
             <el-row class="archway-orange">
               {{
                 leaderboard.myLeaderboardSpot
-                  ? leaderboard.myLeaderboardSpot.score
+                  ? leaderboard.myLeaderboardSpot.position.score
                   : "0"
               }}
               /
               {{
                 leaderboard.myLeaderboardSpot
-                  ? getClosestNextBadgeXp(leaderboard.myLeaderboardSpot.score)
+                  ? getClosestNextBadgeXp(leaderboard.myLeaderboardSpot.position.score)
                   : getClosestNextBadgeXp(undefined)
               }}
               XP
             </el-row>
           </el-col>
-
-          <el-col v-if="leaderboard.myLeaderboardSpot" :span="-1">
-            <el-button class="mr-small is-link" type="primary"
+          <el-col v-if="leaderboard.myLeaderboardSpot && !leaderboard.myLeaderboardSpot.badgeClaimed" :span="-1">
+            <!--            <el-button class="mr-small is-link" type="primary"
               >Share badge</el-button
-            >
-            <el-button type="primary">Mint badge</el-button>
+            >-->
+            <el-button @click="newBadgeMint" type="primary">Mint badge</el-button>
           </el-col>
         </el-row>
       </box-wrapper>
@@ -303,12 +337,19 @@ import SvgBadge5000 from "@/assets/badges/5000.svg";
 import SvgBadge5000Lock from "@/assets/badges/5000-locked.svg";
 import SvgBadge10000 from "@/assets/badges/10000.svg";
 import SvgBadge10000Lock from "@/assets/badges/10000-locked.svg";
+import SvgNewBadge1 from "@/assets/badges/new-badge-1.svg";
+import SvgNewBadge2 from "@/assets/badges/new-badge-2.svg";
+import SvgNewBadge3 from "@/assets/badges/new-badge-3.svg";
+import SvgNewBadge4 from "@/assets/badges/new-badge-4.svg";
+
 import SvgCircle from "@/assets/archway/circle.svg";
 import SvgInfo from "@/assets/icons/info.svg";
 import JpgMissionCardSample from "@/assets/archway/mission-card-sample.jpg";
-
+import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
+import Toast from "@/common/Toast";
 
 let calculationDialog = ref(false);
+let newBadgeDialog = ref(false);
 let page = ref(1);
 let perPage = ref(15);
 let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
@@ -322,7 +363,7 @@ const shareProgressLink: ComputedRef<string> = computed((): string => {
   let message: string;
 
   if (leaderboard.value.myLeaderboardSpot) {
-    message = `Just hit Rank ${leaderboard.value.myLeaderboardSpot.rank} with ${leaderboard.value.myLeaderboardSpot.score} XP on Archway community missions! Join me and let’s climb the ranks together! ${referral}`;
+    message = `Just hit Rank ${leaderboard.value.myLeaderboardSpot.position.rank} with ${leaderboard.value.myLeaderboardSpot.position.score} XP on Archway community missions! Join me and let’s climb the ranks together! ${referral}`;
   } else {
     message = `Just started ranking on Archway community missions! Join me and let’s climb the ranks together! ${referral}`;
   }
@@ -340,6 +381,33 @@ async function getLeaderboard() {
     "ArchwayHttpModule/getLeaderboard",
     pagination
   );
+  newBadgeDialog.value = leaderboard.value.myLeaderboardSpot?.newBadgePopup || false;
+}
+
+async function newBadgeAcknowledge() {
+  newBadgeDialog.value = false;
+  await store.dispatch("ArchwayHttpModule/badgeAcknowledge");
+}
+
+async function newBadgeMint() {
+  newBadgeDialog.value = false;
+  await store.dispatch("ArchwayHttpModule/mintBadgeInit");
+  try {
+    await ArchwayKeplrClient.mintBadge();
+  } catch (e: any) {
+    if (!e.toString().includes("Already Minted")) {
+      Toast.make("Mint failure", e.toString(), "error", false, 0);
+      return;
+    } else {
+      Toast.make("Badge already claimed", "You have already claimed this badge", "warning", true, 1000);
+    }
+  }
+
+  if (leaderboard.value.myLeaderboardSpot) {
+    leaderboard.value.myLeaderboardSpot.badgeClaimed = true;
+  }
+
+  await store.dispatch("ArchwayHttpModule/mintBadgeOk");
 }
 
 const walletAddress: ComputedRef<string> = computed(
@@ -388,7 +456,7 @@ function getXpPercentage(givenXp: number): number {
 
 function getBadgeForXp(givenXp: number){
   let currentXp: number = leaderboard.value.myLeaderboardSpot
-    ? leaderboard.value.myLeaderboardSpot.score
+    ? leaderboard.value.myLeaderboardSpot.position.score
     : 0;
   switch (givenXp) {
     case 1000:
@@ -402,9 +470,28 @@ function getBadgeForXp(givenXp: number){
   }
 }
 
+function getNewBadgeImage(){
+  let currentXp: number = leaderboard.value.myLeaderboardSpot
+    ? leaderboard.value.myLeaderboardSpot.position.score
+    : 0;
+
+  if (currentXp > BADGE_XP[3]) {
+    return SvgNewBadge4;
+  }
+  if (currentXp > BADGE_XP[2]) {
+    return SvgNewBadge3;
+  }
+  if (currentXp > BADGE_XP[1]) {
+    return SvgNewBadge2;
+  }
+  if (currentXp > BADGE_XP[0]) {
+    return SvgNewBadge1;
+  }
+}
+
 function circleOrangeForXp(givenXp: number): boolean {
   let currentXp: number = leaderboard.value.myLeaderboardSpot
-    ? leaderboard.value.myLeaderboardSpot.score
+    ? leaderboard.value.myLeaderboardSpot.position.score
     : 0;
   return currentXp >= givenXp;
 }
@@ -478,6 +565,6 @@ onMounted(async () => {
 
 .calculation-dialog {
   background-color: vars.$archway-warm-grey;
-  max-width: 20em;
+  max-width: 18em;
 }
 </style>

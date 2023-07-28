@@ -244,6 +244,23 @@ export default class ArchwayKeplrClient {
     );
   }
 
+  static async mintBadge() {
+    const currentChain = this.getChain();
+    const contractAddress = import.meta.env.VITE_NFT_CONTRACT_ADDRESS;
+
+    await this.checkChain(this.getChain());
+
+    const executeMsg = {
+      mint: {},
+    };
+
+    return await this.executeContractMsg(
+      contractAddress,
+      executeMsg,
+      currentChain.chainId
+    );
+  }
+
   static async getRewardClaimFee(contractAddress: string) {
     const currentChain = this.getChain();
 
