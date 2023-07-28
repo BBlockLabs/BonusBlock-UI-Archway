@@ -168,10 +168,25 @@
       </box-wrapper>
 
       <el-row align="middle" justify="space-between" class="mt-medium">
-        <el-col :span="-1">
+        <el-col
+          :span="-1"
+          flex-nowrap
+          style="display: flex; flex-direction: row; gap: 0.6em"
+        >
           <h2>Leaderboard</h2>
+          <el-tooltip
+            content="Updates can take up to 5 minutes"
+            placement="right"
+            style="border: none !important"
+          >
+            <SvgInfo pointer style="width: 24px"></SvgInfo>
+          </el-tooltip>
         </el-col>
-        <el-col @click="calculationDialog = true" class="archway-orange pointer" :span="-1">
+        <el-col
+          class="archway-orange pointer"
+          :span="-1"
+          @click="calculationDialog = true"
+        >
           How calculations work?</el-col
         >
       </el-row>
@@ -289,6 +304,7 @@ import SvgBadge5000Lock from "@/assets/badges/5000-locked.svg";
 import SvgBadge10000 from "@/assets/badges/10000.svg";
 import SvgBadge10000Lock from "@/assets/badges/10000-locked.svg";
 import SvgCircle from "@/assets/archway/circle.svg";
+import SvgInfo from "@/assets/icons/info.svg";
 import JpgMissionCardSample from "@/assets/archway/mission-card-sample.jpg";
 
 
