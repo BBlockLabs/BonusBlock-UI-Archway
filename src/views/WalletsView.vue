@@ -58,7 +58,18 @@
             <SvgArch class="mr-small" style="height: 2em" />
           </el-col>
           <el-col :span="-1">
-            <h2>{{ store.state.archwayStats.totalRewardPoolAmount ? getHumanAmount(store.state.archwayStats.totalRewardPoolAmount) : "N/A" }} ARCH</h2>
+            <h2>
+              {{
+                store.state.archwayStats.totalRewardPoolAmount
+                  ? formatPrice(
+                      getHumanAmount(
+                        store.state.archwayStats.totalRewardPoolAmount
+                      )
+                    )
+                  : "N/A"
+              }}
+              ARCH
+            </h2>
           </el-col>
         </el-row>
       </box-wrapper>
@@ -153,6 +164,7 @@ import SvgArch from "@/assets/currencies/arch.svg";
 const usageConsentVisible = ref(false);
 const termsOkDisabled = ref(true);
 
+
 onMounted(() => {
   let consent = localStorage.getItem("usage-consent");
   if (consent == null || moment(consent).add(1, "month").isBefore(new Date())) {
@@ -191,6 +203,11 @@ function getHumanAmount(amount: string) {
   return fractionalPart === ""
     ? integerPart
     : integerPart + "." + fractionalPart;
+}
+
+function formatPrice(value: number) {
+  let val = (value / 1).toFixed(2).replace(" ' ", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
 }
 
 function confirmUsage() {
