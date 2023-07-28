@@ -70,7 +70,7 @@ import DialogKeplr from "@/components/KeplrDialog.vue";
 import FooterComponent from "@/components/HomeFooter.vue";
 import SvgLogo from "@/assets/archway/archway-logo.svg";
 import SvgKeplr from "@/assets/icons/keplr.svg?component";
-import SvgLeapWallet from "@/assets/archway/leap.svg?component";
+import SvgLeapWallet from "@/assets/icons/leap-wallet.svg?component";
 import SvgHome from "@/assets/archway/home-illustration.svg";
 import type { Ref } from "vue";
 import { ref } from "vue";
