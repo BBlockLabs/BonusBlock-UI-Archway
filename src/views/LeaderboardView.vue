@@ -1,19 +1,45 @@
 <template>
   <PageWrapper full-width class="m-0 fs-slightly-larger">
-    <div class="limit-width">
-      <box-wrapper type="white" round class="p-large">
+    <el-dialog
+      :show-close="false"
+      v-model="calculationDialog"
+      class="fs-large calculation-dialog"
+    >
+      <el-row justify="center">
+          <h2 class="w-100 tc">How calculations work?</h2>
+          <img style="border-radius: 18px" class="w-100" :src="JpgMissionCardSample" alt="Example mission">
+
+        <div class="tc fs-medium mt-large mx-large">
+          <div>
+            Accomplish missions to earn <span class="archway-orange">Community XP</span>, which will elevate your rank as you gain more experience.
+          </div>
+          <div class="mt-small">
+            <span class="archway-orange">Community XP</span> serves the additional purpose of unlocking various community badges!
+          </div>
+          <el-button
+            style="width: 100%"
+            class="mt-small"
+            @click="calculationDialog = false"
+            type="secondary"
+          >
+            Close</el-button
+          >
+        </div>
+      </el-row>
+    </el-dialog>
+
+    <div class="limit-width leaderboard">
+      <box-wrapper type="white" round class="mt-large p-large">
         <el-row align="middle" justify="space-between">
           <el-col class="fs-medium bold" :span="-1">
             <el-row class="flex-nowrap" align="middle">
-              <el-avatar :src="getAvatar(walletAddress)" class="mr-small">
-              </el-avatar>
-
-              <el-col :span="-1">
-                <span class="m-auto">{{ walletAddress }}</span>
-              </el-col>
+              <el-avatar :src="getAvatar(walletAddress)" class="mr-small"/>
+              <el-tooltip :content="walletAddress" placement="top">
+                <span class="m-auto">{{ shortWallet(walletAddress) }}</span>
+              </el-tooltip>
             </el-row>
           </el-col>
-          <el-col class="pointer" :span="-1">
+          <el-col v-if="leaderboard.myLeaderboardSpot" class="pointer" :span="-1">
             <el-button class="mr-small is-link" type="primary"
               >Share progress on Twitter
               <svg-twitter class="ml-small icon-small" />
@@ -21,39 +47,110 @@
           </el-col>
         </el-row>
         <el-row class="fs-medium mt-large" justify="space-between">
-          <el-col :span="-1">
+          <el-col class="flex-grow flex-basis-0" :span="-1">
             <el-row> Your rank </el-row>
-            <el-row class="fs-extra-large archway-orange"> #{{ 8 }} </el-row>
+            <el-row class="fs-extra-large archway-orange">
+              {{
+                leaderboard.myLeaderboardSpot
+                  ? "#" + leaderboard.myLeaderboardSpot.rank
+                  : "-"
+              }}
+            </el-row>
           </el-col>
           <el-col :span="-1">
             <el-row>
-              <span> Your XP </span>
+              <span class="mx-auto"> Your XP </span>
             </el-row>
             <el-row class="fs-extra-large">
               <span class="mx-auto">
-                {{ 0 }}
+                {{
+                  leaderboard.myLeaderboardSpot
+                    ? leaderboard.myLeaderboardSpot.score
+                    : "0"
+                }}
               </span>
             </el-row>
           </el-col>
-          <el-col :span="-1">
+          <el-col style="align-items: flex-end;" class="d-flex flex-basis-0 flex-column flex-grow" :span="-1">
             <el-row> Your top dApp </el-row>
             <el-row class="fs-extra-large">
-              {{ "PeerSwap" }}
+              {{
+                leaderboard.myLeaderboardSpot
+                  ? leaderboard.myLeaderboardSpot.topDapp
+                  : "-"
+              }}
             </el-row>
           </el-col>
         </el-row>
         <hr />
 
-        <el-row class="mb-large">TODO</el-row>
+        <el-row style="margin-top: 7em" class="m-large">
+          <el-col style="position: relative;">
+
+            <el-progress
+              :percentage="
+                leaderboard.myLeaderboardSpot
+                  ? getXpPercentage(leaderboard.myLeaderboardSpot.score)
+                  : 0
+              "
+              status="success"
+              :stroke-width="6"
+              :show-text="false"
+            ></el-progress>
+
+            <span
+              v-for="value in BADGE_XP"
+              :key="value"
+              style="position: absolute; top: 0"
+              :style="'left: ' + getXpPercentage(value) + '%'"
+
+            >
+              <component
+                :is="getBadgeForXp(value)"
+                style="
+                  position: absolute;
+                  height: 5em;
+                  bottom: 0.8em;
+                  left: -2.5em;
+                "
+              />
+              <SvgCircle
+                style="
+                  position: absolute;
+                  width: 0.8em;
+                  left: -0.4em;
+                  top: -0.16em;
+                "
+                :class="circleOrangeForXp(value) ? 'archway-orange' : ''"
+                :style="circleOrangeForXp(value) ? '' : 'color: #F2EFED;'"
+              />
+            </span>
+
+
+          </el-col>
+        </el-row>
         <el-row justify="space-between">
           <el-col :span="-1">
             <el-row>
               <strong class="fs-medium">Mint badge progress</strong>
             </el-row>
-            <el-row class="archway-orange"> {{ 1234 }} / {{ 1234 }} XP </el-row>
+            <el-row class="archway-orange">
+              {{
+                leaderboard.myLeaderboardSpot
+                  ? leaderboard.myLeaderboardSpot.score
+                  : "0"
+              }}
+              /
+              {{
+                leaderboard.myLeaderboardSpot
+                  ? getClosestNextBadgeXp(leaderboard.myLeaderboardSpot.score)
+                  : getClosestNextBadgeXp(undefined)
+              }}
+              XP
+            </el-row>
           </el-col>
 
-          <el-col :span="-1">
+          <el-col v-if="leaderboard.myLeaderboardSpot" :span="-1">
             <el-button class="mr-small is-link" type="primary"
               >Share badge</el-button
             >
@@ -62,64 +159,65 @@
         </el-row>
       </box-wrapper>
 
-      <el-row align="middle" justify="space-between">
+      <el-row align="middle" justify="space-between" class="mt-medium">
         <el-col :span="-1">
           <h2>Leaderboard</h2>
         </el-col>
-        <el-col class="archway-orange pointer" :span="-1">
+        <el-col @click="calculationDialog = true" class="archway-orange pointer" :span="-1">
           How calculations work?</el-col
         >
       </el-row>
 
-      <el-row class="fs-medium bold leaderboard-header">
-        <el-col class="m-auto" :span="-1">Rank</el-col>
-        <el-col class="m-auto" :span="-1">User</el-col>
-        <el-col class="m-auto" :span="-1">Total on-chain</el-col>
-        <el-col class="m-auto" :span="-1">Top dApp</el-col>
-        <el-col class="m-auto" :span="-1">Community XP</el-col>
-      </el-row>
-      <template v-if="leaderboard.searchResults.length > 0">
-        <el-row
-          v-for="(leaderboardItem, index) in leaderboard.searchResults"
-          :key="leaderboardItem.walletAddress"
-          class="leaderboard-element"
-        >
-          <el-col class="m-auto" :span="-1">
-            <strong class="fs-large bold archway-orange">{{
-              index + 1 + (perPage * page - perPage)
-            }}</strong>
-          </el-col>
-          <el-col class="fs-medium bold" :span="-1">
-            <el-row class="flex-nowrap" align="middle">
+      <div class="leaderboard-table">
+        <div class="leaderboard-header">Rank</div>
+        <div class="leaderboard-header">User</div>
+        <div class="leaderboard-header"></div>
+        <div class="leaderboard-header">Total on-chain</div>
+        <div class="leaderboard-header">Top dApp</div>
+        <div class="leaderboard-header">Community XP</div>
+        <template v-if="leaderboard.searchResults.length > 0">
+          <template
+            v-for="leaderboardItem in leaderboard.searchResults"
+            :key="leaderboardItem.walletAddress"
+          >
+            <div class="leaderboard-element first">
+              <strong class="fs-large bold archway-orange">
+                {{ leaderboardItem.rank }}
+              </strong>
+            </div>
+            <div class="leaderboard-element fs-medium bold">
               <el-avatar
                 :src="getAvatar(leaderboardItem.walletAddress)"
                 class="mr-small"
               >
               </el-avatar>
-
-              <el-col :span="-1">
-                <span class="m-auto">{{ leaderboardItem.walletAddress }}</span>
-              </el-col>
-            </el-row>
-          </el-col>
-          <el-col class="m-auto fs-medium" :span="-1">{{
-            leaderboardItem.totalOnChain
-          }}</el-col>
-          <el-col class="m-auto fs-medium" :span="-1">{{
-            leaderboardItem.topDapp
-          }}</el-col>
-          <el-col class="m-auto fs-medium bold archway-orange" :span="-1">{{
-            leaderboardItem.score
-          }}</el-col>
-        </el-row>
-        <el-row justify="space-between" class="px-large my-large">
+              <el-tooltip :content="leaderboardItem.walletAddress" placement="top">
+                <span style="width: 8em">
+                  {{ shortWallet(leaderboardItem.walletAddress) }}
+                </span>
+              </el-tooltip>
+            </div>
+            <div class="leaderboard-element">
+            </div>
+            <div class="leaderboard-element fs-medium">
+              {{ leaderboardItem.totalOnChain }}
+            </div>
+            <div class="leaderboard-element fs-medium">
+              {{ leaderboardItem.topDapp }}
+            </div>
+            <div class="leaderboard-element last fs-medium bold archway-orange">
+              {{ leaderboardItem.score }}
+            </div>
+          </template>
+        </template>
+      </div>
+      <template v-if="leaderboard.searchResults.length > 0">
+        <el-row justify="space-between" align="middle" class="px-large my-large">
           <el-col :span="-1" class="bold">
             showing
-            <span class="archway-orange"
-              >{{ page * perPage - perPage + 1 }}-{{
-                page * perPage - perPage + leaderboard.searchResults.length
-              }}</span
-            >
+            <span class="archway-orange">
+              {{ page * perPage - perPage + 1 }}-{{ page * perPage - perPage + leaderboard.searchResults.length }}
+            </span>
             of {{ leaderboard.totalRows }} results
           </el-col>
           <el-col :span="-1">
@@ -157,10 +255,10 @@
           </el-col>
         </el-row>
       </template>
-      <template v-else>
-        <el-row class="fs-large mt-extra-large" justify="center"
-          >No data</el-row
-        >
+      <template v-if="leaderboard.searchResults.length < 1">
+        <el-row class="fs-large mt-extra-large" justify="center">
+          No data
+        </el-row>
       </template>
     </div>
   </PageWrapper>
@@ -175,39 +273,49 @@ import ArchwayLeaderboardResponse from "@/common/api/archway/ArchwayLeaderboardR
 import BoxWrapper from "@/components/BoxWrapper.vue";
 import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
 import { renderDiscs } from "@whi/identicons";
-import ArchwayLeaderboardRecordDto from "@/common/api/archway/ArchwayLeaderboardRecordDto";
 import SvgTwitter from "@/assets/icons/twitter.svg";
+import SvgBadge1000 from "@/assets/badges/1000.svg";
+import SvgBadge1000Lock from "@/assets/badges/1000-locked.svg";
+import SvgBadge2000 from "@/assets/badges/2000.svg";
+import SvgBadge2000Lock from "@/assets/badges/2000-locked.svg";
+import SvgBadge5000 from "@/assets/badges/5000.svg";
+import SvgBadge5000Lock from "@/assets/badges/5000-locked.svg";
+import SvgBadge10000 from "@/assets/badges/10000.svg";
+import SvgBadge10000Lock from "@/assets/badges/10000-locked.svg";
+import SvgCircle from "@/assets/archway/circle.svg";
+import JpgMissionCardSample from "@/assets/archway/mission-card-sample.jpg";
 
+
+let calculationDialog = ref(false);
 let page = ref(1);
 let perPage = ref(15);
 let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
   new ArchwayLeaderboardResponse()
 );
-let myLeaderboardSpot: Ref<ArchwayLeaderboardRecordDto | undefined> = ref(
-  new ArchwayLeaderboardRecordDto()
-);
+
+const BADGE_XP: number[] = [1000, 2000, 5000, 10000];
 
 async function getLeaderboard() {
   let pagination: PaginationRequest = new PaginationRequest(
     page.value,
     perPage.value
   );
-  let ret: ArchwayLeaderboardResponse = await store.dispatch(
+  leaderboard.value = await store.dispatch(
     "ArchwayHttpModule/getLeaderboard",
     pagination
   );
-
-  //TODO update backend
-  myLeaderboardSpot.value = ret.searchResults.find(
-    (row) => (row.walletAddress = walletAddress.value)
-  );
-
-  leaderboard.value = ret;
 }
 
 const walletAddress: ComputedRef<string> = computed(
   () => store.state.UserModule?.activeWallet?.address || ""
 );
+
+function shortWallet(str: any) {
+  if (typeof str !== "string" || str.length < 15) {
+    return str;
+  }
+  return str.substring(0, 10) + "..." + str.substring(str.length - 2);
+}
 
 function currentPageChange(newVal: number) {
   page.value = newVal;
@@ -217,6 +325,52 @@ function currentPageChange(newVal: number) {
 function perPageChange(newVal: number) {
   perPage.value = newVal;
   getLeaderboard();
+}
+
+function getClosestNextBadgeXp(currentXp: number | undefined) {
+  if (currentXp == undefined || currentXp <= BADGE_XP[0]) {
+    return BADGE_XP[0];
+  }
+  if (currentXp <= BADGE_XP[1]) {
+    return BADGE_XP[1];
+  }
+  if (currentXp <= BADGE_XP[2]) {
+    return BADGE_XP[2];
+  }
+  if (currentXp <= BADGE_XP[3]) {
+    return BADGE_XP[3];
+  }
+}
+
+function getXpPercentage(givenXp: number): number {
+  let maxXp = BADGE_XP[BADGE_XP.length - 1];
+  if (givenXp >= maxXp) {
+    return 100;
+  }
+  return Math.floor(100 - (maxXp - givenXp) / 100);
+}
+
+function getBadgeForXp(givenXp: number){
+  let currentXp: number = leaderboard.value.myLeaderboardSpot
+    ? leaderboard.value.myLeaderboardSpot.score
+    : 0;
+  switch (givenXp) {
+    case 1000:
+      return currentXp >= givenXp ? SvgBadge1000 : SvgBadge1000Lock;
+    case 2000:
+      return currentXp >= givenXp ? SvgBadge2000 : SvgBadge2000Lock;
+    case 5000:
+      return currentXp >= givenXp ? SvgBadge5000 : SvgBadge5000Lock;
+    case 10000:
+      return currentXp >= givenXp ? SvgBadge10000 : SvgBadge10000Lock;
+  }
+}
+
+function circleOrangeForXp(givenXp: number): boolean {
+  let currentXp: number = leaderboard.value.myLeaderboardSpot
+    ? leaderboard.value.myLeaderboardSpot.score
+    : 0;
+  return currentXp >= givenXp;
 }
 
 function getAvatar(userWallet: string) {
@@ -229,28 +383,52 @@ function getAvatar(userWallet: string) {
   }).dataURL;
 }
 
-onMounted(() => {
-  // @ts-ignore
-  getLeaderboard();
+onMounted(async () => {
+  await getLeaderboard();
 });
 </script>
 
 <style lang="scss">
 @use "@/design/vars.scss";
-.leaderboard-header {
-  display: grid;
-  grid-template-columns: 1fr 6fr 2fr 2fr 2fr;
-  align-items: center;
-  padding: 0.6em;
+
+.limit-width.leaderboard {
+  max-width: 1000px;
 }
 
-.leaderboard-element {
+.leaderboard-table {
   display: grid;
-  grid-template-columns: 1fr 6fr 2fr 2fr 2fr;
-  background-color: white;
-  margin-bottom: 1em;
-  border-radius: 16px;
-  padding: 0.6em;
+  grid-template-columns: 1.5fr 6fr 1fr 3fr 3fr 3fr;
+  row-gap: 1em;
+
+  .el-avatar {
+    width: 2em;
+    height: 2em;
+  }
+
+  > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4em 0;
+
+    &.first {
+      border-bottom-left-radius: 1em;
+      border-top-left-radius: 1em;
+    }
+    &.last {
+      border-bottom-right-radius: 1em;
+      border-top-right-radius: 1em;
+    }
+  }
+
+  .leaderboard-header {
+    font-weight: bold;
+  }
+
+  .leaderboard-element {
+    background: #fff;
+    box-shadow: 0px 4px 50px -21px rgba(0, 0, 0, 0.5);
+  }
 }
 
 .el-dropdown-menu__item:not(.is-disabled) {
@@ -260,5 +438,10 @@ onMounted(() => {
   &:hover {
     color: vars.$archway-primary-orange;
   }
+}
+
+.calculation-dialog {
+  background-color: vars.$archway-warm-grey;
+  max-width: 20em;
 }
 </style>

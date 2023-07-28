@@ -65,7 +65,7 @@
     </el-row>
 
     <el-row>
-      <h2>Products</h2>
+      <h2>Ecosystem dApps</h2>
     </el-row>
     <product-list class="mb-extra-large"/>
 

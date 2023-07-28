@@ -9,11 +9,11 @@
   @media only screen and (max-width: 768px) {
     font-size: 12vw;
   }
-  @media only screen and (min-aspect-ratio: 2/1) {
-    font-size: 8vw;
+  @media only screen and (min-aspect-ratio: 23/10) {
+    font-size: 7vw;
   }
-  @media only screen and (min-aspect-ratio: 3/1) {
-    font-size: 6.5vw;
+  @media only screen and (min-aspect-ratio: 28/10) {
+    font-size: 5.5vw;
   }
 }
 
@@ -75,7 +75,7 @@ button.archway:hover {
     &:active,
     &:focus{
       color: #FFF;
-      background-color: rgba(255, 77, 0, 0.16);
+      background-color: vars.$archway-primary-orange;
     }
     &:focus {
       border: 2px solid #E14400;
@@ -214,10 +214,12 @@ button.archway:hover {
   .el-card__body {
     padding-left: 1.2em;
     padding-right: 1.2em;
-    box-shadow: -8px 40px 70px -20px rgba(0, 0, 0, 0.6);
   }
   border-radius: 1em;
-  box-shadow: -8px 40px 70px -20px rgba(0, 0, 0, 0.6);
+}
+
+.el-card.is-always-shadow.id-card {
+  box-shadow: -8px 40px 70px -20px rgba(0, 0, 0, 0.2);
 }
 
 .el-box.id-card-social {
