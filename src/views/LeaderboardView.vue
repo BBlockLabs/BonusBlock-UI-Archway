@@ -1,13 +1,18 @@
 <template>
   <PageWrapper full-width class="m-0 fs-slightly-larger">
     <el-dialog
-      :show-close="false"
       v-model="calculationDialog"
+      :show-close="false"
       class="fs-large calculation-dialog"
     >
       <el-row justify="center">
-          <h2 class="w-100 tc">How calculations work?</h2>
-          <img style="border-radius: 18px" class="w-100" :src="JpgMissionCardSample" alt="Example mission">
+        <h2 class="w-100 tc">How calculations work?</h2>
+        <img
+          style="border-radius: 18px"
+          class="w-100"
+          :src="JpgMissionCardSample"
+          alt="Example mission"
+        />
 
         <div class="tc fs-medium mt-large mx-large">
           <div>
@@ -19,8 +24,8 @@
           <el-button
             style="width: 100%"
             class="mt-small"
-            @click="calculationDialog = false"
             type="secondary"
+            @click="calculationDialog = false"
           >
             Close</el-button
           >
@@ -39,11 +44,14 @@
               </el-tooltip>
             </el-row>
           </el-col>
-          <el-col v-if="leaderboard.myLeaderboardSpot" class="pointer" :span="-1">
-            <el-button class="mr-small" type="primary"
-              >Share progress on Twitter
-              <svg-twitter class="ml-small icon-small" />
-            </el-button>
+
+          <el-col class="pointer" :span="-1">
+            <el-link :href="shareProgressLink">
+              <el-button class="mr-small" type="primary"
+                >Share progress on Twitter
+                <svg-twitter class="ml-small icon-small" />
+              </el-button>
+            </el-link>
           </el-col>
         </el-row>
         <el-row class="fs-medium mt-large" justify="space-between">
@@ -191,11 +199,9 @@
                 class="mr-small"
               >
               </el-avatar>
-              <el-tooltip :content="leaderboardItem.walletAddress" placement="top">
-                <span style="width: 8em">
-                  {{ shortWallet(leaderboardItem.walletAddress) }}
-                </span>
-              </el-tooltip>
+              <span style="width: 8em">
+                {{ leaderboardItem.walletAddress }}
+              </span>
             </div>
             <div class="leaderboard-element">
             </div>
@@ -294,6 +300,20 @@ let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
 );
 
 const BADGE_XP: number[] = [1000, 2000, 5000, 10000];
+
+const shareProgressLink: ComputedRef<string> = computed((): string => {
+  const referral: string = store.getters["UserModule/refLink"];
+  let message: string;
+
+  if (leaderboard.value.myLeaderboardSpot) {
+    message = `Just hit Rank #${leaderboard.value.myLeaderboardSpot.rank} with ${leaderboard.value.myLeaderboardSpot.score} XP on Archway community missions! Join me and let’s climb the ranks together! ${referral}`;
+  } else {
+    message = `Just started ranking on Archway community missions! Join me and let’s climb the ranks together! ${referral}`;
+  }
+  const plainLink: string = `https://twitter.com/intent/tweet?text=${message}`;
+
+  return encodeURI(plainLink);
+});
 
 async function getLeaderboard() {
   let pagination: PaginationRequest = new PaginationRequest(
