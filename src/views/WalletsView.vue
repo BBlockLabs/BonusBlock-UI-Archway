@@ -75,6 +75,28 @@
       </box-wrapper>
     </el-row>
 
+    <carousel :mouse-drag="false" :items-to-show="1">
+      <slide :key="1">
+        <div class="carousel__item">
+          <SvgTutorial1 class="w-100" />
+        </div>
+      </slide>
+      <slide :key="2">
+        <div class="carousel__item">
+          <SvgTutorial2 class="w-100" />
+        </div>
+      </slide>
+      <slide :key="3">
+        <div class="carousel__item">
+          <SvgTutorial3 class="w-100" />
+        </div>
+      </slide>
+
+      <template #addons>
+        <pagination />
+      </template>
+    </carousel>
+
     <el-row>
       <h2>Ecosystem dApps</h2>
     </el-row>
@@ -160,6 +182,11 @@ import ArchwayInfoCard from "@/components/ArchwayInfoCard.vue";
 import {onMounted, ref} from "vue";
 import moment from "moment/moment";
 import SvgArch from "@/assets/currencies/arch.svg";
+import SvgTutorial1 from "@/assets/archway/tutorial-carousel-1.svg";
+import SvgTutorial2 from "@/assets/archway/tutorial-carousel-2.svg";
+import SvgTutorial3 from "@/assets/archway/tutorial-carousel-3.svg";
+import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
+import 'vue3-carousel/dist/carousel.css'
 
 const usageConsentVisible = ref(false);
 const termsOkDisabled = ref(true);
@@ -219,10 +246,32 @@ store.dispatch("ArchwayHttpModule/getStats");
 </script>
 
 <style lang="scss">
+@use "@/design/vars.scss";
+
 svg.info-tooltip {
   width: 1em;
   height: 1em;
   top: 0.1em;
   position: relative;
+}
+
+.carousel__item {
+  width: 100%;
+  overflow: hidden;
+  svg {
+    border-radius: 0.75em;
+  }
+}
+
+.carousel__pagination-button:after {
+  width: 3em;
+  background-color: #CCCCCC;
+  border-radius: 8px;
+  height: 4px;
+}
+
+.carousel__pagination-button--active::after,
+.carousel__pagination-button:hover::after {
+  background-color: vars.$archway-primary-orange;
 }
 </style>
