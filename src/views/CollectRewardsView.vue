@@ -128,62 +128,62 @@
               </div-->
             </el-row>
             <el-row justify="space-between" align="middle">
-              <component
-                :is="currencyIcons[campaign.currency] ?? 'div'"
-                class="currency-icon"
-              />
-              <div v-if="campaign.amount" class="bold flex-grow ml-small">
-                {{ getHumanAmount(campaign).substring(0, 17) }}
-                {{ campaign.currency }}
-              </div>
-              <div v-else class="flex-grow ml-small text-muted">
-                Unlocks on {{ nextCampaignCalculationDate(campaign) }}
-              </div>
-
-                <el-row class="ml-auto mt-small">
-                  <el-tooltip
-                    :content="keplrInstalled
-                    ? campaign.amount
-                      ? 'Claim your rewards'
-                      : 'Unlocks on ' + nextCampaignCalculationDate(campaign)
-                    : 'Keplr is not installed'"
-                    placement="top"
-                  >
-                    <div>
-                      <el-button
-                        type="primary"
-                        class="mr-small archway-orange-button"
-                        :disabled="!campaign.amount || !keplrInstalled"
-                        @click="claimCampaign(campaign, 'keplr')"
-                      >
-                        <svg-lock v-if="!campaign.amount" />
-                        Claim with Keplr
-                      </el-button>
-                    </div>
-
-                  </el-tooltip>
-
-                  <el-tooltip
-                    :content="leapInstalled
-                    ? campaign.amount
-                      ? 'Claim your rewards'
-                      : 'Unlocks on ' + nextCampaignCalculationDate(campaign)
-                    : 'Leap is not installed'"
-                    placement="top"
-                  >
-                    <div>
-                      <el-button
-                        type="primary"
-                        class="archway-orange-button"
-                        :disabled="!campaign.amount || !leapInstalled"
-                        @click="claimCampaign(campaign, 'leap')"
-                      >
-                        <svg-lock v-if="!campaign.amount" />
-                        Claim with Leap
-                      </el-button>
-                    </div>
-                  </el-tooltip>
+              <el-col :span="-1">
+                <el-row align="middle">
+                  <component
+                    :is="currencyIcons[campaign.currency] ?? 'div'"
+                    class="currency-icon"
+                  />
+                  <span v-if="campaign.amount" class="bold ml-small">
+                  {{ getHumanAmount(campaign).substring(0, 17) }}
+                  {{ campaign.currency }}
+                </span>
+                  <span v-else class="flex-grow ml-small text-muted">
+                  Unlocks on {{ nextCampaignCalculationDate(campaign) }}
+                </span>
                 </el-row>
+              </el-col>
+
+              <el-col :span="-1">
+                  <el-dropdown placement="bottom-end" class="ml-auto">
+                    <el-button type="primary">
+                      Claim<SvgChevronDown class="ml-small"/>
+                    </el-button>
+                    <template #dropdown>
+                      <el-dropdown-menu >
+                        <el-dropdown-item @click="claimCampaign(campaign, 'keplr')" :disabled="!keplrInstalled">
+                          <el-tooltip
+                            :content="keplrInstalled
+                            ? campaign.amount
+                              ? 'Claim your rewards'
+                              : 'Unlocks on ' + nextCampaignCalculationDate(campaign)
+                            : 'Keplr is not installed'"
+                            placement="right"
+                          >
+                            <div>
+                              Keplr
+                            </div>
+                          </el-tooltip>
+                        </el-dropdown-item>
+
+                        <el-dropdown-item @click="claimCampaign(campaign, 'leap')" :disabled="!leapInstalled">
+                          <el-tooltip
+                            :content="leapInstalled
+                            ? campaign.amount
+                              ? 'Claim your rewards'
+                              : 'Unlocks on ' + nextCampaignCalculationDate(campaign)
+                            : 'Leap is not installed'"
+                            placement="right"
+                          >
+                            <div>
+                              Leap
+                            </div>
+                          </el-tooltip>
+                        </el-dropdown-item>
+                      </el-dropdown-menu>
+                    </template>
+                  </el-dropdown>
+              </el-col>
             </el-row>
           </div>
         </div>
@@ -212,7 +212,7 @@ import PageWrapper from "@/components/PageWrapper.vue";
 import SvgLock from "@/assets/icons/lock.svg?component";
 import SvgLink from "@/assets/icons/open-new-window.svg?component";
 import SvgClock from "@/assets/icons/clock.svg?component";
-//import SvgChevronRight from "@/assets/icons/nav-arrow-right.svg?component";
+import SvgChevronDown from "@/assets/icons/nav-arrow-down.svg?component";
 import SvgShare from "@/assets/icons/share.svg?component";
 import SvgAry from "@/assets/currencies/ary.svg?component";
 import SvgBab from "@/assets/currencies/bab.svg?component";
