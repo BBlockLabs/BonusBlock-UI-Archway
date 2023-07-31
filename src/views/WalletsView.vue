@@ -75,7 +75,7 @@
       </box-wrapper>
     </el-row>
 
-    <carousel :mouse-drag="false" :items-to-show="1">
+    <carousel :wrap-around="true" :autoplay="7000" :mouse-drag="false" :items-to-show="1">
       <slide :key="1">
         <div class="carousel__item">
           <SvgTutorial1 class="w-100" />
