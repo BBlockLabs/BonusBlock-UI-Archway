@@ -1,3 +1,5 @@
+@use "@/design/vars.scss";
+
 .el-drawer {
-  background-color: #FFF7EA;
+  background-color: vars.$archway-warm-grey;
 }

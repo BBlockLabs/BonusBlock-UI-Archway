@@ -7,12 +7,8 @@
     >
       <el-row justify="center">
         <h2 class="w-100 tc">How calculations work?</h2>
-        <img
-          style="border-radius: 18px"
-          class="w-100"
-          :src="JpgMissionCardSample"
-          alt="Example mission"
-        />
+        <SvgMissionCardSample style="border-radius: 1em"/>
+
 
         <div class="tc fs-medium mt-large mx-large">
           <div>
@@ -149,7 +145,7 @@
           </el-col>
 
           <el-col class="pointer" :span="-1">
-            <el-link :href="shareProgressLink">
+            <el-link :href="shareProgressLink" target="_blank">
               <el-button class="mr-small" type="primary"
                 >Share progress on Twitter
                 <svg-twitter class="ml-small icon-small" />
@@ -419,7 +415,7 @@ import SvgNewBadge4 from "@/assets/badges/new-badge-4.svg";
 
 import SvgCircle from "@/assets/archway/circle.svg";
 import SvgInfo from "@/assets/icons/info.svg";
-import JpgMissionCardSample from "@/assets/archway/mission-card-sample.jpg";
+import SvgMissionCardSample from "@/assets/archway/mission-card-sample.svg";
 import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 import Toast from "@/common/Toast";
 import { ArchwayLeapClient } from "@/common/ArchwayLeapClient";
