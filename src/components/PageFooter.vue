@@ -14,7 +14,7 @@
       </el-col>
 
       <el-col :span="-1" class="d-flex gap-small">
-        <b style="align-self: center"> Powered by </b>
+        <b style="align-self: center; text-wrap: nowrap"> Powered by </b>
         <SvgBonusBlockLogo class="icon-medium" />
       </el-col>
     </el-row>

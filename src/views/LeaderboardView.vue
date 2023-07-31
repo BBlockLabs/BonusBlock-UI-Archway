@@ -1,13 +1,18 @@
 <template>
   <PageWrapper full-width class="m-0 fs-slightly-larger">
     <el-dialog
-      :show-close="false"
       v-model="calculationDialog"
+      :show-close="false"
       class="fs-large calculation-dialog"
     >
       <el-row justify="center">
-          <h2 class="w-100 tc">How calculations work?</h2>
-          <img style="border-radius: 18px" class="w-100" :src="JpgMissionCardSample" alt="Example mission">
+        <h2 class="w-100 tc">How calculations work?</h2>
+        <img
+          style="border-radius: 18px"
+          class="w-100"
+          :src="JpgMissionCardSample"
+          alt="Example mission"
+        />
 
         <div class="tc fs-medium mt-large mx-large">
           <div>
@@ -17,14 +22,50 @@
             <span class="archway-orange">Community XP</span> serves the additional purpose of unlocking various community badges!
           </div>
           <el-button
-            style="width: 100%"
-            class="mt-small"
-            @click="calculationDialog = false"
+            class="mt-small w-100"
             type="secondary"
+            @click="calculationDialog = false"
           >
             Close</el-button
           >
         </div>
+      </el-row>
+    </el-dialog>
+
+    <el-dialog
+      v-model="newBadgeDialog"
+      :before-close="newBadgeMint"
+      :show-close="false"
+      class="px-medium pt-medium fs-large calculation-dialog"
+    >
+      <el-row justify="center">
+        <component
+          :is="getNewBadgeImage()"
+          style="height: 35em; border-radius: 18px; border: 1px solid #CCCCCC"
+        />
+
+        <h2 class="tc">Congratulations!</h2>
+        <span class="fs-medium tc">You have unlocked a new mint badge.</span>
+        <el-row class="mt-medium w-100" gutter="10">
+          <el-col :span="12">
+            <el-button
+              class="mt-small w-100"
+              type="secondary"
+              @click="newBadgeAcknowledge"
+            >
+              Close
+            </el-button>
+          </el-col>
+          <el-col :span="12">
+            <el-button
+              class="mt-small w-100"
+              type="primary"
+              @click="newBadgeMint"
+            >
+              Mint
+            </el-button>
+          </el-col>
+        </el-row>
       </el-row>
     </el-dialog>
 
@@ -39,11 +80,14 @@
               </el-tooltip>
             </el-row>
           </el-col>
-          <el-col v-if="leaderboard.myLeaderboardSpot" class="pointer" :span="-1">
-            <el-button class="mr-small is-link" type="primary"
-              >Share progress on Twitter
-              <svg-twitter class="ml-small icon-small" />
-            </el-button>
+
+          <el-col class="pointer" :span="-1">
+            <el-link :href="shareProgressLink">
+              <el-button class="mr-small" type="primary"
+                >Share progress on Twitter
+                <svg-twitter class="ml-small icon-small" />
+              </el-button>
+            </el-link>
           </el-col>
         </el-row>
         <el-row class="fs-medium mt-large" justify="space-between">
@@ -52,7 +96,7 @@
             <el-row class="fs-extra-large archway-orange">
               {{
                 leaderboard.myLeaderboardSpot
-                  ? "#" + leaderboard.myLeaderboardSpot.rank
+                  ? "#" + leaderboard.myLeaderboardSpot.position.rank
                   : "-"
               }}
             </el-row>
@@ -65,7 +109,7 @@
               <span class="mx-auto">
                 {{
                   leaderboard.myLeaderboardSpot
-                    ? leaderboard.myLeaderboardSpot.score
+                    ? leaderboard.myLeaderboardSpot.position.score
                     : "0"
                 }}
               </span>
@@ -76,7 +120,7 @@
             <el-row class="fs-extra-large">
               {{
                 leaderboard.myLeaderboardSpot
-                  ? leaderboard.myLeaderboardSpot.topDapp
+                  ? leaderboard.myLeaderboardSpot.position.topDapp
                   : "-"
               }}
             </el-row>
@@ -90,11 +134,11 @@
             <el-progress
               :percentage="
                 leaderboard.myLeaderboardSpot
-                  ? getXpPercentage(leaderboard.myLeaderboardSpot.score)
+                  ? getXpPercentage(leaderboard.myLeaderboardSpot.position.score)
                   : 0
               "
               status="success"
-              :stroke-width="6"
+              :stroke-width="7"
               :show-text="false"
             ></el-progress>
 
@@ -119,10 +163,10 @@
                   position: absolute;
                   width: 0.8em;
                   left: -0.4em;
-                  top: -0.16em;
+                  top: -0.17em;
                 "
                 :class="circleOrangeForXp(value) ? 'archway-orange' : ''"
-                :style="circleOrangeForXp(value) ? '' : 'color: #F2EFED;'"
+                :style="circleOrangeForXp(value) ? '' : 'color: #CCCCCC'"
               />
             </span>
 
@@ -137,33 +181,53 @@
             <el-row class="archway-orange">
               {{
                 leaderboard.myLeaderboardSpot
-                  ? leaderboard.myLeaderboardSpot.score
+                  ? leaderboard.myLeaderboardSpot.position.score
                   : "0"
               }}
               /
               {{
                 leaderboard.myLeaderboardSpot
-                  ? getClosestNextBadgeXp(leaderboard.myLeaderboardSpot.score)
+                  ? getClosestNextBadgeXp(leaderboard.myLeaderboardSpot.position.score)
                   : getClosestNextBadgeXp(undefined)
               }}
               XP
             </el-row>
           </el-col>
-
-          <el-col v-if="leaderboard.myLeaderboardSpot" :span="-1">
-            <el-button class="mr-small is-link" type="primary"
+          <el-col v-if="leaderboard.myLeaderboardSpot && !leaderboard.myLeaderboardSpot.badgeClaimed" :span="-1">
+            <!--            <el-button class="mr-small is-link" type="primary"
               >Share badge</el-button
+            >-->
+            <el-button
+              :loading="mintBadgeLoading"
+              :disabled="mintBadgeLoading"
+              @click="newBadgeMint"
+              type="primary"
+              >Mint badge</el-button
             >
-            <el-button type="primary">Mint badge</el-button>
           </el-col>
         </el-row>
       </box-wrapper>
 
       <el-row align="middle" justify="space-between" class="mt-medium">
-        <el-col :span="-1">
+        <el-col
+          :span="-1"
+          flex-nowrap
+          style="display: flex; flex-direction: row; gap: 0.6em"
+        >
           <h2>Leaderboard</h2>
+          <el-tooltip
+            content="Updates can take up to 5 minutes"
+            placement="right"
+            style="border: none !important"
+          >
+            <SvgInfo pointer style="width: 24px"></SvgInfo>
+          </el-tooltip>
         </el-col>
-        <el-col @click="calculationDialog = true" class="archway-orange pointer" :span="-1">
+        <el-col
+          class="archway-orange pointer"
+          :span="-1"
+          @click="calculationDialog = true"
+        >
           How calculations work?</el-col
         >
       </el-row>
@@ -191,11 +255,9 @@
                 class="mr-small"
               >
               </el-avatar>
-              <el-tooltip :content="leaderboardItem.walletAddress" placement="top">
-                <span style="width: 8em">
-                  {{ shortWallet(leaderboardItem.walletAddress) }}
-                </span>
-              </el-tooltip>
+              <span style="width: 8em">
+                {{ leaderboardItem.walletAddress }}
+              </span>
             </div>
             <div class="leaderboard-element">
             </div>
@@ -282,11 +344,20 @@ import SvgBadge5000 from "@/assets/badges/5000.svg";
 import SvgBadge5000Lock from "@/assets/badges/5000-locked.svg";
 import SvgBadge10000 from "@/assets/badges/10000.svg";
 import SvgBadge10000Lock from "@/assets/badges/10000-locked.svg";
-import SvgCircle from "@/assets/archway/circle.svg";
-import JpgMissionCardSample from "@/assets/archway/mission-card-sample.jpg";
+import SvgNewBadge1 from "@/assets/badges/new-badge-1.svg";
+import SvgNewBadge2 from "@/assets/badges/new-badge-2.svg";
+import SvgNewBadge3 from "@/assets/badges/new-badge-3.svg";
+import SvgNewBadge4 from "@/assets/badges/new-badge-4.svg";
 
+import SvgCircle from "@/assets/archway/circle.svg";
+import SvgInfo from "@/assets/icons/info.svg";
+import JpgMissionCardSample from "@/assets/archway/mission-card-sample.jpg";
+import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
+import Toast from "@/common/Toast";
 
 let calculationDialog = ref(false);
+let newBadgeDialog = ref(false);
+let mintBadgeLoading = ref(false);
 let page = ref(1);
 let perPage = ref(15);
 let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
@@ -294,6 +365,20 @@ let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
 );
 
 const BADGE_XP: number[] = [1000, 2000, 5000, 10000];
+
+const shareProgressLink: ComputedRef<string> = computed((): string => {
+  const referral: string = store.getters["UserModule/refLink"];
+  let message: string;
+
+  if (leaderboard.value.myLeaderboardSpot) {
+    message = `Just hit Rank ${leaderboard.value.myLeaderboardSpot.position.rank} with ${leaderboard.value.myLeaderboardSpot.position.score} XP on Archway community missions! Join me and let’s climb the ranks together! ${referral}`;
+  } else {
+    message = `Just started ranking on Archway community missions! Join me and let’s climb the ranks together! ${referral}`;
+  }
+  const plainLink: string = `https://twitter.com/intent/tweet?text=${message}`;
+
+  return encodeURI(plainLink);
+});
 
 async function getLeaderboard() {
   let pagination: PaginationRequest = new PaginationRequest(
@@ -304,6 +389,37 @@ async function getLeaderboard() {
     "ArchwayHttpModule/getLeaderboard",
     pagination
   );
+  newBadgeDialog.value = leaderboard.value.myLeaderboardSpot?.newBadgePopup || false;
+}
+
+async function newBadgeAcknowledge() {
+  newBadgeDialog.value = false;
+  await store.dispatch("ArchwayHttpModule/badgeAcknowledge");
+}
+
+async function newBadgeMint() {
+  newBadgeDialog.value = false;
+  mintBadgeLoading.value = true;
+  await store.dispatch("ArchwayHttpModule/mintBadgeInit");
+  try {
+    await ArchwayKeplrClient.mintBadge();
+  } catch (e: any) {
+    if (!e.toString().includes("Already Minted")) {
+      Toast.make("Mint failure", e.toString(), "error", false, 0);
+      mintBadgeLoading.value = false;
+      return;
+    } else {
+      Toast.make("Badge already claimed", "You have already claimed this badge", "warning", true, 1000);
+    }
+  }
+
+  if (leaderboard.value.myLeaderboardSpot) {
+    leaderboard.value.myLeaderboardSpot.badgeClaimed = true;
+  }
+
+  mintBadgeLoading.value = false;
+
+  await store.dispatch("ArchwayHttpModule/mintBadgeOk");
 }
 
 const walletAddress: ComputedRef<string> = computed(
@@ -352,7 +468,7 @@ function getXpPercentage(givenXp: number): number {
 
 function getBadgeForXp(givenXp: number){
   let currentXp: number = leaderboard.value.myLeaderboardSpot
-    ? leaderboard.value.myLeaderboardSpot.score
+    ? leaderboard.value.myLeaderboardSpot.position.score
     : 0;
   switch (givenXp) {
     case 1000:
@@ -366,9 +482,28 @@ function getBadgeForXp(givenXp: number){
   }
 }
 
+function getNewBadgeImage(){
+  let currentXp: number = leaderboard.value.myLeaderboardSpot
+    ? leaderboard.value.myLeaderboardSpot.position.score
+    : 0;
+
+  if (currentXp >= BADGE_XP[3]) {
+    return SvgNewBadge4;
+  }
+  if (currentXp >= BADGE_XP[2]) {
+    return SvgNewBadge3;
+  }
+  if (currentXp >= BADGE_XP[1]) {
+    return SvgNewBadge2;
+  }
+  if (currentXp >= BADGE_XP[0]) {
+    return SvgNewBadge1;
+  }
+}
+
 function circleOrangeForXp(givenXp: number): boolean {
   let currentXp: number = leaderboard.value.myLeaderboardSpot
-    ? leaderboard.value.myLeaderboardSpot.score
+    ? leaderboard.value.myLeaderboardSpot.position.score
     : 0;
   return currentXp >= givenXp;
 }
@@ -442,6 +577,6 @@ onMounted(async () => {
 
 .calculation-dialog {
   background-color: vars.$archway-warm-grey;
-  max-width: 20em;
+  max-width: 18em;
 }
 </style>

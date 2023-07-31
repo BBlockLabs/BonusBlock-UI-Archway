@@ -1,9 +1,17 @@
+@use "@/design/vars.scss";
+
 .el-tag {
   margin-right: 1em;
 }
 
 
 .el-tag--plain {
-  background: transparent;
-  border-color: #000;
+  background: vars.$archway-warm-grey;
+  border: none;
+}
+
+.el-tag--info {
+  color: black;
+  background: vars.$archway-warm-grey;
+  border: none;
 }
