@@ -160,7 +160,27 @@
                         Claim with Keplr
                       </el-button>
                     </div>
+                  </el-tooltip>
 
+                  <el-tooltip
+                    :content="leapInstalled
+                    ? campaign.amount
+                      ? 'Claim your rewards'
+                      : 'Unlocks on ' + nextCampaignCalculationDate(campaign)
+                    : 'Leap is not installed'"
+                    placement="top"
+                  >
+                    <div>
+                      <el-button
+                        type="primary"
+                        class="archway-orange-button"
+                        :disabled="!campaign.amount || !leapInstalled"
+                        @click="claimCampaign(campaign, 'cosmostation')"
+                      >
+                        <svg-lock v-if="!campaign.amount" />
+                        Claim with Cosmostation
+                      </el-button>
+                    </div>
                   </el-tooltip>
 
                   <el-tooltip
@@ -236,6 +256,7 @@ import ProductList from "@/components/ProductList.vue";
 import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 import Toast from "@/common/Toast";
 import {ArchwayLeapClient} from "@/common/ArchwayLeapClient";
+import CosmostationWalletClient from "@/common/CosmostationWalletClient";
 
 const currencyIcons = {
   ARY: SvgAry,
@@ -313,11 +334,24 @@ function openCampaignDetails(campaign: CampaignWithRewardDto): void {
   router.push("/campaign/" + campaign.id);
 }
 
-async function claimCampaign(campaign: CampaignWithRewardDto, walletClient: "keplr" | "leap"): Promise<void> {
-  const client = walletClient === "keplr" ? ArchwayKeplrClient : ArchwayLeapClient;
+async function claimCampaign(campaign: CampaignWithRewardDto, walletClient: "keplr" | "leap" | "cosmostation"): Promise<void> {
+  let client;
+
+  switch (walletClient) {
+    case "keplr":
+      client = ArchwayKeplrClient;
+      break;
+    case "leap":
+      client = ArchwayLeapClient;
+      break;
+    case "cosmostation":
+      client = await CosmostationWalletClient.create();
+      break;
+  }
 
   claimModal.campaign = campaign;
   claimModal.loading = true;
+
   if (campaign.smartContractAddress.startsWith("archway")) {
     let claimFee;
     try {
@@ -328,9 +362,9 @@ async function claimCampaign(campaign: CampaignWithRewardDto, walletClient: "kep
     }
 
     try {
-      await store.dispatch("HttpModule/claimRewardInit", {
-        campaignId: campaign.id,
-      });
+      // await store.dispatch("HttpModule/claimRewardInit", {
+      //   campaignId: campaign.id,
+      // });
       await client.claimArchwayReward(campaign.smartContractAddress, campaign.id, claimFee);
 
       let index = campaigns.indexOf(campaign);
@@ -343,11 +377,13 @@ async function claimCampaign(campaign: CampaignWithRewardDto, walletClient: "kep
     }
     claimModal.loading = false;
     try {
-      await store.dispatch("HttpModule/claimRewardCheck", {});
+      // await store.dispatch("HttpModule/claimRewardCheck", {});
     }catch (ignoredError: any){}
     return;
   }
 
+  console.log(campaign.smartContractAddress, 'aa')
+  return;
   try {
     const response = await store.dispatch("HttpModule/claimReward", {
       campaignId: campaign.id,
