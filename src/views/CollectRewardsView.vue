@@ -139,36 +139,51 @@
               <div v-else class="flex-grow ml-small text-muted">
                 Unlocks on {{ nextCampaignCalculationDate(campaign) }}
               </div>
-              <el-tooltip
-                :content="
-                  campaign.amount
-                    ? 'Claim your rewards'
-                    : 'Unlocks on ' + nextCampaignCalculationDate(campaign)
-                "
-                placement="top"
-              >
-                <div>
-                  <el-button
-                    type="primary"
-                    class="archway-orange-button"
-                    :disabled="!campaign.amount"
-                    @click="claimCampaign(campaign, 'keplr')"
-                  >
-                    <svg-lock v-if="!campaign.amount" />
-                    Claim with keplr
-                  </el-button>
 
-                  <el-button
-                    type="primary"
-                    class="archway-orange-button"
-                    :disabled="!campaign.amount"
-                    @click="claimCampaign(campaign, 'leap')"
+                <el-row class="ml-auto mt-small">
+                  <el-tooltip
+                    :content="keplrInstalled
+                    ? campaign.amount
+                      ? 'Claim your rewards'
+                      : 'Unlocks on ' + nextCampaignCalculationDate(campaign)
+                    : 'Keplr is not installed'"
+                    placement="top"
                   >
-                    <svg-lock v-if="!campaign.amount" />
-                    Claim
-                  </el-button>
-                </div>
-              </el-tooltip>
+                    <div>
+                      <el-button
+                        type="primary"
+                        class="mr-small archway-orange-button"
+                        :disabled="!campaign.amount || !keplrInstalled"
+                        @click="claimCampaign(campaign, 'keplr')"
+                      >
+                        <svg-lock v-if="!campaign.amount" />
+                        Claim with Keplr
+                      </el-button>
+                    </div>
+
+                  </el-tooltip>
+
+                  <el-tooltip
+                    :content="leapInstalled
+                    ? campaign.amount
+                      ? 'Claim your rewards'
+                      : 'Unlocks on ' + nextCampaignCalculationDate(campaign)
+                    : 'Leap is not installed'"
+                    placement="top"
+                  >
+                    <div>
+                      <el-button
+                        type="primary"
+                        class="archway-orange-button"
+                        :disabled="!campaign.amount || !leapInstalled"
+                        @click="claimCampaign(campaign, 'leap')"
+                      >
+                        <svg-lock v-if="!campaign.amount" />
+                        Claim with Leap
+                      </el-button>
+                    </div>
+                  </el-tooltip>
+                </el-row>
             </el-row>
           </div>
         </div>
@@ -259,6 +274,8 @@ let claimModal = reactive({
 const todayInteractions = ref(null as number | null);
 const campaignsLoading = ref(true);
 const campaigns: Array<CampaignWithRewardDto> = reactive([]);
+const keplrInstalled = window.keplr != undefined;
+const leapInstalled = window.leap != undefined;
 
 function fetchTodayInteractions() {
   store
