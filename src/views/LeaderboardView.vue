@@ -47,22 +47,53 @@
         <h2 class="tc">Congratulations!</h2>
         <span class="fs-medium tc">You have unlocked a new mint badge.</span>
         <el-row class="mt-medium w-100" gutter="10">
+
           <el-col :span="12">
+            <el-tooltip
+              :disabled="keplrInstalled"
+              content="Keplr is not installed"
+              placement="top"
+            >
+              <div>
+                <el-button
+                  class="mt-small w-100"
+                  type="primary"
+                  :disabled="!keplrInstalled"
+                  @click="newBadgeMint('keplr')"
+                >
+                  Mint with Keplr
+                </el-button>
+              </div>
+            </el-tooltip>
+          </el-col>
+
+          <el-col :span="12">
+            <el-tooltip
+              :disabled="false"
+              content="Leap is not installed"
+              placement="top"
+            >
+              <div>
+                <el-button
+                  class="mt-small w-100"
+                  type="primary"
+                  :disabled="!leapInstalled"
+                  @click="newBadgeMint('leap')"
+                >
+                  Mint with Leap
+                </el-button>
+              </div>
+            </el-tooltip>
+          </el-col>
+        </el-row>
+        <el-row class="w-100" gutter="10">
+          <el-col>
             <el-button
               class="mt-small w-100"
               type="secondary"
               @click="newBadgeAcknowledge"
             >
               Close
-            </el-button>
-          </el-col>
-          <el-col :span="12">
-            <el-button
-              class="mt-small w-100"
-              type="primary"
-              @click="newBadgeMint"
-            >
-              Mint
             </el-button>
           </el-col>
         </el-row>
@@ -193,17 +224,43 @@
               XP
             </el-row>
           </el-col>
-          <el-col v-if="leaderboard.myLeaderboardSpot && !leaderboard.myLeaderboardSpot.badgeClaimed" :span="-1">
-            <!--            <el-button class="mr-small is-link" type="primary"
-              >Share badge</el-button
-            >-->
-            <el-button
-              :loading="mintBadgeLoading"
-              :disabled="mintBadgeLoading"
-              @click="newBadgeMint"
-              type="primary"
-              >Mint badge</el-button
-            >
+          <el-col :span="-1">
+            <el-row>
+              <el-tooltip
+                :disabled="keplrInstalled"
+                content="Keplr is not installed"
+                placement="top"
+              >
+                <div>
+                  <el-button
+                    :loading="keplrInstalled && mintBadgeLoading"
+                    type="primary"
+                    :disabled="!keplrInstalled || mintBadgeLoading"
+                    @click="newBadgeMint('keplr')"
+                    class="mr-small"
+                  >
+                    Mint with Keplr
+                  </el-button>
+                </div>
+              </el-tooltip>
+
+              <el-tooltip
+                :disabled="false"
+                content="Leap is not installed"
+                placement="top"
+              >
+                <div>
+                  <el-button
+                    :loading="leapInstalled && mintBadgeLoading"
+                    type="primary"
+                    :disabled="!leapInstalled || mintBadgeLoading"
+                    @click="newBadgeMint('leap')"
+                  >
+                    Mint with Leap
+                  </el-button>
+                </div>
+              </el-tooltip>
+            </el-row>
           </el-col>
         </el-row>
       </box-wrapper>
@@ -354,7 +411,10 @@ import SvgInfo from "@/assets/icons/info.svg";
 import JpgMissionCardSample from "@/assets/archway/mission-card-sample.jpg";
 import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 import Toast from "@/common/Toast";
+import { ArchwayLeapClient } from "@/common/ArchwayLeapClient";
 
+const keplrInstalled = window.keplr != undefined;
+const leapInstalled = window.leap != undefined;
 let calculationDialog = ref(false);
 let newBadgeDialog = ref(false);
 let mintBadgeLoading = ref(false);
@@ -397,12 +457,14 @@ async function newBadgeAcknowledge() {
   await store.dispatch("ArchwayHttpModule/badgeAcknowledge");
 }
 
-async function newBadgeMint() {
+async function newBadgeMint(walletClient: "keplr" | "leap") {
+  const client = walletClient === "keplr" ? ArchwayKeplrClient : ArchwayLeapClient;
+
   newBadgeDialog.value = false;
   mintBadgeLoading.value = true;
   await store.dispatch("ArchwayHttpModule/mintBadgeInit");
   try {
-    await ArchwayKeplrClient.mintBadge();
+    await client.mintBadge();
   } catch (e: any) {
     if (!e.toString().includes("Already Minted")) {
       Toast.make("Mint failure", e.toString(), "error", false, 0);
@@ -499,6 +561,7 @@ function getNewBadgeImage(){
   if (currentXp >= BADGE_XP[0]) {
     return SvgNewBadge1;
   }
+  return SvgNewBadge1;
 }
 
 function circleOrangeForXp(givenXp: number): boolean {
