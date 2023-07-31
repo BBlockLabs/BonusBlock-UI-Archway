@@ -32,6 +32,7 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
+    "@cosmostation/extension-client": "^0.1.15",
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/node": "^18.11.12",
     "@vitejs/plugin-vue": "^4.0.0",

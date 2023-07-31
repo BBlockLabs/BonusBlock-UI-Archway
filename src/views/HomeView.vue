@@ -56,6 +56,23 @@
               </el-col>
             </el-row>
           </box-wrapper>
+
+          <box-wrapper
+            style="border-radius: 16px"
+            type="white"
+            round
+            class="keplr-button pointer fs-large my-small p-small ml-small"
+            @click="connectWallet('cosmostation')"
+          >
+            <el-row class="mx-medium is-align-middle" align="middle">
+              <el-col class="d-flex" :span="-1">
+                <svg-leap-wallet class="mr-small icon-small w-auto" />
+              </el-col>
+              <el-col class="fs-base" :span="-1">
+                <strong>Continue with Cosmosstation</strong>
+              </el-col>
+            </el-row>
+          </box-wrapper>
         </el-row>
       </el-col>
     </el-row>
@@ -121,7 +138,7 @@ async function onKeplrLogin(): Promise<void> {
   await router.push("/explore");
 }
 
-const connectWallet = async (wallet: "keplr" | "leap"): Promise<void> => {
+const connectWallet = async (wallet: "keplr" | "leap" | "cosmostation"): Promise<void> => {
   let chain = new Chain();
   let currentChain = ArchwayKeplrClient.getChain();
   let currentCurrency = ArchwayKeplrClient.getCurrency();
@@ -142,6 +159,9 @@ const connectWallet = async (wallet: "keplr" | "leap"): Promise<void> => {
       break;
     case "leap":
       dispatch = 'UserModule/leapLogin';
+      break;
+    case "cosmostation":
+      dispatch = 'UserModule/cosmostationLogin';
       break;
   }
 

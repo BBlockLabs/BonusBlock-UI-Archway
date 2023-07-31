@@ -28,6 +28,7 @@ import Chain from "@/common/Chain";
 import Toast from "@/common/Toast";
 import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 import type LeapWallet from "@/common/LeapWallet";
+import CosmostationWalletClient from "@/common/CosmostationWalletClient";
 
 export type Context = ActionContext<StateInterface, RootStateInterface>;
 export type UserAction = Action<StateInterface, RootStateInterface>;
@@ -404,6 +405,38 @@ export default class Actions implements ActionsInterface {
       "HttpModule/keplrCheckResponse",
       new KeplrCheckResponseRequest(
         JSON.stringify(signResponse),
+        nonce,
+        payload.referral
+      ),
+      { root: true }
+    );
+
+    await context.dispatch("setLoginResponseData", loginResponse);
+  }
+
+  cosmostationLogin = async (
+    context: Context,
+    payload: LinkActionPayload
+  ): Promise<void> => {
+    const cosmostationWalletClient: CosmostationWalletClient = await CosmostationWalletClient.create();
+    let nonce: string;
+
+    try {
+      nonce = crypto.randomUUID();
+    } catch (e) {
+      nonce = new Date().valueOf() + "-" + Math.random();
+    }
+
+    const ticket: string = await context.dispatch(
+      "HttpModule/getAuthTicket",
+      nonce,
+      { root: true }
+    );
+
+    const loginResponse: LoginResponse = await context.dispatch(
+      "HttpModule/keplrCheckResponse",
+      new KeplrCheckResponseRequest(
+        JSON.stringify(await cosmostationWalletClient.signTransactionLogin(ticket, payload.chain.id)),
         nonce,
         payload.referral
       ),
