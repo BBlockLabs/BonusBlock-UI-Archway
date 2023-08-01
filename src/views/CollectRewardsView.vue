@@ -146,7 +146,7 @@
 
               <el-col :span="-1">
                   <el-dropdown placement="bottom-end" class="ml-auto">
-                    <el-button type="primary">
+                    <el-button :loading="claimModal.loading" type="primary">
                       Claim<SvgChevronDown class="ml-small"/>
                     </el-button>
                     <template #dropdown>
@@ -327,20 +327,24 @@ async function claimCampaign(campaign: CampaignWithRewardDto, walletClient: "kep
       return;
     }
 
+    let index = campaigns.indexOf(campaign);
+
     try {
       await store.dispatch("HttpModule/claimRewardInit", {
         campaignId: campaign.id,
       });
       await client.claimArchwayReward(campaign.smartContractAddress, campaign.id, claimFee);
 
-      let index = campaigns.indexOf(campaign);
       campaigns.splice(index, 1);
 
       claimModal.open = true;
     } catch (e: any) {
-      claimModal.open = false;
       Toast.make("Claim failure!", e.message, "error", false, 3000);
+      if(e.toString().includes("User pool does not exist")){
+        campaigns.splice(index, 1);
+      }
     }
+
     claimModal.loading = false;
     try {
       await store.dispatch("HttpModule/claimRewardCheck", {});
