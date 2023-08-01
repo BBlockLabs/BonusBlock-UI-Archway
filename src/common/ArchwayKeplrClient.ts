@@ -196,8 +196,8 @@ export default class ArchwayKeplrClient {
   }
 
   static getChain() {
-    const currentEnv = import.meta.env.VITE_ENV;
-    if (currentEnv === "dev") {
+    const currentEnv = process.env.NODE_ENV?.toUpperCase();
+    if (currentEnv === "DEVELOPMENT") {
       return this.testnetChainInfo;
     } else {
       return this.mainnetChainInfo;
@@ -205,8 +205,8 @@ export default class ArchwayKeplrClient {
   }
 
   static getCurrency() {
-    const currentEnv = import.meta.env.VITE_ENV;
-    if (currentEnv === "dev") {
+    const currentEnv = process.env.NODE_ENV?.toUpperCase();
+    if (currentEnv === "DEVELOPMENT") {
       return this.testnetCurrency;
     } else {
       return this.mainnetCurrency;
