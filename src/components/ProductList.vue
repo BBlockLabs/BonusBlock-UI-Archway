@@ -36,7 +36,7 @@
         </el-row>
         <el-row class="px-medium mb-large">
           <el-col style="word-break: break-word; height: 3.5em">
-            {{ product.shortDescription }}
+            <span v-html="product.shortDescription"></span>
           </el-col>
         </el-row>
         <el-row justify="center" align="middle" class="px-medium h-100">
@@ -65,7 +65,7 @@
                 <strong>{{ product.featuredMission.title }}</strong>
               </el-row>-->
               <el-row class="h-auto" style="word-break: break-word">
-                {{ product.featuredMission.shortDescription }}
+                <span v-html="product.featuredMission.shortDescription"></span>
               </el-row>
             </template>
           </el-card>

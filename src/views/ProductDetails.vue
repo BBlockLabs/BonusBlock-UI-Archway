@@ -31,7 +31,7 @@
 
                 <el-row align="middle">
                   <el-col :span="-1">
-                    {{ selectedProduct.description }}
+                    <span v-html="selectedProduct.description"></span>
                   </el-col>
                 </el-row>
 
@@ -114,7 +114,7 @@
                   <strong>{{ mission.title }}</strong>
                 </el-row>
                 <el-row class="mx-medium mb-medium">
-                  {{ mission.description }}
+                  <span v-html="mission.description"></span>
                 </el-row>
                 <hr class="w-100 mt-auto"/>
                 <el-row align="middle" class="mx-medium mt-small">
