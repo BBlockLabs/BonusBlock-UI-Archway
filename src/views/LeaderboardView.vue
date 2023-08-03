@@ -7,12 +7,8 @@
     >
       <el-row justify="center">
         <h2 class="w-100 tc">How calculations work?</h2>
-        <img
-          style="border-radius: 18px"
-          class="w-100"
-          :src="JpgMissionCardSample"
-          alt="Example mission"
-        />
+        <SvgMissionCardSample style="border-radius: 1em"/>
+
 
         <div class="tc fs-medium mt-large mx-large">
           <div>
@@ -34,7 +30,7 @@
 
     <el-dialog
       v-model="newBadgeDialog"
-      :before-close="newBadgeMint"
+      :before-close="newBadgeAcknowledge"
       :show-close="false"
       class="px-medium pt-medium fs-large calculation-dialog"
     >
@@ -48,7 +44,9 @@
         <span class="fs-medium tc">You have unlocked a new mint badge.</span>
         <el-row class="mt-medium w-100" gutter="10">
 
-          <el-col :span="12">
+
+
+<!--          <el-col :span="12">
             <el-tooltip
               :disabled="keplrInstalled"
               content="Keplr is not installed"
@@ -65,9 +63,54 @@
                 </el-button>
               </div>
             </el-tooltip>
+          </el-col>-->
+
+          <el-col :span="12">
+            <el-button
+              class="w-100"
+              type="secondary"
+              @click="newBadgeAcknowledge"
+            >
+              Close
+            </el-button>
           </el-col>
 
           <el-col :span="12">
+            <el-dropdown placement="bottom-end" class="w-100 ml-auto">
+              <el-button class="w-100" type="primary">
+                Claim<SvgChevronDown style="height: 1em" class="ml-small" />
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu >
+                  <el-dropdown-item :disabled="!keplrInstalled" @click="newBadgeMint('keplr')">
+                    <el-tooltip
+                      :disabled="keplrInstalled"
+                      content="Keplr is not installed"
+                      placement="right"
+                    >
+                      <div>
+                        Keplr
+                      </div>
+                    </el-tooltip>
+                  </el-dropdown-item>
+
+                  <el-dropdown-item :disabled="!leapInstalled" @click="newBadgeMint('leap')">
+                    <el-tooltip
+                      :disabled="leapInstalled"
+                      content="Leap is not installed"
+                      placement="right"
+                    >
+                      <div>
+                        Leap
+                      </div>
+                    </el-tooltip>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </el-col>
+
+<!--          <el-col :span="12">
             <el-tooltip
               :disabled="false"
               content="Leap is not installed"
@@ -84,18 +127,7 @@
                 </el-button>
               </div>
             </el-tooltip>
-          </el-col>
-        </el-row>
-        <el-row class="w-100" gutter="10">
-          <el-col>
-            <el-button
-              class="mt-small w-100"
-              type="secondary"
-              @click="newBadgeAcknowledge"
-            >
-              Close
-            </el-button>
-          </el-col>
+          </el-col>-->
         </el-row>
       </el-row>
     </el-dialog>
@@ -113,7 +145,7 @@
           </el-col>
 
           <el-col class="pointer" :span="-1">
-            <el-link :href="shareProgressLink">
+            <el-link :href="shareProgressLink" target="_blank">
               <el-button class="mr-small" type="primary"
                 >Share progress on Twitter
                 <svg-twitter class="ml-small icon-small" />
@@ -224,43 +256,17 @@
               XP
             </el-row>
           </el-col>
-          <el-col :span="-1">
-            <el-row>
-              <el-tooltip
-                :disabled="keplrInstalled"
-                content="Keplr is not installed"
-                placement="top"
-              >
-                <div>
-                  <el-button
-                    :loading="keplrInstalled && mintBadgeLoading"
-                    type="primary"
-                    :disabled="!keplrInstalled || mintBadgeLoading"
-                    @click="newBadgeMint('keplr')"
-                    class="mr-small"
-                  >
-                    Mint with Keplr
-                  </el-button>
-                </div>
-              </el-tooltip>
-
-              <el-tooltip
-                :disabled="false"
-                content="Leap is not installed"
-                placement="top"
-              >
-                <div>
-                  <el-button
-                    :loading="leapInstalled && mintBadgeLoading"
-                    type="primary"
-                    :disabled="!leapInstalled || mintBadgeLoading"
-                    @click="newBadgeMint('leap')"
-                  >
-                    Mint with Leap
-                  </el-button>
-                </div>
-              </el-tooltip>
-            </el-row>
+          <el-col v-if="leaderboard.myLeaderboardSpot && !leaderboard.myLeaderboardSpot.badgeClaimed" :span="-1">
+            <!--            <el-button class="mr-small is-link" type="primary"
+              >Share badge</el-button
+            >-->
+            <el-button
+              :loading="mintBadgeLoading"
+              :disabled="mintBadgeLoading"
+              type="primary"
+              @click="newBadgeDialog = true"
+            >Mint badge</el-button
+            >
           </el-col>
         </el-row>
       </box-wrapper>
@@ -386,6 +392,7 @@
 <script setup lang="ts">
 import PageWrapper from "@/components/PageWrapper.vue";
 import SvgChevronUp from "@/assets/icons/nav-arrow-up.svg?component";
+import SvgChevronDown from "@/assets/icons/nav-arrow-down.svg?component";
 import { store } from "@/store";
 import PaginationRequest from "@/common/api/PaginationRequest";
 import ArchwayLeaderboardResponse from "@/common/api/archway/ArchwayLeaderboardResponse";
@@ -408,7 +415,7 @@ import SvgNewBadge4 from "@/assets/badges/new-badge-4.svg";
 
 import SvgCircle from "@/assets/archway/circle.svg";
 import SvgInfo from "@/assets/icons/info.svg";
-import JpgMissionCardSample from "@/assets/archway/mission-card-sample.jpg";
+import SvgMissionCardSample from "@/assets/archway/mission-card-sample.svg";
 import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 import Toast from "@/common/Toast";
 import { ArchwayLeapClient } from "@/common/ArchwayLeapClient";
@@ -453,8 +460,12 @@ async function getLeaderboard() {
 }
 
 async function newBadgeAcknowledge() {
+  if (leaderboard.value.myLeaderboardSpot && leaderboard.value.myLeaderboardSpot.newBadgePopup) {
+    await store.dispatch("ArchwayHttpModule/badgeAcknowledge");
+    leaderboard.value.myLeaderboardSpot.newBadgePopup = false;
+  }
+
   newBadgeDialog.value = false;
-  await store.dispatch("ArchwayHttpModule/badgeAcknowledge");
 }
 
 async function newBadgeMint(walletClient: "keplr" | "leap") {
@@ -636,6 +647,11 @@ onMounted(async () => {
   &:hover {
     color: vars.$archway-primary-orange;
   }
+}
+
+.el-dropdown-menu__item.is-disabled {
+  font-size: 1.5em;
+  font-weight: 700;
 }
 
 .calculation-dialog {
