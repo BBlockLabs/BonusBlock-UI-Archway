@@ -9,7 +9,7 @@ import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 import {SEND_TRANSACTION_MODE} from "@cosmostation/extension-client/cosmos";
 // import {getOfflineSigner} from "@cosmostation/cosmos-client";
 import { GasPrice, calculateFee } from "@cosmjs/stargate";
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { SigningArchwayClient } from "@archwayhq/arch3.js";
 import { Decimal } from "@cosmjs/math";
 
 export default class CosmostationWalletClient implements WalletClient {
@@ -113,7 +113,7 @@ export default class CosmostationWalletClient implements WalletClient {
   async claimReward(contract: string, campaignId: string, chainId: string): Promise<any> {
     const fee: string = await this.getClaimFee(contract, chainId);
 
-    const client = await SigningCosmWasmClient.connectWithSigner(
+    const client = await SigningArchwayClient.connectWithSigner(
       this.getChainRpc(chainId),
       await ArchwayKeplrClient.getOfflineSigner()
     );
@@ -126,10 +126,7 @@ export default class CosmostationWalletClient implements WalletClient {
           campaign_id: campaignId,
         },
       },
-      {
-          amount: [],
-          gas: "360000"
-      },
+      "auto",
       undefined,
       Number(fee) > 0
         ? [
