@@ -232,7 +232,7 @@ function getHumanAmount(amount: string) {
   }
   fractionalPart = fractionalPart.replace(/0+$/, "");
   let retUmnformatted = fractionalPart === ""
-    ? integerPart
+    ? integerPart + ".00"
     : integerPart + "." + fractionalPart;
 
   return retUmnformatted.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
