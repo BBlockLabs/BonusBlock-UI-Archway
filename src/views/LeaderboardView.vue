@@ -256,7 +256,14 @@
               XP
             </el-row>
           </el-col>
-          <el-col v-if="leaderboard.myLeaderboardSpot && !leaderboard.myLeaderboardSpot.badgeClaimed" :span="-1">
+          <el-col
+            v-if="
+              leaderboard.myLeaderboardSpot &&
+              leaderboard.myLeaderboardSpot.position.score >= BADGE_XP[0] &&
+              !leaderboard.myLeaderboardSpot.badgeClaimed
+            "
+            :span="-1"
+          >
             <!--            <el-button class="mr-small is-link" type="primary"
               >Share badge</el-button
             >-->

@@ -61,10 +61,8 @@
             <h2>
               {{
                 store.state.archwayStats.totalRewardPoolAmount
-                  ? formatPrice(
-                      getHumanAmount(
-                        store.state.archwayStats.totalRewardPoolAmount
-                      )
+                  ? getHumanAmount(
+                      store.state.archwayStats.totalRewardPoolAmount
                     )
                   : "N/A"
               }}
@@ -218,7 +216,7 @@ onMounted(() => {
 });
 
 function getHumanAmount(amount: string) {
-  let decimal = 12;
+  let decimal = 18;
   let integerPart =
     amount.length > decimal
       ? amount.substring(0, amount.length - decimal)
@@ -233,14 +231,11 @@ function getHumanAmount(amount: string) {
     }
   }
   fractionalPart = fractionalPart.replace(/0+$/, "");
-  return fractionalPart === ""
+  let retUmnformatted = fractionalPart === ""
     ? integerPart
     : integerPart + "." + fractionalPart;
-}
 
-function formatPrice(value: number) {
-  let val = (value / 1).toFixed(2).replace(" ' ", ",");
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+  return retUmnformatted.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function confirmUsage() {
