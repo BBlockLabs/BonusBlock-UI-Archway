@@ -362,9 +362,9 @@ async function claimCampaign(campaign: CampaignWithRewardDto, walletClient: "kep
     }
 
     try {
-      // await store.dispatch("HttpModule/claimRewardInit", {
-      //   campaignId: campaign.id,
-      // });
+      await store.dispatch("HttpModule/claimRewardInit", {
+        campaignId: campaign.id,
+      });
       await client.claimArchwayReward(campaign.smartContractAddress, campaign.id, claimFee);
 
       let index = campaigns.indexOf(campaign);
@@ -377,13 +377,12 @@ async function claimCampaign(campaign: CampaignWithRewardDto, walletClient: "kep
     }
     claimModal.loading = false;
     try {
-      // await store.dispatch("HttpModule/claimRewardCheck", {});
+      await store.dispatch("HttpModule/claimRewardCheck", {});
     }catch (ignoredError: any){}
+
     return;
   }
 
-  console.log(campaign.smartContractAddress, 'aa')
-  return;
   try {
     const response = await store.dispatch("HttpModule/claimReward", {
       campaignId: campaign.id,

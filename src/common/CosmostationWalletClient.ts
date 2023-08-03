@@ -7,6 +7,10 @@ import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
 import { ArchwayClient } from '@archwayhq/arch3.js';
 import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 import {SEND_TRANSACTION_MODE} from "@cosmostation/extension-client/cosmos";
+// import {getOfflineSigner} from "@cosmostation/cosmos-client";
+import { GasPrice, calculateFee } from "@cosmjs/stargate";
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { Decimal } from "@cosmjs/math";
 
 export default class CosmostationWalletClient implements WalletClient {
   private provider: Cosmos;
@@ -53,18 +57,16 @@ export default class CosmostationWalletClient implements WalletClient {
     if (signer === null) {
       signer = (await this.getAccountAddress(chainId))[0].address;
     }
-    console.log('4');
 
     if (typeof message !== "string") {
       message = JSON.stringify(message);
     }
 
-    console.log('5');
     return await this.provider.signMessage(chainId, signer, message);
   }
 
   public async signTransactionLogin(nonce: string, chainId: string): Promise<SignedLoginMessage> {
-    console.log('1');
+    await this.addChain();
 
     const response = await this.provider.signAmino(
       chainId,
@@ -94,7 +96,7 @@ export default class CosmostationWalletClient implements WalletClient {
   }
 
   private async getClaimFee(contract: string, chainId: string): Promise<string> {
-    const client = await ArchwayClient.connect(ArchwayKeplrClient.getChain().rpc);
+    const client = await ArchwayClient.connect(this.getChainRpc(chainId));
 
     return await client.queryContractSmart(contract,  {get_claim_fee: {}});
   }
@@ -109,48 +111,55 @@ export default class CosmostationWalletClient implements WalletClient {
   }
 
   async claimReward(contract: string, campaignId: string, chainId: string): Promise<any> {
-    const fee = await this.getClaimFee(contract, chainId);
+    const fee: string = await this.getClaimFee(contract, chainId);
 
+    const client = await SigningCosmWasmClient.connectWithSigner(
+      this.getChainRpc(chainId),
+      await ArchwayKeplrClient.getOfflineSigner()
+    );
 
-    console.log('??')
-    try {
-      await this.provider.sendTransaction(
-        chainId,
-        "eyJyZXdhcmRfYWxsIjp7InVzZXJfcmV3YXJkcyI6W3siY2FtcGFpZ25faWQiOiIxMTExMTEiLCJ1c2VyX2FkZHJlc3MiOiJhcmNod2F5MTh2MDMya3JydDBzdWQyNXkydms5dmo0OWx2d2tnMmh4bHh1cHdmIiwiYW1vdW50IjoiMTAwMDAifSx7ImNhbXBhaWduX2lkIjoiMjIyMjIyIiwidXNlcl9hZGRyZXNzIjoiYXJjaHdheTE4djAzMmtycnQwc3VkMjV5MnZrOXZqNDlsdndrZzJoeGx4dXB3ZiIsImFtb3VudCI6IjEwMDAwIn1dfX0=", // base64 string or Uint8Array
-        SEND_TRANSACTION_MODE.ASYNC
-      );
-    } catch (e) {
-      console.log(e);
-    }
-    console.log('????')
+    const result = await client.execute(
+      (await this.getAccountAddress(chainId))[0].address,
+      contract,
+      {
+        claim: {
+          campaign_id: campaignId,
+        },
+      },
+      {
+          amount: [],
+          gas: "100"
+      },
+      undefined,
+      [
+        {
+          amount: fee,
+          denom: this.getChainDenom(chainId),
+        }
+      ]
+    );
+  }
 
-    // const executeMsg = {
-    //   claim: {
-    //     campaign_id: campaignId,
-    //   },
-    // };
-    //
-    // this.provider.sendTransaction()
-    //
-    //     return await this.executeContractMsg(
-    //   contractAddress,
-    //   executeMsg,
-    //   currentChain.chainId,
-    //   undefined,
-    //   Number(claimFee) > 0
-    //     ? [
-    //         {
-    //           amount: claimFee,
-    //           denom: currentChain.feeCurrencies[0].coinMinimalDenom,
-    //         },
-    //       ]
-    //     : undefined
-    // );
+  private getChainRpc(chainId: string): string {
+    return ArchwayKeplrClient.getChain().rpc
+  }
 
-    //   campaign.smartContractAddress
-    //
-    //
-    // await client.claimArchwayReward(campaign.smartContractAddress, campaign.id, fee);
+  private getChainDenom(chainId: string): string {
+    return ArchwayKeplrClient.getChain().feeCurrencies[0].coinMinimalDenom;
+  }
 
+  private async addChain(): Promise<void> {
+    const chain = ArchwayKeplrClient.getChain();
+
+    await this.provider.addChain({
+      chainId: chain.chainId,
+      chainName: chain.chainName || chain.chainId,
+      addressPrefix: chain.bech32Config.bech32PrefixAccAddr,
+      baseDenom: chain.currencies[0].coinMinimalDenom,
+      displayDenom: chain.currencies[0].coinDenom,
+      restURL: chain.rest,
+      coinType: String(chain.coinType),
+      decimals: chain.currencies[0].coinDecimals
+    });
   }
 }

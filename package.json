@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@archwayhq/arch3.js": "^0.4.0",
+    "@cosmostation/cosmos-client": "^0.0.5",
     "@cosmostation/extension-client": "^0.1.15",
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/node": "^18.11.12",

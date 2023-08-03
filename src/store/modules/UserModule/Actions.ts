@@ -418,21 +418,27 @@ export default class Actions implements ActionsInterface {
     context: Context,
     payload: LinkActionPayload
   ): Promise<void> => {
+    console.log("q1");
     const cosmostationWalletClient: CosmostationWalletClient = await CosmostationWalletClient.create();
+    console.log("q2");
     let nonce: string;
 
+    console.log("q3");
     try {
+    console.log("q4");
       nonce = crypto.randomUUID();
     } catch (e) {
       nonce = new Date().valueOf() + "-" + Math.random();
     }
 
+    console.log("q5");
     const ticket: string = await context.dispatch(
       "HttpModule/getAuthTicket",
       nonce,
       { root: true }
     );
 
+    console.log("q6");
     const loginResponse: LoginResponse = await context.dispatch(
       "HttpModule/keplrCheckResponse",
       new KeplrCheckResponseRequest(
