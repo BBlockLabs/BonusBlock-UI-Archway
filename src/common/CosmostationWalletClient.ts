@@ -128,15 +128,17 @@ export default class CosmostationWalletClient implements WalletClient {
       },
       {
           amount: [],
-          gas: "100"
+          gas: "100000"
       },
       undefined,
-      [
+      Number(fee) > 0
+        ? [
         {
           amount: fee,
           denom: this.getChainDenom(chainId),
         }
-      ]
+          ]
+        : undefined
     );
   }
 
