@@ -76,7 +76,7 @@
           </el-col>
           <el-col class="mr-medium" :span="-1">
             <el-link
-              href="https://docs.archway.io/overview/disclaimer"
+              href="https://archway.io/privacy"
               target="_blank"
               :underline="false"
             >

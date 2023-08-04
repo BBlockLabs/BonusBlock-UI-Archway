@@ -49,7 +49,7 @@
           >
             <el-row class="mx-medium is-align-middle" align="middle">
               <el-col class="d-flex" :span="-1">
-                <svg-leap-wallet class="mr-small icon-small w-auto" />
+                <SvgLeapWallet class="mr-small icon-small w-auto" />
               </el-col>
               <el-col class="fs-base" :span="-1">
                 <strong>Continue with Leap</strong>
@@ -66,10 +66,10 @@
           >
             <el-row class="mx-medium is-align-middle" align="middle">
               <el-col class="d-flex" :span="-1">
-                <svg-leap-wallet class="mr-small icon-small w-auto" />
+                <SvgCosmostation class="mr-small icon-small w-auto" />
               </el-col>
               <el-col class="fs-base" :span="-1">
-                <strong>Continue with Cosmosstation</strong>
+                <strong>Continue with Cosmostation</strong>
               </el-col>
             </el-row>
           </box-wrapper>
@@ -88,6 +88,7 @@ import FooterComponent from "@/components/HomeFooter.vue";
 import SvgLogo from "@/assets/archway/archway-logo.svg";
 import SvgKeplr from "@/assets/icons/keplr.svg?component";
 import SvgLeapWallet from "@/assets/icons/leap-wallet.svg?component";
+import SvgCosmostation from "@/assets/icons/cosmostation.svg?component";
 import SvgHome from "@/assets/archway/home-illustration.svg";
 import type { Ref } from "vue";
 import { ref } from "vue";
