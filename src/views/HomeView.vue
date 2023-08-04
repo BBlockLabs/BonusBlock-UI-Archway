@@ -2,6 +2,7 @@
   <SvgHome
     style="
       position: absolute;
+      right:0;
       height: 100vh;
       max-width: 80vw;
       z-index: -1;
