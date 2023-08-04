@@ -7,9 +7,11 @@
     >
       <el-col :span="-1">
         <social-links
-          :twitter="LinkTwitter"
-          :reddit="LinkReddit"
-          :telegram="LinkTelegram"
+          :twitter="'https://twitter.com/archwayhq'"
+          :telegram="'https://t.me/archway_hq'"
+          :github="'https://github.com/archway-network'"
+          :discord="'https://discord.com/invite/5FVvx3WGfa'"
+          :reddit="'https://www.reddit.com/r/Archway/'"
         />
       </el-col>
 

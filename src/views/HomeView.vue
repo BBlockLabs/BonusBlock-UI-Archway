@@ -1,5 +1,12 @@
 <template>
-  <SvgHome style="position: absolute; right:0; top: -4vh; height: 110vh; max-width: 80vw"></SvgHome>
+  <SvgHome
+    style="
+      position: absolute;
+      height: 100vh;
+      max-width: 80vw;
+      z-index: -1;
+    "
+  ></SvgHome>
   <el-main
     class="d-flex home-view px-extra-large flex-column"
   >
@@ -27,7 +34,7 @@
             style="border-radius: 16px"
             type="white"
             round
-            class="keplr-button pointer fs-large my-small p-small"
+            class="keplr-button pointer fs-large my-small p-small mr-small"
             @click="connectWallet('keplr')"
           >
             <el-row class="mx-medium is-align-middle" align="middle">
@@ -44,7 +51,7 @@
             style="border-radius: 16px"
             type="white"
             round
-            class="keplr-button pointer fs-large my-small p-small ml-small"
+            class="keplr-button pointer fs-large my-small p-small mr-small"
             @click="connectWallet('leap')"
           >
             <el-row class="mx-medium is-align-middle" align="middle">
@@ -61,7 +68,7 @@
             style="border-radius: 16px"
             type="white"
             round
-            class="keplr-button pointer fs-large my-small p-small ml-small"
+            class="keplr-button pointer fs-large my-small p-small mr-small"
             @click="connectWallet('cosmostation')"
           >
             <el-row class="mx-medium is-align-middle" align="middle">

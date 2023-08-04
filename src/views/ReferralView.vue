@@ -1,6 +1,6 @@
 <template>
-  <PageWrapper class="mx-medium" :full-width="true">
-    <el-row justify="space-between" :gutter="24" class="mt-extra-large">
+  <PageWrapper class="fs-slightly-larger w-100">
+    <el-row justify="space-between" :gutter="24" class="w-100 mt-extra-large">
       <el-col :md="16" :lg="17">
         <h3 class="fs-slightly-larger mt-0">
           Stack your first rewards by onboarding more users!
