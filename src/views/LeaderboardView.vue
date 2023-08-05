@@ -29,6 +29,26 @@
     </el-dialog>
 
     <el-dialog
+      v-model="badgeShowcaseDialog"
+      :show-close="false"
+      class="fs-large calculation-dialog"
+    >
+      <el-row :style="badgeShowcaseDialog ? '' : 'height: 25em;'" class="mb-small" justify="center">
+        <component
+          :is="badgeShowcaseDialog ? getBadgeImageForXp(badgeShowcaseDialog) : {}"
+        />
+
+      </el-row>
+      <el-button
+        class="mt-auto w-100"
+        type="secondary"
+        @click="badgeShowcaseDialog = null"
+      >
+        Close</el-button
+      >
+    </el-dialog>
+
+    <el-dialog
       v-model="newBadgeDialog"
       :before-close="newBadgeAcknowledge"
       :show-close="false"
@@ -144,6 +164,8 @@
 
             >
               <component
+                :class="badgeActive(value) ? 'pointer' : ''"
+                @click="badgeActive(value) ? badgeShowcaseDialog = value : {}"
                 :is="getBadgeForXp(value)"
                 style="
                   position: absolute;
@@ -159,8 +181,8 @@
                   left: -0.4em;
                   top: -0.17em;
                 "
-                :class="circleOrangeForXp(value) ? 'archway-orange' : ''"
-                :style="circleOrangeForXp(value) ? '' : 'color: #CCCCCC'"
+                :class="badgeActive(value) ? 'archway-orange' : ''"
+                :style="badgeActive(value) ? '' : 'color: #CCCCCC'"
               />
             </span>
 
@@ -360,6 +382,7 @@ import CosmostationWalletClient from "@/common/CosmostationWalletClient";
 
 let calculationDialog = ref(false);
 let newBadgeDialog = ref(false);
+let badgeShowcaseDialog: Ref<number | null> = ref(null);
 let mintBadgeLoading = ref(false);
 let page = ref(1);
 let perPage = ref(15);
@@ -514,22 +537,26 @@ function getNewBadgeImage(){
     ? leaderboard.value.myLeaderboardSpot.position.score
     : 0;
 
-  if (currentXp >= BADGE_XP[3]) {
+  return getBadgeImageForXp(currentXp);
+}
+
+function getBadgeImageForXp(givenXp: number){
+  if (givenXp >= BADGE_XP[3]) {
     return SvgNewBadge4;
   }
-  if (currentXp >= BADGE_XP[2]) {
+  if (givenXp >= BADGE_XP[2]) {
     return SvgNewBadge3;
   }
-  if (currentXp >= BADGE_XP[1]) {
+  if (givenXp >= BADGE_XP[1]) {
     return SvgNewBadge2;
   }
-  if (currentXp >= BADGE_XP[0]) {
+  if (givenXp >= BADGE_XP[0]) {
     return SvgNewBadge1;
   }
   return SvgNewBadge1;
 }
 
-function circleOrangeForXp(givenXp: number): boolean {
+function badgeActive(givenXp: number): boolean {
   let currentXp: number = leaderboard.value.myLeaderboardSpot
     ? leaderboard.value.myLeaderboardSpot.position.score
     : 0;
