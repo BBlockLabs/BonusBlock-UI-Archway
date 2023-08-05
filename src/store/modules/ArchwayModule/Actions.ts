@@ -168,13 +168,17 @@ export default class Actions implements ActionsInterface {
   };
 
   mintBadgeInit = async (context: Context): Promise<void> => {
-    await fetch(`${import.meta.env.VITE_BACKEND_URL}/archway/mint/init`, {
-      headers: {
-        "Content-Type": "application/json",
-        "X-Auth-Token": context.rootState.UserModule?.token || "",
-      },
-      method: "POST",
-    });
+    const response: Response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/archway/mint/init`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "X-Auth-Token": context.rootState.UserModule?.token || "",
+        },
+        method: "POST",
+      }
+    );
+    await HttpResponse.fromResponse<null>(response);
   };
 
   mintBadgeOk = async (context: Context): Promise<void> => {

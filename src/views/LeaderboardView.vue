@@ -480,16 +480,20 @@ async function newBadgeMint(walletClient: "keplr" | "leap") {
 
   newBadgeDialog.value = false;
   mintBadgeLoading.value = true;
-  await store.dispatch("ArchwayHttpModule/mintBadgeInit");
+
   try {
+    await store.dispatch("ArchwayHttpModule/mintBadgeInit");
+
     await client.mintBadge();
+    Toast.make("Mint success!", "You have minted a new badge", "success", true, 3000);
   } catch (e: any) {
-    if (!e.toString().includes("Already Minted")) {
+    console.log(e);
+    if (e.toString().includes("Already Minted")) {
+      Toast.make("Badge already claimed", "You have already claimed this badge", "warning", true, 5000);
+    } else {
       Toast.make("Mint failure", e.toString(), "error", false, 0);
       mintBadgeLoading.value = false;
       return;
-    } else {
-      Toast.make("Badge already claimed", "You have already claimed this badge", "warning", true, 1000);
     }
   }
 
