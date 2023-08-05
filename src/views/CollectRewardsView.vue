@@ -145,59 +145,9 @@
               </el-col>
 
               <el-col :span="-1">
-                  <el-dropdown placement="bottom-end" class="ml-auto">
-                    <el-button :loading="claimModal.loading" type="primary">
-                      Claim<SvgChevronDown class="ml-small"/>
-                    </el-button>
-                    <template #dropdown>
-                      <el-dropdown-menu >
-                        <el-dropdown-item @click="claimCampaign(campaign, 'keplr')" :disabled="!keplrInstalled">
-                          <el-tooltip
-                            :content="keplrInstalled
-                            ? campaign.amount
-                              ? 'Claim your rewards'
-                              : 'Unlocks on ' + nextCampaignCalculationDate(campaign)
-                            : 'Keplr is not installed'"
-                            placement="right"
-                          >
-                            <div>
-                              Keplr
-                            </div>
-                          </el-tooltip>
-                        </el-dropdown-item>
-
-                        <el-dropdown-item @click="claimCampaign(campaign, 'leap')" :disabled="!leapInstalled">
-                          <el-tooltip
-                            :content="leapInstalled
-                            ? campaign.amount
-                              ? 'Claim your rewards'
-                              : 'Unlocks on ' + nextCampaignCalculationDate(campaign)
-                            : 'Leap is not installed'"
-                            placement="right"
-                          >
-                            <div>
-                              Leap
-                            </div>
-                          </el-tooltip>
-                        </el-dropdown-item>
-
-                        <el-dropdown-item @click="claimCampaign(campaign, 'cosmostation')" :disabled="!leapInstalled">
-                          <el-tooltip
-                            :content="leapInstalled
-                            ? campaign.amount
-                              ? 'Claim your rewards'
-                              : 'Unlocks on ' + nextCampaignCalculationDate(campaign)
-                            : 'Leap is not installed'"
-                            placement="right"
-                          >
-                            <div>
-                              Cosmosstation
-                            </div>
-                          </el-tooltip>
-                        </el-dropdown-item>
-                      </el-dropdown-menu>
-                    </template>
-                  </el-dropdown>
+                <el-button :loading="claimModal.loading" @click="claimCampaign(campaign)" type="primary">
+                  Claim
+                </el-button>
               </el-col>
             </el-row>
           </div>
@@ -329,10 +279,11 @@ function openCampaignDetails(campaign: CampaignWithRewardDto): void {
   router.push("/campaign/" + campaign.id);
 }
 
-async function claimCampaign(campaign: CampaignWithRewardDto, walletClient: "keplr" | "leap" | "cosmostation"): Promise<void> {
+async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
+  const loggedInWith = store.state.UserModule?.loggedInWith;
   let client;
 
-  switch (walletClient) {
+  switch (loggedInWith) {
     case "keplr":
       client = ArchwayKeplrClient;
       break;
@@ -342,6 +293,9 @@ async function claimCampaign(campaign: CampaignWithRewardDto, walletClient: "kep
     case "cosmostation":
       client = await CosmostationWalletClient.create();
       break;
+    default: {
+      throw new Error("Unknown wallet: " + loggedInWith);
+    }
   }
 
   claimModal.campaign = campaign;

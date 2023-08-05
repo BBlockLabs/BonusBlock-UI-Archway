@@ -44,27 +44,6 @@
         <span class="fs-medium tc">You have unlocked a new mint badge.</span>
         <el-row class="mt-medium w-100" gutter="10">
 
-
-
-<!--          <el-col :span="12">
-            <el-tooltip
-              :disabled="keplrInstalled"
-              content="Keplr is not installed"
-              placement="top"
-            >
-              <div>
-                <el-button
-                  class="mt-small w-100"
-                  type="primary"
-                  :disabled="!keplrInstalled"
-                  @click="newBadgeMint('keplr')"
-                >
-                  Mint with Keplr
-                </el-button>
-              </div>
-            </el-tooltip>
-          </el-col>-->
-
           <el-col :span="12">
             <el-button
               class="w-100"
@@ -76,58 +55,10 @@
           </el-col>
 
           <el-col :span="12">
-            <el-dropdown placement="bottom-end" class="w-100 ml-auto">
-              <el-button class="w-100" type="primary">
-                Claim<SvgChevronDown style="height: 1em" class="ml-small" />
-              </el-button>
-              <template #dropdown>
-                <el-dropdown-menu >
-                  <el-dropdown-item :disabled="!keplrInstalled" @click="newBadgeMint('keplr')">
-                    <el-tooltip
-                      :disabled="keplrInstalled"
-                      content="Keplr is not installed"
-                      placement="right"
-                    >
-                      <div>
-                        Keplr
-                      </div>
-                    </el-tooltip>
-                  </el-dropdown-item>
-
-                  <el-dropdown-item :disabled="!leapInstalled" @click="newBadgeMint('leap')">
-                    <el-tooltip
-                      :disabled="leapInstalled"
-                      content="Leap is not installed"
-                      placement="right"
-                    >
-                      <div>
-                        Leap
-                      </div>
-                    </el-tooltip>
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
+            <el-button class="w-100" @click="newBadgeMint()" type="primary">
+              Claim
+            </el-button>
           </el-col>
-
-<!--          <el-col :span="12">
-            <el-tooltip
-              :disabled="false"
-              content="Leap is not installed"
-              placement="top"
-            >
-              <div>
-                <el-button
-                  class="mt-small w-100"
-                  type="primary"
-                  :disabled="!leapInstalled"
-                  @click="newBadgeMint('leap')"
-                >
-                  Mint with Leap
-                </el-button>
-              </div>
-            </el-tooltip>
-          </el-col>-->
         </el-row>
       </el-row>
     </el-dialog>
@@ -399,7 +330,6 @@
 <script setup lang="ts">
 import PageWrapper from "@/components/PageWrapper.vue";
 import SvgChevronUp from "@/assets/icons/nav-arrow-up.svg?component";
-import SvgChevronDown from "@/assets/icons/nav-arrow-down.svg?component";
 import { store } from "@/store";
 import PaginationRequest from "@/common/api/PaginationRequest";
 import ArchwayLeaderboardResponse from "@/common/api/archway/ArchwayLeaderboardResponse";
@@ -426,9 +356,8 @@ import SvgMissionCardSample from "@/assets/archway/mission-card-sample.svg";
 import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 import Toast from "@/common/Toast";
 import { ArchwayLeapClient } from "@/common/ArchwayLeapClient";
+import CosmostationWalletClient from "@/common/CosmostationWalletClient";
 
-const keplrInstalled = window.keplr != undefined;
-const leapInstalled = window.leap != undefined;
 let calculationDialog = ref(false);
 let newBadgeDialog = ref(false);
 let mintBadgeLoading = ref(false);
@@ -475,8 +404,23 @@ async function newBadgeAcknowledge() {
   newBadgeDialog.value = false;
 }
 
-async function newBadgeMint(walletClient: "keplr" | "leap") {
-  const client = walletClient === "keplr" ? ArchwayKeplrClient : ArchwayLeapClient;
+async function newBadgeMint() {
+  const loggedInWith = store.state.UserModule?.loggedInWith;
+  let client;
+  switch (loggedInWith) {
+    case "keplr":
+      client = ArchwayKeplrClient;
+      break;
+    case "leap":
+      client = ArchwayLeapClient;
+      break;
+    case "cosmostation":
+      client = await CosmostationWalletClient.create();
+      break;
+    default: {
+      throw new Error("Unknown wallet: " + loggedInWith);
+    }
+  }
 
   newBadgeDialog.value = false;
   mintBadgeLoading.value = true;
@@ -487,7 +431,6 @@ async function newBadgeMint(walletClient: "keplr" | "leap") {
     await client.mintBadge();
     Toast.make("Mint success!", "You have minted a new badge", "success", true, 3000);
   } catch (e: any) {
-    console.log(e);
     if (e.toString().includes("Already Minted")) {
       Toast.make("Badge already claimed", "You have already claimed this badge", "warning", true, 5000);
     } else {

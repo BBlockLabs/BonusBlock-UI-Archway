@@ -1,16 +1,10 @@
 import type WalletClient from "@/common/WalletClient";
 import type { Signature, SignedLoginMessage } from "@/common/WalletClient";
 import type { Account } from "@/common/WalletClient";
-import {Cosmos, cosmos, InstallError} from "@cosmostation/extension-client";
-import { store } from "@/store";
-import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
-import { ArchwayClient } from '@archwayhq/arch3.js';
+import { Cosmos, cosmos, InstallError } from "@cosmostation/extension-client";
+import { ArchwayClient } from "@archwayhq/arch3.js";
 import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
-import {SEND_TRANSACTION_MODE} from "@cosmostation/extension-client/cosmos";
-// import {getOfflineSigner} from "@cosmostation/cosmos-client";
-import { GasPrice, calculateFee } from "@cosmjs/stargate";
 import { SigningArchwayClient } from "@archwayhq/arch3.js";
-import { Decimal } from "@cosmjs/math";
 
 export default class CosmostationWalletClient implements WalletClient {
   private provider: Cosmos;
@@ -136,6 +130,25 @@ export default class CosmostationWalletClient implements WalletClient {
         }
           ]
         : undefined
+    );
+  }
+
+  async mintBadge(){
+    const currentChain = ArchwayKeplrClient.getChain();
+    const contractAddress = import.meta.env.VITE_NFT_CONTRACT_ADDRESS;
+
+    const client = await SigningArchwayClient.connectWithSigner(
+      currentChain.rpc,
+      await ArchwayKeplrClient.getOfflineSigner()
+    );
+
+    const result = await client.execute(
+      (await this.getAccountAddress(currentChain.chainId))[0].address,
+      contractAddress,
+      {
+        mint: {},
+      },
+      "auto"
     );
   }
 

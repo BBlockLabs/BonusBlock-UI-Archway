@@ -187,6 +187,7 @@ const connectWallet = async (wallet: "keplr" | "leap" | "cosmostation"): Promise
       )
     );
     keplrDialog.value = false;
+    store.commit("UserModule/setLoggedInWith", wallet);
     await router.push("/explore");
   } catch (error: any) {
     if (error instanceof FormattedError) {

@@ -24,6 +24,9 @@ interface MutationsInterface extends MutationTree<StateInterface> {
 
   setActiveWallet: Mutation<StateInterface> &
     ((state: StateInterface, wallet: Wallet) => void);
+
+  setLoggedInWith: Mutation<StateInterface> &
+    ((state: StateInterface, loggedInWith: "keplr" | "leap" | "cosmostation" | null) => void);
 }
 
 export default class Mutations implements MutationsInterface {
@@ -79,5 +82,14 @@ export default class Mutations implements MutationsInterface {
 
   setActiveWallet = (state: StateInterface, wallet: Wallet): void => {
     state.activeWallet = wallet;
+  };
+
+  setLoggedInWith = (state: StateInterface, loggedInWith: "keplr" | "leap" | "cosmostation" | null): void => {
+    if(loggedInWith){
+      localStorage.setItem("loggedInWith", loggedInWith);
+    }else {
+      localStorage.removeItem("loggedInWith");
+    }
+    state.loggedInWith = loggedInWith;
   };
 }

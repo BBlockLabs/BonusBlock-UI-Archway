@@ -335,6 +335,7 @@ export default class Actions implements ActionsInterface {
     context.commit("setActiveWallet", null);
     context.commit("setUser", null);
     context.commit("resetWallets", null);
+    context.commit("setLoggedInWith", null);
   };
 
   logout = async (context: Context): Promise<void> => {
