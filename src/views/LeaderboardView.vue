@@ -259,7 +259,7 @@
           class="d-flex mb-small py-extra-small archway-orange w-100"
         >
           <SvgInfo class="mr-extra-small" style="width: 24px"></SvgInfo>
-          <span>Leaderboard updated may take up to 10 minutes</span>
+          <span>Leaderboard updates may take up to 10 minutes</span>
         </box-wrapper>
       </el-row>
 
