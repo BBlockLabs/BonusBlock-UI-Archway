@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import BoxWrapper from "@/components/BoxWrapper.vue";
-import SvgArchwayTwitter from "@/assets/archway/archway-twitter.svg";
+import SvgArchwayTwitter from "@/assets/icons/archway-twitter.svg";
 import type { ComputedRef } from "vue";
 import { useStore, StoreType } from "@/store";
 import { computed } from "vue";

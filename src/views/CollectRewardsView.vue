@@ -3,7 +3,7 @@
     :full-width="true"
     class="fs-slightly-larger py-base"
   >
-    <el-dialog v-model="claimModal.open" class="claim-modal">
+    <el-dialog :show-close="false" v-model="claimModal.open" class="claim-modal">
       <div v-if="claimModal.loading">
         <div class="el-loading-spinner static-spinner mb-small">
           <svg class="circular" viewBox="0 0 50 50">
@@ -13,8 +13,8 @@
         Continue in your wallet
       </div>
       <div v-else>
-        <svg-medal class="medal-image" />
-        <h1 class="fs-large my-small">Congrats!</h1>
+        <img class="medal-image" :src="WebpMedal">
+        <h1 class="fs-large my-small">Congratulations!</h1>
         <div>
           You have claimed
           <b
@@ -22,20 +22,32 @@
             {{ claimModal.campaign.currency }}!</b
           >
         </div>
-        <div class="fs-small mt-large">
-          Share your win rate with your network and get referral bonus!
-        </div>
-        <div class="mt-small">
-          <el-button
-            type="primary"
-            round
-            @click="generateAndCopyClaimImage(claimModal.campaign)"
-            >Share<svg-share class="ml-small"
-          /></el-button>
-        </div>
-        <el-button class="mt-large" @click="claimModal.open = false"
-          >Close</el-button
-        >
+
+
+        <el-row class="mt-extra-large w-100" >
+
+          <el-col :span="12">
+            <el-button
+              class="w-90"
+              type="secondary"
+              @click="claimModal.open = false"
+            >
+              Close
+            </el-button>
+          </el-col>
+
+          <el-col :span="12">
+            <el-button
+              class="w-90"
+              type="primary"
+              round
+              @click="generateAndCopyClaimImage(claimModal.campaign)"
+            >Share<svg-share class="p-0 ml-small"
+            /></el-button>
+          </el-col>
+        </el-row>
+
+
       </div>
     </el-dialog>
 
@@ -78,11 +90,6 @@
           <div class="top-half">
             <el-row justify="space-between" align="middle">
               <h3 class="fs-slightly-larger">{{ campaign.name }}</h3>
-              <svg-link
-                v-if="campaign.mainLink"
-                class="card-link"
-                @click="openCampaignDetails(campaign)"
-              />
             </el-row>
             <el-progress
               :percentage="getCampaignProgressPercent(campaign)"
@@ -120,20 +127,11 @@
               class="pt-medium pb-medium"
             >
               <b>Your Reward</b>
-              <!--div
-                class="text-link text-muted"
-                @click="openCampaignDetails(campaign)"
-              >
-                See more <svg-chevron-right />
-              </div-->
             </el-row>
             <el-row justify="space-between" align="middle">
               <el-col :span="-1">
                 <el-row align="middle">
-                  <component
-                    :is="currencyIcons[campaign.currency] ?? 'div'"
-                    class="currency-icon"
-                  />
+                  <SvgArch class="currency-icon" />
                   <span v-if="campaign.amount" class="bold ml-small">
                   {{ getHumanAmount(campaign).substring(0, 17) }}
                   {{ campaign.currency }}
@@ -167,54 +165,27 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, reactive, ref } from "vue";
+import { onMounted, onUnmounted, reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { store } from "@/store";
 import { AwesomeQR } from "awesome-qr";
 import VueCommonMixin from "@/common/Mixin";
 import Logo from "@/assets/logo/logo.png";
 import PageWrapper from "@/components/PageWrapper.vue";
-import SvgLock from "@/assets/icons/lock.svg?component";
-import SvgLink from "@/assets/icons/open-new-window.svg?component";
 import SvgClock from "@/assets/icons/clock.svg?component";
-import SvgChevronDown from "@/assets/icons/nav-arrow-down.svg?component";
 import SvgShare from "@/assets/icons/share.svg?component";
-import SvgAry from "@/assets/currencies/ary.svg?component";
-import SvgBab from "@/assets/currencies/bab.svg?component";
-import SvgBeam from "@/assets/currencies/beam.svg?component";
-import SvgEth from "@/assets/currencies/eth.svg?component";
-import SvgEvx from "@/assets/currencies/evx.svg?component";
-import SvgLuna from "@/assets/currencies/luna.svg?component";
-import SvgPowr from "@/assets/currencies/powr.svg?component";
-import SvgUni from "@/assets/currencies/uni.svg?component";
 import SvgArch from "@/assets/currencies/arch.svg?component";
-import SvgMedal from "@/assets/images/congratulations_medal.svg?component";
+import WebpMedal from "@/assets/images/congratulations_medal.webp";
 import SvgCubeTop from "@/assets/icons/cube-top.svg?component";
 import ClaimSharingBackground from "@/assets/images/claim-sharing-image-template.svg?raw";
 import moment from "moment";
 import CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
-import MetamaskClient from "@/common/MetamaskClient";
-import detectEthereumProvider from "@metamask/detect-provider";
 import InteractionsChart from "@/components/InteractionsChart.vue";
-import router from "@/router";
 import ProductList from "@/components/ProductList.vue";
 import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 import Toast from "@/common/Toast";
-import {ArchwayLeapClient} from "@/common/ArchwayLeapClient";
+import { ArchwayLeapClient } from "@/common/ArchwayLeapClient";
 import CosmostationWalletClient from "@/common/CosmostationWalletClient";
-
-const currencyIcons = {
-  ARY: SvgAry,
-  BAB: SvgBab,
-  BEAM: SvgBeam,
-  ETH: SvgEth,
-  EVX: SvgEvx,
-  LUNA: SvgLuna,
-  POWR: SvgPowr,
-  UNI: SvgUni,
-  ARCH: SvgArch,
-  CONST: SvgArch,
-};
 
 let localTimeOffsetMs: number = 0;
 const now = ref(Math.ceil((new Date().valueOf() - localTimeOffsetMs) / 1000));
@@ -240,8 +211,6 @@ let claimModal = reactive({
 const todayInteractions = ref(null as number | null);
 const campaignsLoading = ref(true);
 const campaigns: Array<CampaignWithRewardDto> = reactive([]);
-const keplrInstalled = window.keplr != undefined;
-const leapInstalled = window.leap != undefined;
 
 function fetchTodayInteractions() {
   store
@@ -274,11 +243,6 @@ function updateRewards() {
   });
 }
 
-function openCampaignDetails(campaign: CampaignWithRewardDto): void {
-  //window.open(campaign.mainLink, "_blank");
-  router.push("/campaign/" + campaign.id);
-}
-
 async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
   const loggedInWith = store.state.UserModule?.loggedInWith;
   let client;
@@ -301,68 +265,37 @@ async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
   claimModal.campaign = campaign;
   claimModal.loading = true;
 
-  if (campaign.smartContractAddress.startsWith("archway")) {
-    let claimFee;
-    try {
-      claimFee = await client.getRewardClaimFee(campaign.smartContractAddress)
-    } catch (e: any) {
-      Toast.make("Claim failure!", e.message, "error", false, 3000);
-      return;
-    }
-
-    let index = campaigns.indexOf(campaign);
-
-    try {
-      await store.dispatch("HttpModule/claimRewardInit", {
-        campaignId: campaign.id,
-      });
-      await client.claimArchwayReward(campaign.smartContractAddress, campaign.id, claimFee);
-
-      campaigns.splice(index, 1);
-
-      claimModal.open = true;
-    } catch (e: any) {
-      Toast.make("Claim failure!", e.message, "error", false, 3000);
-      if(e.toString().includes("User pool does not exist")){
-        campaigns.splice(index, 1);
-      }
-    }
-
-    claimModal.loading = false;
-    try {
-      await store.dispatch("HttpModule/claimRewardCheck", {});
-    }catch (ignoredError: any){}
-
+  let claimFee;
+  try {
+    claimFee = await client.getRewardClaimFee(campaign.smartContractAddress)
+  } catch (e: any) {
+    Toast.make("Claim failure!", e.message, "error", false, 3000);
     return;
   }
 
+  let index = campaigns.indexOf(campaign);
+
   try {
-    const response = await store.dispatch("HttpModule/claimReward", {
-      campaignId: campaign.id,
-    });
-
-    const provider = await detectEthereumProvider();
-    await MetamaskClient.sendTransaction(
-      provider,
-      campaign.smartContractAddress,
-      "0",
-      response.memo
-    );
-
     await store.dispatch("HttpModule/claimRewardInit", {
       campaignId: campaign.id,
     });
+    await client.claimArchwayReward(campaign.smartContractAddress, campaign.id, claimFee);
 
-    claimModal.loading = false;
+    campaigns.splice(index, 1);
+
     claimModal.open = true;
   } catch (e: any) {
-    claimModal.open = false;
-    ElMessage({
-      message: "Failed to claim:\n" + e.message,
-      type: "error",
-      duration: 0,
-      showClose: true,
-    });
+    Toast.make("Claim failure!", e.message, "error", false, 3000);
+    if (e.toString().includes("User pool does not exist")) {
+      campaigns.splice(index, 1);
+    }
+  }
+
+  claimModal.loading = false;
+  try {
+    await store.dispatch("HttpModule/claimRewardCheck", {});
+  } catch (ignoredError: any) {
+    /* empty */
   }
 }
 
@@ -542,12 +475,4 @@ function generateAndCopyClaimImage(campaign: CampaignWithRewardDto): void {
 }
 </script>
 
-<style scoped>
-.align-items-center {
-  align-items: center;
-}
-
-.justify-content-center {
-  justify-content: center;
-}
-</style>
+<style scoped></style>

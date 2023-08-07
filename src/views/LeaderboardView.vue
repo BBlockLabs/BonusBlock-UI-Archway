@@ -238,13 +238,6 @@
           style="display: flex; flex-direction: row; gap: 0.6em"
         >
           <h2>Leaderboard</h2>
-          <el-tooltip
-            content="Updates can take up to 5 minutes"
-            placement="right"
-            style="border: none !important"
-          >
-            <SvgInfo pointer style="width: 24px"></SvgInfo>
-          </el-tooltip>
         </el-col>
         <el-col
           class="archway-orange pointer"
@@ -253,6 +246,21 @@
         >
           How calculations work?</el-col
         >
+      </el-row>
+
+      <el-row justify="center">
+        <box-wrapper
+          type="white"
+          style="
+            border-radius: 1em;
+            justify-content: center;
+            align-items: center;
+          "
+          class="d-flex mb-small py-extra-small archway-orange w-100"
+        >
+          <SvgInfo class="mr-extra-small" style="width: 24px"></SvgInfo>
+          <span>Leaderboard updated may take up to 10 minutes</span>
+        </box-wrapper>
       </el-row>
 
       <div class="leaderboard-table">
@@ -372,9 +380,9 @@ import SvgNewBadge2 from "@/assets/badges/new-badge-2.svg";
 import SvgNewBadge3 from "@/assets/badges/new-badge-3.svg";
 import SvgNewBadge4 from "@/assets/badges/new-badge-4.svg";
 
-import SvgCircle from "@/assets/archway/circle.svg";
+import SvgCircle from "@/assets/icons/circle.svg";
 import SvgInfo from "@/assets/icons/info.svg";
-import SvgMissionCardSample from "@/assets/archway/mission-card-sample.svg";
+import SvgMissionCardSample from "@/assets/images/mission-card-sample.svg";
 import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 import Toast from "@/common/Toast";
 import { ArchwayLeapClient } from "@/common/ArchwayLeapClient";

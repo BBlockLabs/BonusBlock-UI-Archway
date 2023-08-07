@@ -5,9 +5,8 @@ import KeplrLoginSignDoc, {
 import KeplrUnlinkWalletRequest from "@/common/api/KeplrUnlinkWalletRequest";
 import User from "@/store/entity/User";
 import Wallet from "@/store/entity/Wallet";
-import detectEthereumProvider from "@metamask/detect-provider";
 import moment from "moment";
-import LinkActionPayload from "@/common/LinkActionPayload";
+import type LinkActionPayload from "@/common/LinkActionPayload";
 import type LoginResponse from "@/common/api/LoginResponse";
 import type WalletDto from "@/common/api/dto/WalletDto";
 import type { Action, ActionContext, ActionTree, Store } from "vuex";
@@ -15,16 +14,11 @@ import type { StateInterface as RootStateInterface } from "@/store/State";
 import type { StateInterface } from "./State";
 import type {
   AminoSignResponse,
-  ChainInfo,
   Keplr,
   OfflineAminoSigner,
 } from "@keplr-wallet/types";
 import FormattedError from "@/common/errors/FormattedError";
 import NoKeplrAccountsError from "@/common/errors/NoKeplrAccountsError";
-import MetamaskConnectRequest from "@/common/api/MetamaskConnectRequest";
-import { Plugins } from "@/common/Plugins";
-import MetamaskClient from "@/common/MetamaskClient";
-import Chain from "@/common/Chain";
 import Toast from "@/common/Toast";
 import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 import type LeapWallet from "@/common/LeapWallet";
@@ -56,17 +50,7 @@ export interface ActionsInterface
       payload: Wallet
     ) => Promise<boolean>);
 
-  metamaskLogin: UserAction &
-    ((
-      this: Store<RootStateInterface>,
-      context: Context,
-      referralId: string | null
-    ) => Promise<void>);
-
   logout: UserAction &
-    ((this: Store<RootStateInterface>, context: Context) => Promise<void>);
-
-  keplrBonusBlockLogin: UserAction &
     ((this: Store<RootStateInterface>, context: Context) => Promise<void>);
 
   setLoginResponseData: UserAction &
@@ -149,98 +133,6 @@ export default class Actions implements ActionsInterface {
     context.commit("setActiveWallet", wallets[0]);
 
     Toast.dismiss("not-logged-in");
-  };
-
-  metamaskLogin = async (
-    context: Context,
-    referralId: string | null
-  ): Promise<void> => {
-    if (!context.rootGetters.isPluginEnabled(Plugins.Metamask)) {
-      throw new FormattedError(
-        "MetaMask extension not found. Enable or install it first and reload the page."
-      );
-    }
-
-    const provider: any = await detectEthereumProvider({
-      mustBeMetaMask: true,
-      silent: true,
-    });
-
-    const chainId = await provider.request({ method: "eth_chainId" });
-
-    const accounts: Array<string> = await MetamaskClient.requestAccounts(
-      provider
-    );
-
-    const existingWallet: Wallet | undefined = context.state.wallets.find(
-      (wallet) =>
-        wallet.network === `eth-${chainId}` && wallet.address === accounts[0]
-    );
-
-    if (existingWallet !== undefined) {
-      throw new FormattedError(
-        "Wallet already connected, please switch network or account and try again."
-      );
-    }
-
-    let nonce: string;
-    try {
-      nonce = crypto.randomUUID();
-    } catch (e) {
-      nonce = new Date().valueOf() + "-" + Math.random();
-    }
-
-    const ticket: string = await context.dispatch(
-      "HttpModule/getAuthTicket",
-      nonce,
-      { root: true }
-    );
-
-    const signedMessage: string = await MetamaskClient.signMessage(provider, [
-      ticket,
-      accounts[0],
-    ]);
-
-    const loginResponse: LoginResponse = await context.dispatch(
-      "HttpModule/connectEthereum",
-      new MetamaskConnectRequest(
-        `eth-${chainId}`,
-        signedMessage,
-        nonce,
-        referralId
-      ),
-      { root: true }
-    );
-
-    await context.dispatch("setLoginResponseData", loginResponse);
-  };
-
-  keplrBonusBlockLogin = async (context: Context): Promise<void> => {
-    if (!window.keplr) {
-      throw new FormattedError(
-        "Keplr extension not reachable. Enable or install it first and reload the page."
-      );
-    }
-
-    const keplr: Keplr = window.keplr;
-    const chainData: ChainInfo = JSON.parse(
-      import.meta.env.VITE_BONUSBLOCK_KEPLR_CONFIG
-    ) as ChainInfo;
-    const chain: Chain = new Chain();
-
-    try {
-      await keplr.experimentalSuggestChain(chainData);
-    } catch (error: any | Error) {
-      throw new FormattedError(
-        `Could not authorize against BonusBlock network`
-      );
-    }
-
-    chain.name = chainData.chainName;
-    chain.id = chainData.chainId;
-    chain.denom = chainData.currencies[0].coinDenom;
-
-    await context.dispatch("keplrLogin", new LinkActionPayload(chain));
   };
 
   keplrLogin = async (

@@ -1,5 +1,3 @@
-import Actions from "./Actions";
-import Getters from "./Getters";
 import HttpModule from "@/store/modules/HttpModule";
 import ArchwayHttpModule from "@/store/modules/ArchwayModule";
 import Mutations from "./Mutations";
@@ -13,8 +11,6 @@ export type StoreType = Store<StateInterface>;
 export const key: InjectionKey<StoreType> = Symbol();
 
 export const store = createStore<StateInterface>({
-  actions: new Actions(),
-  getters: new Getters(),
   mutations: new Mutations(),
   state: new State(),
   modules: {

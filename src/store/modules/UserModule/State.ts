@@ -1,7 +1,7 @@
+import type {Moment} from "moment";
 import moment from "moment";
 import type User from "@/store/entity/User";
 import type Wallet from "@/store/entity/Wallet";
-import type { Moment } from "moment";
 
 export interface StateInterface {
   token: string | null;
@@ -23,9 +23,7 @@ export default class State implements StateInterface {
   constructor() {
     const localToken: string | null = localStorage.getItem("token");
     const localTokenExpire: string | null = localStorage.getItem("tokenExpire");
-    const loggedInWith: string | null = localStorage.getItem("loggedInWith");
-
-    this.loggedInWith = loggedInWith;
+    this.loggedInWith = localStorage.getItem("loggedInWith");
 
     if (localTokenExpire !== null && localToken !== null) {
       const expireMoment: Moment = moment(localTokenExpire);

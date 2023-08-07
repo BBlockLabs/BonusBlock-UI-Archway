@@ -186,9 +186,9 @@ import ArchwayInfoCard from "@/components/ArchwayInfoCard.vue";
 import {onMounted, ref} from "vue";
 import moment from "moment/moment";
 import SvgArch from "@/assets/currencies/arch.svg";
-import SvgTutorial1 from "@/assets/archway/tutorial-carousel-1.svg";
-import SvgTutorial2 from "@/assets/archway/tutorial-carousel-2.svg";
-import SvgTutorial3 from "@/assets/archway/tutorial-carousel-3.svg";
+import SvgTutorial1 from "@/assets/images/tutorial-carousel-1.svg";
+import SvgTutorial2 from "@/assets/images/tutorial-carousel-2.svg";
+import SvgTutorial3 from "@/assets/images/tutorial-carousel-3.svg";
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 

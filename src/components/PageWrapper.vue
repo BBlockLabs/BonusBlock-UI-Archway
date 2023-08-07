@@ -19,8 +19,7 @@
     <template #default>
       <el-row justify="center" class="mb-base">
         <el-col>
-          <id-card-front v-if="!props.cardBack" />
-          <id-card-back v-else />
+          <id-card-front />
         </el-col>
       </el-row>
 
@@ -44,8 +43,7 @@
         </el-row>
         <el-row justify="center" class="mb-base">
           <el-col>
-            <id-card-front v-if="!props.cardBack" />
-            <id-card-back v-else />
+            <id-card-front />
           </el-col>
         </el-row>
 
@@ -76,7 +74,7 @@
           </el-col>
           <el-col class="mr-medium" :span="-1">
             <el-link
-              href="https://archway.io/privacy"
+              :href="LinkPrivacyPolicy"
               target="_blank"
               :underline="false"
             >
@@ -85,7 +83,7 @@
           </el-col>
           <el-col :span="-1">
             <el-link
-              href="https://docs.archway.io/overview/disclaimer"
+              :href="LinkDisclaimer"
               target="_blank"
               :underline="false"
             >
@@ -100,11 +98,11 @@
           <el-col :span="-1">
             <social-links
               class="grey-socials"
-              :twitter="'https://twitter.com/archwayhq'"
-              :telegram="'https://t.me/archway_hq'"
-              :github="'https://github.com/archway-network'"
-              :discord="'https://discord.com/invite/5FVvx3WGfa'"
-              :reddit="'https://www.reddit.com/r/Archway/'"
+              :twitter="LinkTwitter"
+              :telegram="LinkTelegram"
+              :github="LinkGithub"
+              :discord="LinkDiscord"
+              :reddit="LinkReddit"
             />
           </el-col>
         </el-row>
@@ -113,7 +111,7 @@
             The ARCH tokens will not be offered in the United States or to U.S.
             persons or to residents of certain other prohibited jurisdictions.
             <el-link
-              href="https://docs.archway.io/overview/disclaimer"
+              :href="LinkDisclaimer"
               target="_blank"
               :underline="false"
               class="orange-link"
@@ -128,9 +126,8 @@
 </template>
 
 <script setup lang="ts">
-import ArchwayLogo from "@/assets/archway/archway-logo.svg";
+import ArchwayLogo from "@/assets/logo/archway-logo.svg";
 import FooterComponent from "@/components/PageFooter.vue";
-import IdCardBack from "@/components/IdCardBack.vue";
 import IdCardFront from "@/components/IdCardFront.vue";
 import NavigationBar from "@/components/NavigationBar.vue";
 import TwitterBox from "@/components/TwitterBox.vue";
@@ -141,6 +138,14 @@ import SocialLinks from "@/components/ExternalLinks.vue";
 // defineOptions({
 //   inheritAttrs: false,
 // });
+
+const LinkTwitter: string = import.meta.env.VITE_LINK_TWITTER;
+const LinkTelegram: string = import.meta.env.VITE_LINK_TELEGRAM;
+const LinkGithub: string = import.meta.env.VITE_LINK_GITHUB;
+const LinkDiscord: string = import.meta.env.VITE_LINK_DISCORD;
+const LinkReddit: string = import.meta.env.VITE_LINK_REDDIT;
+const LinkPrivacyPolicy: string = import.meta.env.VITE_LINK_PRIVACY_POLICY;
+const LinkDisclaimer: string = import.meta.env.VITE_LINK_DISCLAIMER;
 
 interface Props {
   cardBack?: boolean;

@@ -7,11 +7,11 @@
     >
       <el-col :span="-1">
         <social-links
-          :twitter="'https://twitter.com/archwayhq'"
-          :telegram="'https://t.me/archway_hq'"
-          :github="'https://github.com/archway-network'"
-          :discord="'https://discord.com/invite/5FVvx3WGfa'"
-          :reddit="'https://www.reddit.com/r/Archway/'"
+          :twitter="LinkTwitter"
+          :telegram="LinkTelegram"
+          :github="LinkGithub"
+          :discord="LinkDiscord"
+          :reddit="LinkReddit"
         />
       </el-col>
 
@@ -45,6 +45,8 @@ import { useNamespace } from "element-plus";
 
 const LinkTwitter: string = import.meta.env.VITE_LINK_TWITTER;
 const LinkTelegram: string = import.meta.env.VITE_LINK_TELEGRAM;
+const LinkGithub: string = import.meta.env.VITE_LINK_GITHUB;
+const LinkDiscord: string = import.meta.env.VITE_LINK_DISCORD;
 const LinkReddit: string = import.meta.env.VITE_LINK_REDDIT;
 
 export interface Props {

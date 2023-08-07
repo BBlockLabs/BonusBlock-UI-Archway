@@ -1,4 +1,3 @@
-import type Chain from "@/common/Chain";
 import type { Mutation, MutationTree } from "vuex";
 import type { Plugins } from "@/common/Plugins";
 import type { StateInterface } from "./State";
@@ -6,9 +5,6 @@ import type ArchwayProductDto from "@/common/api/archway/ArchwayProductDto";
 import type ArchwayStatsDto from "@/common/api/archway/ArchwayStatsDto";
 
 interface MutationsInterface extends MutationTree<StateInterface> {
-  addChain: Mutation<StateInterface> &
-    ((state: StateInterface, payload: Chain) => void);
-
   addArchwayProduct: Mutation<StateInterface> &
     ((state: StateInterface, payload: ArchwayProductDto) => void);
 
@@ -17,12 +13,6 @@ interface MutationsInterface extends MutationTree<StateInterface> {
 
   setLoading: Mutation<StateInterface> &
     ((state: StateInterface, loading: boolean | null) => void);
-
-  addPlugin: Mutation<StateInterface> &
-    ((state: StateInterface, plugin: Plugins) => void);
-
-  setUserCount: Mutation<StateInterface> &
-    ((state: StateInterface, userCount: string) => void);
 
   toggleInfoPanel: Mutation<StateInterface> & ((state: StateInterface) => void);
 
@@ -33,14 +23,6 @@ interface MutationsInterface extends MutationTree<StateInterface> {
 
 export default class Mutations implements MutationsInterface {
   [key: string]: Mutation<StateInterface>;
-
-  addChain = (state: StateInterface, payload: Chain): void => {
-    state.chains = state.chains.filter(
-      (chain: Chain) => chain.id !== payload.id
-    );
-
-    state.chains.push(payload);
-  };
 
   addArchwayProduct = (state: StateInterface, payload: ArchwayProductDto): void => {
     state.archwayProducts.push(payload);
@@ -59,16 +41,6 @@ export default class Mutations implements MutationsInterface {
     } else {
       state.loading = loading;
     }
-  };
-
-  addPlugin = (state: StateInterface, plugin: Plugins): void => {
-    state.plugins.push(plugin);
-  };
-
-  setUserCount = (state: StateInterface, userCount: string): void => {
-    state.userCount = userCount;
-
-    localStorage.setItem("userCount", userCount);
   };
 
   toggleInfoPanel = (state: StateInterface): void => {

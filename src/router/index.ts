@@ -16,17 +16,12 @@ const router = createRouter({
     {
       path: "/explore",
       name: "Explore",
-      component: () => import("@/views/WalletsView.vue"),
+      component: () => import("@/views/ExploreView.vue"),
     },
     {
       path: "/referral",
       name: "Referral",
       component: () => import("@/views/ReferralView.vue"),
-    },
-    {
-      path: "/campaign/:id",
-      name: "Campaign",
-      component: () => import("@/views/CampaignDetails.vue"),
     },
     {
       path: "/product/:id",

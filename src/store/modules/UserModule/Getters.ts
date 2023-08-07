@@ -3,7 +3,6 @@ import type { StateInterface } from "./State";
 import type { StateInterface as RootStateInterface } from "@/store/State";
 import type User from "@/store/entity/User";
 import moment from "moment";
-import type Wallet from "@/store/entity/Wallet";
 
 export type UserGetter = Getter<StateInterface, RootStateInterface>;
 
@@ -12,7 +11,6 @@ export interface GettersInterface
   getUser: UserGetter & ((state: StateInterface) => User | null);
   refLink: UserGetter & ((state: StateInterface) => string | null);
   loggedIn: UserGetter & ((state: StateInterface) => boolean);
-  bonusBlockWallet: UserGetter & ((state: StateInterface) => Wallet | null);
 }
 
 export default class Getters implements GettersInterface {
@@ -40,14 +38,6 @@ export default class Getters implements GettersInterface {
     }
 
     return true;
-  };
-
-  bonusBlockWallet = (state: StateInterface): Wallet | null => {
-    return (
-      state.wallets.find(
-        (wallet: Wallet) => wallet.network === "blocktopia-01"
-      ) || null
-    );
   };
 
   [key: string]: Getter<StateInterface, RootStateInterface>;

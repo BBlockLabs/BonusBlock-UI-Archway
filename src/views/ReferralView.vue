@@ -58,7 +58,7 @@ import PageWrapper from "@/components/PageWrapper.vue";
 import CopyBox from "@/components/CopyBox.vue";
 // import BoxWrapper from "@/components/BoxWrapper.vue";
 import InvitationCountCard from "@/components/InvitationCountCard.vue";
-import PngReferral from "@/assets/archway/referral-illustration.png";
+import PngReferral from "@/assets/images/referral-illustration.png";
 import { useStore, StoreType } from "@/store";
 
 const store: StoreType = useStore();

@@ -3,7 +3,6 @@ import App from "@/App.vue";
 import router from "@/router";
 import { store, key } from "@/store";
 import ElementPlus from "element-plus";
-import type Chain from "@/common/Chain";
 import VueCommonMixin from "@/common/Mixin";
 import VueApexCharts from "vue3-apexcharts";
 import moment from "moment";
@@ -32,11 +31,3 @@ app.use(ElementPlus);
 app.use(VueApexCharts);
 app.use(mq);
 app.mount("#app");
-
-const chains: Array<Chain> = JSON.parse(
-  import.meta.env.VITE_PREDEFINED_CHAINS
-) as Array<Chain>;
-
-chains.forEach((chain: Chain): void => {
-  store.commit("addChain", chain);
-});

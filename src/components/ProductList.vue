@@ -107,9 +107,8 @@
 import RawCubeLeft from "@/assets/icons/cube-left.svg?raw";
 import RawCubeRight from "@/assets/icons/cube-right.svg?raw";
 import RawCubeTop from "@/assets/icons/cube-top.svg?raw";
-import EmptyCube from "@/assets/archway/empty-cube.svg";
-import SvgArch from "@/assets/currencies/arch.svg?component";
-import SvgProductLogoBlank from "@/assets/archway/product-logo-blank.svg";
+import EmptyCube from "@/assets/icons/empty-cube.svg";
+import SvgProductLogoBlank from "@/assets/icons/product-logo-blank.svg";
 import { ref } from "vue";
 import { store } from "@/store/index.ts";
 

@@ -84,22 +84,18 @@
         </el-row>
       </el-col>
     </el-row>
-    <dialog-keplr v-model:open="keplrDialog" @connect="onKeplrLogin" />
   </el-main>
   <footer-component />
   <div id="cookie-consent"></div>
 </template>
 
 <script setup lang="ts">
-import DialogKeplr from "@/components/KeplrDialog.vue";
 import FooterComponent from "@/components/HomeFooter.vue";
-import SvgLogo from "@/assets/archway/archway-logo.svg";
+import SvgLogo from "@/assets/logo/archway-logo.svg";
 import SvgKeplr from "@/assets/icons/keplr.svg?component";
 import SvgLeapWallet from "@/assets/icons/leap-wallet.svg?component";
 import SvgCosmostation from "@/assets/icons/cosmostation.svg?component";
-import SvgHome from "@/assets/archway/home-illustration.svg";
-import type { Ref } from "vue";
-import { ref } from "vue";
+import SvgHome from "@/assets/images/home-illustration.svg";
 import { Router, useRoute, useRouter } from "vue-router";
 import { StoreType, useStore } from "@/store";
 
@@ -115,8 +111,6 @@ import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 const store: StoreType = useStore();
 const router: Router = useRouter();
 const route = useRoute();
-
-const keplrDialog: Ref<boolean> = ref(false);
 
 setTimeout(() => {
   if (document.getElementById('cookie-consent') == null) {
@@ -142,11 +136,6 @@ setTimeout(() => {
   });
 }, 1000);
 
-async function onKeplrLogin(): Promise<void> {
-  keplrDialog.value = false;
-  await router.push("/explore");
-}
-
 const connectWallet = async (wallet: "keplr" | "leap" | "cosmostation"): Promise<void> => {
   let chain = new Chain();
   let currentChain = ArchwayKeplrClient.getChain();
@@ -155,7 +144,6 @@ const connectWallet = async (wallet: "keplr" | "leap" | "cosmostation"): Promise
   chain.name = currentChain.chainName;
   chain.id = currentChain.chainId;
   chain.denom = currentCurrency.coinMinimalDenom;
-  chain.source = "Keplr";
   chain.iconUrl = "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/archway/chain.png";
 
   store.commit("setLoading", true);
@@ -164,13 +152,13 @@ const connectWallet = async (wallet: "keplr" | "leap" | "cosmostation"): Promise
 
   switch (wallet) {
     case "keplr":
-      dispatch = 'UserModule/keplrLogin';
+      dispatch = "UserModule/keplrLogin";
       break;
     case "leap":
-      dispatch = 'UserModule/leapLogin';
+      dispatch = "UserModule/leapLogin";
       break;
     case "cosmostation":
-      dispatch = 'UserModule/cosmostationLogin';
+      dispatch = "UserModule/cosmostationLogin";
       break;
   }
 
@@ -186,7 +174,6 @@ const connectWallet = async (wallet: "keplr" | "leap" | "cosmostation"): Promise
             : null
       )
     );
-    keplrDialog.value = false;
     store.commit("UserModule/setLoggedInWith", wallet);
     await router.push("/explore");
   } catch (error: any) {

@@ -65,7 +65,6 @@ async function checkLogin() {
 checkArchXWallet();
 checkLogin();
 
-store.dispatch("getEnabledExtensions");
 </script>
 
 <style lang="scss" scoped>

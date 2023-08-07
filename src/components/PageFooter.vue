@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import SvgBonusBlockLogo from "@/assets/logo/white-bg/full.svg";
+import SvgBonusBlockLogo from "@/assets/logo/bb-logo.svg";
 import { normalizeClass, unref } from "vue";
 import { useNamespace } from "element-plus";
 

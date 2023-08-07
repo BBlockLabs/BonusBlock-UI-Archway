@@ -1,5 +1,3 @@
-import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
-
 export interface Account {
   address: string;
 }

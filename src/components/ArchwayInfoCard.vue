@@ -19,7 +19,7 @@
         <el-row class="mt-auto">
           <el-link
             target="_blank"
-            href="https://docs.google.com/forms/d/e/1FAIpQLSfJL3E12uD0kmivVHF4Naxab7DR4CYdYKXf7ouQJznOlmUn9Q/viewform"
+            :href="LinkGetInTouch"
             :underline="false"
           >
             <el-button style="box-shadow: none" type="secondary"> Get in touch</el-button>
@@ -47,7 +47,7 @@
         <el-row class="mt-auto">
           <el-link
             target="_blank"
-            href="https://archway.io/community"
+            :href="LinkDocs"
             :underline="false"
           >
             <el-button class="is-link" type="primary"> View Documentation</el-button>
@@ -76,7 +76,7 @@
         <el-row class="mt-auto">
           <el-link
             target="_blank"
-            href="https://docs.archway.io/"
+            :href="LinkCommunity"
             :underline="false"
           >
             <el-button class="is-link" type="primary"> Access the community hub</el-button>
@@ -87,22 +87,15 @@
   </el-row>
 </template>
 
-<script>
-
-import {defineComponent} from "vue";
+<script setup lang="ts">
 import SvgOpenBook from "@/assets/icons/open-book.svg";
 import BoxWrapper from "@/components/BoxWrapper.vue";
 import SvgChatBubbleEmpty from "@/assets/icons/chat-bubble-empty.svg";
 import SvgGroup from "@/assets/icons/group.svg";
 
-export default defineComponent({
-  components: {SvgGroup, SvgChatBubbleEmpty, BoxWrapper, SvgOpenBook},
-
-})
-
+const LinkGetInTouch: string = import.meta.env.VITE_LINK_GET_IN_TOUCH;
+const LinkDocs: string = import.meta.env.VITE_LINK_DOCS;
+const LinkCommunity: string = import.meta.env.VITE_LINK_COMMUNITY;
 </script>
 
-
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

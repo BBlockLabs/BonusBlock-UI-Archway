@@ -4,14 +4,10 @@ import HttpResponse from "@/common/api/HttpResponse";
 import type KeplrCheckResponseRequest from "@/common/api/KeplrCheckResponseRequest";
 import type LoginResponse from "@/common/api/LoginResponse";
 import type KeplrUnlinkWalletRequest from "@/common/api/KeplrUnlinkWalletRequest";
-import type MetamaskConnectRequest from "@/common/api/MetamaskConnectRequest";
 import type CalculationResultDto from "@/common/api/dto/CalculationResultDto";
-import type AnnouncementsDto from "@/common/api/dto/AnnouncementsDto";
 import type CampaignWithRewardDto from "@/common/api/dto/CampaignWithRewardDto";
-import type PaginationRequest from "@/common/api/PaginationRequest";
 import type ClaimResponseDto from "@/common/api/dto/ClaimResponseDto";
 import type ChartDataDto from "@/common/api/dto/ChartDataDto";
-import type CampaignDataDto from "@/common/api/dto/CampaignDataDto";
 import moment from "moment";
 
 export type Context = ActionContext<{}, RootStateInterface>;
@@ -36,12 +32,7 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
       context: Context,
       payload: KeplrCheckResponseRequest
     ) => Promise<LoginResponse>);
-  connectEthereum: HttpAction &
-    ((
-      this: Store<RootStateInterface>,
-      context: Context,
-      payload: MetamaskConnectRequest
-    ) => Promise<LoginResponse>);
+
   keplrUnlinkWallet: HttpAction &
     ((
       this: Store<RootStateInterface>,
@@ -51,21 +42,11 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
   terminateSession: HttpAction &
     ((this: Store<RootStateInterface>, context: Context) => Promise<void>);
 
-  getUserCount: HttpAction &
-    ((this: Store<RootStateInterface>, context: Context) => Promise<string>);
-
   getCalculationResults: HttpAction &
     ((
       this: Store<RootStateInterface>,
       context: Context
     ) => Promise<Array<CalculationResultDto>>);
-
-  getAnnouncementsList: HttpAction &
-    ((
-      this: Store<RootStateInterface>,
-      context: Context,
-      payload: PaginationRequest
-    ) => Promise<Array<AnnouncementsDto>>);
 
   getCampaignsWithReward: HttpAction &
     ((
@@ -97,12 +78,6 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
       payload: { from: number | null; to: number | null; timeZoneOffset: number | null; campaignIds: Array<string> | null; }
     ) => Promise<ChartDataDto>);
 
-  loadCampaign: HttpAction &
-    ((
-      this: Store<RootStateInterface>,
-      context: Context,
-      payload: { campaignId: string; }
-    ) => Promise<CampaignDataDto>);
 }
 
 export default class Actions implements ActionsInterface {
@@ -169,29 +144,6 @@ export default class Actions implements ActionsInterface {
     return responseData.payload;
   };
 
-  connectEthereum = async (
-    context: Context,
-    payload: MetamaskConnectRequest
-  ): Promise<LoginResponse> => {
-    const response: Response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/auth/eth`,
-      {
-        body: JSON.stringify(payload),
-        headers: {
-          "Content-Type": "application/json",
-          "X-Auth-Token": context.rootState.UserModule?.token || "",
-        },
-        method: "POST",
-      }
-    );
-
-    const responseData = await HttpResponse.fromResponse<LoginResponse>(
-      response
-    );
-
-    return responseData.payload;
-  };
-
   keplrUnlinkWallet = async (
     context: Context,
     payload: KeplrUnlinkWalletRequest
@@ -229,21 +181,6 @@ export default class Actions implements ActionsInterface {
     await HttpResponse.fromResponse<null>(response);
   };
 
-  getUserCount = async (context: Context): Promise<string> => {
-    const response: Response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/users-count`,
-      {
-        headers: {
-          "X-Auth-Token": context.rootState.UserModule?.token || "",
-        },
-      }
-    );
-
-    const responseData = await HttpResponse.fromResponse<string>(response);
-
-    return responseData.payload;
-  };
-
   getCalculationResults = async (
     context: Context
   ): Promise<Array<CalculationResultDto>> => {
@@ -260,73 +197,6 @@ export default class Actions implements ActionsInterface {
     const responseData = await HttpResponse.fromResponse<
       Array<CalculationResultDto>
     >(response);
-
-    return responseData.payload;
-  };
-
-  getAnnouncementsList = async (
-    context: Context,
-    payload: PaginationRequest
-  ): Promise<Array<AnnouncementsDto>> => {
-    const response: Response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/announcements`,
-      {
-        body: JSON.stringify(payload),
-        headers: {
-          "Content-Type": "application/json",
-          "X-Auth-Token": context.rootState.UserModule?.token || "",
-        },
-        method: "POST",
-      }
-    );
-
-    const responseData = await HttpResponse.fromResponse<
-      Array<AnnouncementsDto>
-    >(response);
-
-    responseData.payload.map((row) => {
-      if (!row.id) {
-        row.id = row.title;
-      }
-      if (row.bannerImg) {
-        row.image = row.bannerImg;
-      }
-      if (row.content) {
-        row.description = row.content;
-      }
-      if (!row.socials) {
-        row.socials = [];
-      }
-      if (row.mainLink) {
-        row.socials.push({ type: "main-link", link: row.mainLink });
-      }
-      if (row.twitterLink) {
-        row.socials.push({ type: "twitter", link: row.twitterLink });
-      }
-      if (row.telegramLink) {
-        row.socials.push({ type: "telegram", link: row.telegramLink });
-      }
-      if (row.youtubeLink) {
-        row.socials.push({ type: "youtube", link: row.youtubeLink });
-      }
-      if (row.redditLink) {
-        row.socials.push({ type: "reddit", link: row.redditLink });
-      }
-      if (row.discordLink) {
-        row.socials.push({ type: "discord", link: row.discordLink });
-      }
-      if (row.socials) {
-        for (const r of row.socials) {
-          if (r.type === "main" || r.type == "main-link") {
-            row.mainLink = r.link;
-            row.mainLinkTitle = r.title || "Visit";
-          }
-        }
-      }
-      if (row.image) {
-        row.image = "data:" + (row.imageType ?? "image/jpeg") + ";base64," + row.image;
-      }
-    });
 
     return responseData.payload;
   };
@@ -445,30 +315,4 @@ export default class Actions implements ActionsInterface {
     return responseData.payload;
   };
 
-  loadCampaign = async (
-    context: Context,
-    payload: { campaignId: string }
-  ): Promise<CampaignDataDto> => {
-    const response: Response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/campaign/` + payload.campaignId,
-      {
-        headers: {
-          "X-Auth-Token": context.rootState.UserModule?.token || "",
-        },
-      }
-    );
-
-    const responseData = await HttpResponse.fromResponse<CampaignDataDto>(
-      response
-    );
-    const row = responseData.payload;
-    if (row && row.periodFrom) {
-      row.periodFrom = moment(row.periodFrom);
-      row.periodTill = moment(row.periodTill);
-    }
-    if (row && row.image) {
-      row.image = "data:" + (row.imageType ?? "image/jpeg") + ";base64," + row.image;
-    }
-    return row;
-  };
 }
