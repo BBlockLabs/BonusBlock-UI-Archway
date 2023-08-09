@@ -110,8 +110,9 @@
                 }"
               ></el-row>
               <el-row class="flex-grow flex-column mission-card-content">
-                <el-row class="mx-medium mb-medium">
+                <el-row justify="space-between" align="middle" class="mx-medium mb-medium">
                   <strong>{{ mission.title }}</strong>
+                  <span v-if="mission.completionCount > 0" class="d-flex is-align-middle archway-orange fs-extra-small"><SvgCheck class="icon-small" /> Completed</span>
                 </el-row>
                 <el-row class="mx-medium mb-medium">
                   <span v-html="mission.description"></span>
@@ -151,6 +152,7 @@
 <script>
 import BoxWrapper from "@/components/BoxWrapper.vue";
 import SvgChevronLeft from "@/assets/icons/nav-arrow-left.svg?component";
+import SvgCheck from "@/assets/icons/check.svg?component"
 import { store } from "@/store/index.ts";
 import SocialIcon from "@/components/SocialIcon.vue";
 import PageWrapper from "@/components/PageWrapper.vue";
@@ -161,6 +163,7 @@ export default {
     SocialIcon,
     BoxWrapper,
     SvgChevronLeft,
+    SvgCheck,
   },
   emits: ["deselected"],
   data() {

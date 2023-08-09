@@ -4,4 +4,5 @@ export default class ArchwayMissionDto {
   description: string = "";
   image: string = "";
   socials: Array<{ type: string; link: string; title?: string }> | null = [];
+  completionCount: number = 0;
 }

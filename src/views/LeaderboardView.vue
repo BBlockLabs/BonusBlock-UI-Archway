@@ -189,6 +189,9 @@
 
           </el-col>
         </el-row>
+        <el-row class="mb-medium d-flex is-align-middle archway-orange">
+          <SvgInfo class="mr-small icon-small"/> Repeating missions allows you to accumulate Community XP, though the token reward has a limit.
+        </el-row>
         <el-row justify="space-between">
           <el-col :span="-1">
             <el-row>

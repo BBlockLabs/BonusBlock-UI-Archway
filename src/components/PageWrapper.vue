@@ -68,58 +68,61 @@
         <slot />
       </div>
       <el-footer class="mt-auto">
-        <el-row align="middle">
-          <el-col :span="-1" class="mr-auto">
-            <archway-logo style="height: 3em" />
-          </el-col>
-          <el-col class="mr-medium" :span="-1">
-            <el-link
-              :href="LinkPrivacyPolicy"
-              target="_blank"
-              :underline="false"
-            >
-              Privacy policy
-            </el-link>
-          </el-col>
+        <el-row align="bottom" justify="space-between">
           <el-col :span="-1">
-            <el-link
-              :href="LinkDisclaimer"
-              target="_blank"
-              :underline="false"
-            >
-              Terms of use
-            </el-link>
+            <el-row align="middle">
+              <span>
+                The ARCH tokens will not be offered in the United States or to
+                persons or to residents of certain other prohibited jurisdictions.
+              </span>
+              <el-link
+                :href="LinkDisclaimer"
+                target="_blank"
+                :underline="false"
+                class="orange-link"
+              >
+                <span>Learn more.</span>
+              </el-link>
+            </el-row>
+
           </el-col>
-        </el-row>
-        <el-row class="mb-small" align="middle">
-          <el-col class="mr-auto" :span="-1">
-            © Archway Foundation 2023
-          </el-col>
+
           <el-col :span="-1">
-            <social-links
-              class="grey-socials"
-              :twitter="LinkTwitter"
-              :telegram="LinkTelegram"
-              :github="LinkGithub"
-              :discord="LinkDiscord"
-              :reddit="LinkReddit"
-            />
+            <el-row class="mb-medium" align="middle">
+              <el-col class="mr-medium" :span="-1">
+                <el-link
+                  :href="LinkPrivacyPolicy"
+                  target="_blank"
+                  :underline="false"
+                >
+                  Privacy policy
+                </el-link>
+              </el-col>
+              <el-col :span="-1">
+                <el-link
+                  :href="LinkDisclaimer"
+                  target="_blank"
+                  :underline="false"
+                >
+                  Terms of use
+                </el-link>
+              </el-col>
+            </el-row>
+            <el-row align="middle">
+              <el-col :span="-1">
+                <social-links
+                  class="grey-socials"
+                  :twitter="LinkTwitter"
+                  :telegram="LinkTelegram"
+                  :github="LinkGithub"
+                  :discord="LinkDiscord"
+                  :reddit="LinkReddit"
+                />
+              </el-col>
+            </el-row>
           </el-col>
         </el-row>
-        <el-row>
-          <span>
-            The ARCH tokens will not be offered in the United States or to U.S.
-            persons or to residents of certain other prohibited jurisdictions.
-            <el-link
-              :href="LinkDisclaimer"
-              target="_blank"
-              :underline="false"
-              class="orange-link"
-            >
-              <span>Learn more.</span>
-            </el-link>
-          </span>
-        </el-row>
+
       </el-footer>
     </el-main>
   </el-container>
