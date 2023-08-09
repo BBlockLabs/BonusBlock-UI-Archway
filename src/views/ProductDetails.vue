@@ -112,7 +112,9 @@
               <el-row class="flex-grow flex-column mission-card-content">
                 <el-row justify="space-between" align="middle" class="mx-medium mb-medium">
                   <strong>{{ mission.title }}</strong>
-                  <span v-if="mission.completionCount > 0" class="d-flex is-align-middle archway-orange fs-extra-small"><SvgCheck class="icon-small" /> Completed</span>
+                  <span v-if="mission.completionCount > 0" class="d-flex is-align-middle archway-orange fs-extra-small">
+                    <SvgCheck style="margin-right: 2px;" class="icon-small" />
+                    Completed</span>
                 </el-row>
                 <el-row class="mx-medium mb-medium">
                   <span v-html="mission.description"></span>
