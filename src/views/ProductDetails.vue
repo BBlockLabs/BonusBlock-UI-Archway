@@ -96,6 +96,16 @@
           <el-row class="w-100">
             <h2>Missions</h2>
           </el-row>
+          <el-row class="w-100">
+            <box-wrapper
+              type="white"
+              style="border-radius: 1em;justify-content: center;align-items: center;"
+              class="d-flex mb-small py-extra-small archway-orange w-100"
+            >
+              <svg-info class="mr-extra-small" style="width: 24px"/>
+              <span>Missions can be repeatedly completed in order to earn Community XP. Token rewards can only be earned once per mission per week.</span>
+            </box-wrapper>
+          </el-row>
           <el-row v-if="selectedProduct.missions.length > 0" class="products-container mb-base">
             <el-col
               v-for="mission in selectedProduct.missions"
@@ -158,9 +168,11 @@ import SvgCheck from "@/assets/icons/check.svg?component"
 import { store } from "@/store/index.ts";
 import SocialIcon from "@/components/SocialIcon.vue";
 import PageWrapper from "@/components/PageWrapper.vue";
+import SvgInfo from "@/assets/icons/info.svg";
 
 export default {
   components: {
+    SvgInfo,
     PageWrapper,
     SocialIcon,
     BoxWrapper,
