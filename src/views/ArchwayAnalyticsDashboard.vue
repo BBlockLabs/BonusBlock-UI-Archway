@@ -2,20 +2,26 @@
   <PageWrapper class="fs-slightly-larger">
     <el-row>
       <el-col>
-        <el-select v-model="productId" clearable>
-          <el-option
-            v-for="id in products.keys()"
-            :key="id"
-            :label="products.get(id)"
-            :value="id"
-          />
-        </el-select>
+        <el-form inline>
+          <el-form-item label="dApp">
+            <el-select v-model="productId" clearable>
+              <el-option
+                v-for="id in products.keys()"
+                :key="id"
+                :label="products.get(id)"
+                :value="id"
+              />
+            </el-select>
+          </el-form-item>
 
-        <el-select v-model="dateFilterPeriod">
-          <el-option label="Day" value="day" />
-          <el-option label="Week" value="week" />
-          <el-option label="Month" value="month" />
-        </el-select>
+          <el-form-item label="Period">
+            <el-select v-model="dateFilterPeriod">
+              <el-option label="Day" value="day" />
+              <el-option label="Week" value="week" />
+              <el-option label="Month" value="month" />
+            </el-select>
+          </el-form-item>
+        </el-form>
       </el-col>
     </el-row>
 
@@ -104,7 +110,11 @@
                 prop="gasSpent"
                 sortable
                 label="Gas spent"
-              />
+              >
+                <template #default="scope">
+                  {{ scope.row.gasSpent.toString() }}
+                </template>
+              </el-table-column>
             </el-table>
           </el-col>
         </el-row>
@@ -149,6 +159,7 @@ import type {
 import type { ComputedRef, Ref } from "vue";
 import type { Computed } from "vuex";
 import moment, { Moment } from "moment";
+import PageWrapper from "@/components/PageWrapper.vue";
 
 type TimeUnit = "month" | "week" | "day";
 
