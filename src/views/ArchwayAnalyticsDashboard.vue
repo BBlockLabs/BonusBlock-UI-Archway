@@ -14,6 +14,8 @@
             </el-select>
           </el-form-item>
 
+          {{ getDateStart('day') }}
+
           <el-form-item label="Period">
             <el-select v-model="dateFilterPeriod">
               <el-option label="Day" value="day" />
@@ -34,9 +36,11 @@
         <el-table :data="activeWallets" fixed max-height="500" show-summary>
           <el-table-column prop="mission" label="Mission">
             <template #default="scope">
-              <el-button link color="secondary" @click="updateActiveWalletsFilter(scope.row.mission)">
-                {{ missionNames.get(scope.row.mission) }}
-              </el-button>
+              <el-tooltip :content="missionAddresses.get(scope.row.mission)" placement="top">
+                <el-button link color="secondary" @click="updateActiveWalletsFilter(scope.row.mission)">
+                  {{ missionNames.get(scope.row.mission) }}
+                </el-button>
+              </el-tooltip>
             </template>
           </el-table-column>
           <el-table-column prop="count" sortable label="Active wallets" />
@@ -59,14 +63,16 @@
 
     <el-row>
       <el-col>
-        <h1>Missions completed</h1>
+        <h1>Missions completed per wallet</h1>
       </el-col>
       <el-col>
         <el-table :data="walletMissions" fixed max-height="500" show-summary>
           <el-table-column prop="wallet" label="Wallet" />
           <el-table-column prop="mission" label="Mission">
             <template #default="scope">
-              {{ missionNames.get(scope.row.mission) }}
+              <el-tooltip :content="missionAddresses.get(scope.row.mission)" placement="top">
+                {{ missionNames.get(scope.row.mission) }}
+              </el-tooltip>
             </template>
           </el-table-column>
           <el-table-column prop="count" sortable label="Times completed" />
@@ -83,7 +89,9 @@
         <el-table :data="missionActivity" fixed max-height="500" show-summary>
           <el-table-column prop="mission" label="Mission">
             <template #default="scope">
-              {{ missionNames.get(scope.row.mission) }}
+              <el-tooltip :content="missionAddresses.get(scope.row.mission)" placement="top">
+                {{ missionNames.get(scope.row.mission) }}
+              </el-tooltip>
             </template>
           </el-table-column>
           <el-table-column prop="count" sortable label="Times completed" />
@@ -101,6 +109,7 @@
             <el-table
               :data="totalGasSpent"
               fixed
+              :summary-method="gasSum"
               max-height="500"
               :default-sort="{ prop: 'gasSpent', order: 'descending' }"
               show-summary
@@ -112,7 +121,7 @@
                 label="Gas spent"
               >
                 <template #default="scope">
-                  {{ scope.row.gasSpent.toString() }}
+                  {{ Formatter.bigIntToPrecision(scope.row.gasSpent, 18, 18) }}
                 </template>
               </el-table-column>
             </el-table>
@@ -160,6 +169,7 @@ import type { ComputedRef, Ref } from "vue";
 import type { Computed } from "vuex";
 import moment, { Moment } from "moment";
 import PageWrapper from "@/components/PageWrapper.vue";
+import {Formatter} from "@/common/formatter";
 
 type TimeUnit = "month" | "week" | "day";
 
@@ -194,11 +204,21 @@ function updateActiveWalletsFilter(filter: string) {
   }
 }
 
+const missionAddresses: ComputedRef<Map<string, string>> = computed((() => {
+  const response: Map<string, string> = new Map<string, string>();
+
+  for (const mission of missions.value) {
+   response.set(mission.id, mission.address)
+  }
+
+  return response;
+}));
+
 const missionNames: ComputedRef<Map<string, string>> = computed(() => {
   const response: Map<string, string> = new Map<string, string>();
 
   for (const mission of missions.value) {
-   response.set(mission.id, `${mission.product.name} - ${mission.address} ${mission.action}`)
+   response.set(mission.id, `${mission.product.name} - ${mission.action}`)
   }
 
   return response;
@@ -380,16 +400,22 @@ const totalGasSpent: ComputedRef<TotalGasSpentRow[]> = computed(() => {
   const walletActivities: Map<string, bigint> = new Map<string, bigint>();
 
   for (const activity of activitiesInDate) {
-    if (activity.gas === 0n || !activity.gas) {
+    if (!activity.gas) {
       continue;
+    }
+
+    const activityGas: bigint = BigInt(activity.gas);
+
+    if (activityGas === 0n) {
+      continue
     }
 
     let gas: bigint | undefined = walletActivities.get(activity.wallet);
 
     if (gas === undefined) {
-      walletActivities.set(activity.wallet, activity.gas);
+      walletActivities.set(activity.wallet, activityGas);
     } else {
-      walletActivities.set(activity.wallet, gas + activity.gas);
+      walletActivities.set(activity.wallet, gas + activityGas);
     }
   }
 
@@ -431,6 +457,16 @@ const totalInteractions: ComputedRef<TotalInteractionRow[]> = computed(() => {
   return results;
 });
 
+function gasSum(param: any): [string, string] {
+  let sum: bigint = 0n;
+
+  for (const item of param.data) {
+    sum += item.gasSpent || 0n;
+  }
+
+  return ["Sum", Formatter.bigIntToPrecision(sum, 18, 18)];
+}
+
 async function loadData(): Promise<void> {
   const response: HttpResponse<ArchwayStatisticsResponsePayloadDto> =
     await HttpResponse.fromResponse(
@@ -443,7 +479,7 @@ async function loadData(): Promise<void> {
     );
 
   activities.value = response.payload.activity;
-  missions.value = response.payload.campaignActivities;
+  missions.value = response.payload.campaignActivities.filter(mission => mission.network.network == 'ARCHWAY_TRIOMPHE');
 }
 
 loadData();
