@@ -89,10 +89,15 @@ export default class CosmostationWalletClient implements WalletClient {
     };
   }
 
-  private async getClaimFee(contract: string, chainId: string): Promise<string> {
-    const client = await ArchwayClient.connect(this.getChainRpc(chainId));
+  async getMintBadgeFee(): Promise<string> {
+    const contractAddress = import.meta.env.VITE_NFT_CONTRACT_ADDRESS;
+    const client = await ArchwayClient.connect(
+      ArchwayKeplrClient.getChain().rpc
+    );
 
-    return await client.queryContractSmart(contract,  {get_claim_fee: {}});
+    return await client.queryContractSmart(contractAddress, {
+      mint_badge_fee: {},
+    });
   }
 
   public getRewardClaimFee(): null {
@@ -100,12 +105,8 @@ export default class CosmostationWalletClient implements WalletClient {
     return null;
   }
 
-  claimArchwayReward(contract: string, campaignId: string, claimFee: string): Promise<any> {
-    return this.claimReward(contract, campaignId, ArchwayKeplrClient.getChain().chainId);
-  }
-
-  async claimReward(contract: string, campaignId: string, chainId: string): Promise<any> {
-    const fee: string = await this.getClaimFee(contract, chainId);
+  async claimArchwayReward(contract: string, campaignId: string, claimFee: string): Promise<any> {
+    const chainId = ArchwayKeplrClient.getChain().chainId;
 
     const client = await SigningArchwayClient.connectWithSigner(
       this.getChainRpc(chainId),
@@ -122,10 +123,10 @@ export default class CosmostationWalletClient implements WalletClient {
       },
       "auto",
       undefined,
-      Number(fee) > 0
+      Number(claimFee) > 0
         ? [
         {
-          amount: fee,
+          amount: claimFee,
           denom: this.getChainDenom(chainId),
         }
           ]

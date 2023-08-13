@@ -35,5 +35,4 @@ export default interface WalletClient {
   getAccountAddress(chainId: string): Promise<Account[]>;
   signMessage(message: any, chainId: string, signer: string | null): Promise<Signature>;
   signTransactionLogin(nonce: string, chainId: string): Promise<SignedLoginMessage>;
-  claimReward(contract: string, campaignId: string, chainId: string): Promise<any>;
 }

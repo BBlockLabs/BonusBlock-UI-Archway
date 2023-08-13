@@ -460,9 +460,12 @@ async function newBadgeMint() {
   mintBadgeLoading.value = true;
 
   try {
+    let mintFee = await client.getMintBadgeFee();
+
     await store.dispatch("ArchwayHttpModule/mintBadgeInit");
 
-    await client.mintBadge();
+    await client.mintBadge(mintFee);
+
     Toast.make("Mint success!", "You have minted a new badge", "success", true, 3000);
   } catch (e: any) {
     if (e.toString().includes("Already Minted")) {

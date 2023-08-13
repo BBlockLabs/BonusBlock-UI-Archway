@@ -244,7 +244,8 @@ export default class ArchwayKeplrClient {
     );
   }
 
-  static async mintBadge() {
+  static async mintBadge(mintFee: string) {
+    console.log(mintFee)
     const currentChain = this.getChain();
     const contractAddress = import.meta.env.VITE_NFT_CONTRACT_ADDRESS;
 
@@ -257,7 +258,16 @@ export default class ArchwayKeplrClient {
     return await this.executeContractMsg(
       contractAddress,
       executeMsg,
-      currentChain.chainId
+      currentChain.chainId,
+      undefined,
+      Number(mintFee) > 0
+        ? [
+            {
+              amount: mintFee,
+              denom: currentChain.feeCurrencies[0].coinMinimalDenom,
+            },
+          ]
+        : undefined
     );
   }
 
@@ -283,6 +293,31 @@ export default class ArchwayKeplrClient {
       throw e;
     }
     return result;
+  }
+
+  static async getMintBadgeFee() {
+    const contractAddress = import.meta.env.VITE_NFT_CONTRACT_ADDRESS;
+    const currentChain = this.getChain();
+
+    await this.checkChain(this.getChain());
+
+    const queryMsg = {
+      mint_badge_fee: {},
+    };
+    let result;
+    try {
+      result = await this.queryContract(
+        contractAddress,
+        queryMsg,
+        currentChain.chainId
+      );
+    } catch (e) {
+      console.error(
+        "Failed to get reward claim fee for contract " + contractAddress
+      );
+      throw e;
+    }
+    return result.mint_badge_fee;
   }
 
   private static async getSigningClinet(): Promise<SigningArchwayClient> {
