@@ -245,7 +245,6 @@ export default class ArchwayKeplrClient {
   }
 
   static async mintBadge(mintFee: string) {
-    console.log(mintFee)
     const currentChain = this.getChain();
     const contractAddress = import.meta.env.VITE_NFT_CONTRACT_ADDRESS;
 

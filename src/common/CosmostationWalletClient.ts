@@ -95,14 +95,21 @@ export default class CosmostationWalletClient implements WalletClient {
       ArchwayKeplrClient.getChain().rpc
     );
 
-    return await client.queryContractSmart(contractAddress, {
+    const ret = await client.queryContractSmart(contractAddress, {
       mint_badge_fee: {},
     });
+
+    return ret.mint_badge_fee;
   }
 
-  public getRewardClaimFee(): null {
-    // This is just here for coolect reward function, it doesn't use the fees anyway
-    return null;
+  async getRewardClaimFee(contractAddress: string): Promise<string> {
+    const client = await ArchwayClient.connect(
+      ArchwayKeplrClient.getChain().rpc
+    );
+
+    return await client.queryContractSmart(contractAddress, {
+      get_claim_fee: {},
+    });
   }
 
   async claimArchwayReward(contract: string, campaignId: string, claimFee: string): Promise<any> {
@@ -134,7 +141,7 @@ export default class CosmostationWalletClient implements WalletClient {
     );
   }
 
-  async mintBadge(){
+  async mintBadge(mintFee: string){
     const currentChain = ArchwayKeplrClient.getChain();
     const contractAddress = import.meta.env.VITE_NFT_CONTRACT_ADDRESS;
 
@@ -149,12 +156,21 @@ export default class CosmostationWalletClient implements WalletClient {
       {
         mint: {},
       },
-      "auto"
+      "auto",
+      undefined,
+      Number(mintFee) > 0
+        ? [
+          {
+            amount: mintFee,
+            denom: this.getChainDenom(currentChain.chainId),
+          }
+        ]
+        : undefined
     );
   }
 
   private getChainRpc(chainId: string): string {
-    return ArchwayKeplrClient.getChain().rpc
+    return ArchwayKeplrClient.getChain().rpc;
   }
 
   private getChainDenom(chainId: string): string {

@@ -279,8 +279,6 @@ async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
     await store.dispatch("HttpModule/claimRewardInit", {
       campaignId: campaign.id,
     });
-    console.log(campaign.smartContractAddress)
-    console.log(campaign.id)
     await client.claimArchwayReward(campaign.smartContractAddress, campaign.id, claimFee);
 
     campaigns.splice(index, 1);
