@@ -297,7 +297,7 @@ export default class Actions implements ActionsInterface {
     payload: { from: number | null; to: number | null; timeZoneOffset: number | null; campaignIds: Array<string> | null }
   ): Promise<ChartDataDto> => {
     const response: Response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/stats`,
+      `${import.meta.env.VITE_BACKEND_URL}/archway/interactions`,
       {
         body: JSON.stringify(payload),
         headers: {
