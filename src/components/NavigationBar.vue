@@ -47,9 +47,10 @@
       </template>
 
       <el-menu-item index="info">Info</el-menu-item>
-      <el-menu-item index="/explore">Wallets</el-menu-item>
+      <el-menu-item index="/explore">Explore</el-menu-item>
       <el-menu-item index="/referral">Referral</el-menu-item>
       <el-menu-item index="/collect-rewards">Collect Rewards</el-menu-item>
+      <el-menu-item index="/leaderboard">Leaderboard</el-menu-item>
       <el-sub-menu index="menu" class="flex-noshrink">
         <template #title>
           <el-avatar :src="url" class="mr-small"> </el-avatar>

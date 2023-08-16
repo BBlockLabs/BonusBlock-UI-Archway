@@ -85,8 +85,8 @@
 
     <div class="limit-width leaderboard">
       <box-wrapper type="white" round class="mt-large p-large">
-        <el-row align="middle" justify="space-between">
-          <el-col class="fs-medium bold" :span="-1">
+        <el-row align="top" justify="space-between">
+          <el-col class="fs-medium bold mb-large" :span="-1">
             <el-row class="flex-nowrap" align="middle">
               <el-avatar :src="getAvatar(walletAddress)" class="mr-small"/>
               <el-tooltip :content="walletAddress" placement="top">
@@ -104,7 +104,7 @@
             </el-link>
           </el-col>
         </el-row>
-        <el-row class="fs-medium mt-large" justify="space-between">
+        <el-row class="fs-medium mt-small" justify="space-between">
           <el-col class="flex-grow flex-basis-0" :span="-1">
             <el-row> Your rank </el-row>
             <el-row class="fs-extra-large archway-orange">
@@ -189,9 +189,9 @@
 
           </el-col>
         </el-row>
-        <el-row class="mb-medium d-flex is-align-middle archway-orange">
+        <el-col class="mb-medium d-flex is-align-middle archway-orange">
           <SvgInfo class="mr-small icon-small"/> Repeating missions allows you to accumulate Community XP, though the token reward has a limit.
-        </el-row>
+        </el-col>
         <el-row justify="space-between">
           <el-col :span="-1">
             <el-row>
