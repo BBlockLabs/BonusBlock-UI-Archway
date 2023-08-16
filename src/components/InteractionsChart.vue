@@ -53,6 +53,7 @@ import type ChartDataDto from "@/common/api/dto/ChartDataDto";
 import SvgCubeTop from "@/assets/icons/cube-top.svg?component";
 import SvgChevronLeft from "@/assets/icons/nav-arrow-left.svg?component";
 import SvgChevronRight from "@/assets/icons/nav-arrow-right.svg?component";
+import Chart from "@/common/Chart";
 
 interface Props {
   campaignId?: string;
@@ -90,55 +91,7 @@ const interactionsSeries = [
     data: reactive([0] as Array<number>),
   },
 ];
-const interactionsOptions = {
-  colors: ["#FF4D00"],
-  chart: {
-    animations: {
-      speed: 400,
-      dynamicAnimation: {
-        enabled: false,
-      },
-    },
-    toolbar: {
-      show: false,
-    },
-  },
-  states: {
-    active: {
-      filter: {
-        type: "none",
-      },
-    },
-  },
-  theme: {
-    mode: "light",
-  },
-  xaxis: {
-    categories: reactive([""] as Array<string>),
-    labels: {
-      hideOverlappingLabels: true,
-      rotate: -45,
-      style: {
-        fontWeight: 700,
-      },
-    },
-    axisBorder: {
-      color: "rgba(222, 227, 237, 0.4)",
-      show: true,
-    },
-    axisTicks: {
-      color: "rgba(222, 227, 237, 0.4)",
-      show: true,
-    },
-  },
-  yaxis: {
-    labels: {
-      style: {
-        colors: ["#909399"],
-        fontSize: "10px",
-      },
-    },
-  },
+const interactionsOptions = Chart.getBarChartOptions({
   tooltip: {
     x: {
       formatter: tooltipXFormatter,
@@ -147,20 +100,7 @@ const interactionsOptions = {
       formatter: tooltipYFormatter,
     },
   },
-  dataLabels: {
-    enabled: false,
-  },
-  plotOptions: {
-    bar: {
-      borderRadius: 5,
-      columnWidth: 25 as string | number,
-    },
-  },
-  grid: {
-    strokeDashArray: 2,
-    borderColor: "rgba(222, 227, 237, 0.7)",
-  },
-};
+});
 
 onMounted(() => {
   chartOffset.value = lowestOffset.value;
