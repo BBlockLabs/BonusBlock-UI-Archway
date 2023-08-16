@@ -66,6 +66,22 @@
       </el-col>
     </el-row>
 
+    <el-row class="mt-medium">
+      <el-col v-if="activityStatistics.missionCategories.length">
+        <statistics-chart
+          :series="activityStatistics.activeWallets.chartData"
+          :options="
+            Chart.getBarChartOptions({
+              colors: ['#FF4D00', '#B63700'],
+              xaxis: {
+                categories: activityStatistics.missionCategories,
+              },
+            })
+          "
+        />
+      </el-col>
+    </el-row>
+
     <el-row>
       <el-col>
         <h1>Missions completed per wallet</h1>
@@ -109,14 +125,17 @@
           <el-table-column prop="increase" sortable label="Growth in period" />
         </el-table>
       </el-col>
+    </el-row>
 
-      <el-col>
+    <el-row class="mt-medium">
+      <el-col v-if="activityStatistics.missionCategories.length">
         <statistics-chart
           :series="activityStatistics.missionActivityRow.chartData"
           :options="
             Chart.getBarChartOptions({
+              colors: ['#FF4D00', '#B63700'],
               xaxis: {
-                categories: activityStatistics.missionActivityRow.categories,
+                categories: activityStatistics.missionCategories,
               },
             })
           "
@@ -146,6 +165,20 @@
               </el-table-column>
             </el-table>
           </el-col>
+
+<!--          commented out since its broken due to too many walles-->
+<!--          <el-col v-if="activityStatistics.walletCategories.length">-->
+<!--            <statistics-chart-->
+<!--              :series="activityStatistics.totalGasSpent.chartData"-->
+<!--              :options="-->
+<!--                Chart.getBarChartOptions({-->
+<!--                  xaxis: {-->
+<!--                    categories: activityStatistics.walletCategories,-->
+<!--                  },-->
+<!--                })-->
+<!--              "-->
+<!--            />-->
+<!--          </el-col>-->
         </el-row>
       </el-col>
 
@@ -169,6 +202,20 @@
               />
             </el-table>
           </el-col>
+
+<!--          commented out since its broken due to too many walles-->
+<!--          <el-col v-if="activityStatistics.walletCategories.length">-->
+<!--            <statistics-chart-->
+<!--              :series="activityStatistics.totalInteractions.chartData"-->
+<!--              :options="-->
+<!--                Chart.getBarChartOptions({-->
+<!--                  xaxis: {-->
+<!--                    categories: activityStatistics.walletCategories,-->
+<!--                  },-->
+<!--                })-->
+<!--              "-->
+<!--            />-->
+<!--          </el-col>-->
         </el-row>
       </el-col>
     </el-row>
@@ -282,10 +329,11 @@ const activeWalletsTransactions: ComputedRef<StatisticsActivity[]> = computed(
 );
 
 type ActivityStatistics = {
+  missionCategories: Array<string>;
+  walletCategories: Array<string>;
   missionActivityRow: {
     tableData: Array<{ mission: string; count: number; increase: number }>;
     chartData: Array<{ name: string; data: Array<number> }>;
-    categories: Array<string>;
   };
   walletMission: {
     tableData: Array<{
@@ -294,15 +342,19 @@ type ActivityStatistics = {
       count: number;
       increase: number;
     }>;
+    chartData: Array<{ name: string; group: string; data: Array<number> }>;
   };
   activeWallets: {
     tableData: Array<{ mission: string; count: number; increase: number }>;
+    chartData: Array<{ name: string; data: Array<number> }>;
   };
   totalGasSpent: {
     tableData: Array<{ wallet: string; gasSpent: bigint }>;
+    chartData: Array<{ name: string; data: Array<number> }>;
   };
   totalInteractions: {
     tableData: Array<{ wallet: string; interactions: number }>;
+    chartData: Array<{ name: string; data: Array<bigint> }>;
   };
 };
 
@@ -310,6 +362,8 @@ const activityStatistics: ComputedRef<ActivityStatistics> = computed(() => {
   const dateFilter = getDateStart(dateFilterPeriod.value);
 
   const activityStatistics: ActivityStatistics = {
+    missionCategories: [],
+    walletCategories: [],
     missionActivityRow: {
       tableData: [],
       chartData: [
@@ -322,152 +376,142 @@ const activityStatistics: ComputedRef<ActivityStatistics> = computed(() => {
           data: [],
         },
       ],
-      categories: [],
     },
     walletMission: {
       tableData: [],
     },
     activeWallets: {
       tableData: [],
+      chartData: [
+        {
+          name: "Wallets before period",
+          data: [],
+        },
+        {
+          name: "New wallets in period",
+          data: [],
+        },
+      ],
     },
     totalGasSpent: {
       tableData: [],
+      chartData: [{ name: "Gas", data: [] }],
     },
     totalInteractions: {
       tableData: [],
+      chartData: [{ name: "Count", data: [] }],
     },
   };
 
-  const missionActivity: Map<string, [number, number]> = new Map<string, [number, number]>();
-  const walletMissions: Map<string, Map<string, [number, number]>> = new Map<string, Map<string, [number, number]>>();
-  const missionActiveWallets: Map<string, Map<string, Moment>> = new Map<string, Map<string, Moment>>();
-  const walletGas: Map<string, bigint> = new Map<string, bigint>();
-  const walletActivities: Map<string, number> = new Map<string, number>();
+  const missionData: Map<
+    string,
+    {
+      activities: [number, number];
+      wallets: Map<string, [number, number]>;
+      activeWallets: Map<string, Moment>;
+    }
+  > = new Map();
+
+  const walletData: Map<
+    string,
+    {
+      gas: bigint,
+      interactions: number,
+    }
+  > = new Map();
 
   for (const activity of missionActivities.value) {
     const dateBefore: boolean = moment(activity.date).isBefore(dateFilter);
 
-    const missionAct = missionActivity.get(activity.campaignActivityId);
+    const mission = missionData.get(activity.campaignActivityId);
 
-    if (missionAct === undefined) {
-      missionActivity.set(activity.campaignActivityId, [1, dateBefore ? 0 : 1]);;
+    if (mission === undefined) {
+      missionData.set(activity.campaignActivityId, {
+        activities: [1, dateBefore ? 0 : 1],
+        wallets: new Map([[activity.wallet, [1, dateBefore ? 0 : 1]]]),
+        activeWallets: new Map([[activity.wallet, moment(activity.date)]]),
+      });
     } else {
-      missionActivity.set(activity.campaignActivityId, [
-        missionAct[0] + 1,
-        missionAct[1] + (dateBefore ? 0 : 1),
-      ]);
-    }
+      mission.activities[0]++;
+      mission.activities[1] += (dateBefore ? 0 : 1);
 
-    const walletMission = walletMissions.get(activity.campaignActivityId);
+      const wallet = mission.wallets.get(activity.wallet);
 
-    if (walletMission === undefined) {
-      walletMissions.set(
-        activity.campaignActivityId,
-        new Map<string, [number, number]>([
-          [activity.wallet, [1, dateBefore ? 0 : 1]],
-        ])
-      );
-    } else {
-      let missionWallet = walletMission.get(activity.wallet);
-
-      if (missionWallet === undefined) {
-        walletMission.set(activity.wallet, [1, dateBefore ? 0 : 1]);
+      if (wallet === undefined) {
+        mission.wallets.set(activity.wallet, [1, dateBefore ? 0 : 1]);
       } else {
-        walletMission.set(activity.wallet, [
-          missionWallet[0] + 1,
-          missionWallet[1] + (dateBefore ? 0 : 1),
-        ]);
+        wallet[0]++;
+        wallet[1] += (dateBefore ? 0 : 1);
       }
-    }
 
-    const missionActiveWallet = missionActiveWallets.get(activity.campaignActivityId);
+      const activeWallet = mission.activeWallets.get(activity.wallet);
 
-    if (missionActiveWallet !== undefined) {
-      const walletAppearance = missionActiveWallet.get(activity.wallet);
-
-      if (walletAppearance === undefined) {
-        missionActiveWallet.set(activity.wallet, moment(activity.date));
+      if (activeWallet === undefined) {
+        mission.activeWallets.set(activity.wallet, moment(activity.date));
       } else {
-        missionActiveWallet.set(
+        mission.activeWallets.set(
           activity.wallet,
-          moment.min(walletAppearance, moment(activity.date))
+          moment.min(activeWallet, moment(activity.date))
         );
       }
-
-      missionActiveWallets.set(activity.campaignActivityId, missionActiveWallet);
-    } else {
-      const map = new Map();
-
-      map.set(activity.wallet, moment(activity.date));
-
-      missionActiveWallets.set(activity.campaignActivityId, map);
     }
 
-    if (activity.gas) {
-      const activityGas: bigint = BigInt(activity.gas);
+    const wallet = walletData.get(activity.wallet);
+    const gas = activity.gas ? BigInt(activity.gas) : 0n;
 
-      if (activityGas > 0n) {
-        let gas: bigint | undefined = walletGas.get(activity.wallet);
-
-        if (gas === undefined) {
-          walletGas.set(activity.wallet, activityGas);
-        } else {
-          walletGas.set(activity.wallet, gas + activityGas);
-        }
-      }
-    }
-
-    let count: number | undefined = walletActivities.get(activity.wallet);
-
-    if (count === undefined) {
-      walletActivities.set(activity.wallet, 1);
+    if (wallet === undefined) {
+      walletData.set(activity.wallet, {gas: gas, interactions: 1})
     } else {
-      walletActivities.set(activity.wallet, count + 1);
+      wallet.gas += gas;
+      wallet.interactions ++;
     }
   }
 
-  for (const entry of missionActivity.entries()) {
+  for (const entry of missionData.entries()) {
     activityStatistics.missionActivityRow.tableData.push({
       mission: entry[0],
-      count: entry[1][0],
-      increase: entry[1][1],
+      count: entry[1].activities[0],
+      increase: entry[1].activities[1],
     });
 
-    activityStatistics.missionActivityRow.chartData[0].data.push(entry[1][0] - entry[1][1]);
-    activityStatistics.missionActivityRow.chartData[1].data.push(entry[1][1]);
+    activityStatistics.missionActivityRow.chartData[0].data.push(entry[1].activities[0] - entry[1].activities[1]);
+    activityStatistics.missionActivityRow.chartData[1].data.push(entry[1].activities[1]);
 
-    activityStatistics.missionActivityRow.categories.push(
-      missionNames.value.get(entry[0]) || entry[0]
-    );
-  }
-
-  for (const missionWallets of walletMissions.entries()) {
-    for (const wallet of missionWallets[1]) {
+    for (const wallet of entry[1].wallets.entries()) {
       activityStatistics.walletMission.tableData.push({
-        mission: missionWallets[0],
+        mission: entry[0],
         wallet: wallet[0],
         count: wallet[1][0],
         increase: wallet[1][1],
       });
     }
-  }
 
-  for (const result of missionActiveWallets.entries()) {
+    const walletIncrease = [...entry[1].activeWallets.values()].filter((date) => date.isSameOrAfter(dateFilter)).length;
+
     activityStatistics.activeWallets.tableData.push({
-      mission: result[0],
-      count: result[1].size,
-      increase: [...result[1].values()].filter((date) =>
-        date.isSameOrAfter(dateFilter)
-      ).length,
+      mission: entry[0],
+      count: entry[1].activeWallets.size,
+      increase: walletIncrease,
     });
+
+    activityStatistics.activeWallets.chartData[0].data.push(entry[1].activeWallets.size - walletIncrease);
+    activityStatistics.activeWallets.chartData[1].data.push(walletIncrease);
+
+    activityStatistics.missionCategories.push(
+      missionNames.value.get(entry[0]) || entry[0]
+    );
   }
 
-  for (const result of walletGas.entries()) {
-    activityStatistics.totalGasSpent.tableData.push({ wallet: result[0], gasSpent: result[1] });
-  }
+  for (const entry of walletData.entries()) {
+    activityStatistics.walletCategories.push(entry[0]);
 
-  for (const result of walletActivities.entries()) {
-    activityStatistics.totalInteractions.tableData.push({ wallet: result[0], interactions: result[1] });
+    activityStatistics.totalInteractions.tableData.push({ wallet: entry[0], interactions: entry[1].interactions });
+    // activityStatistics.totalInteractions.chartData[0].data.push(entry[1].interactions);
+
+    if (entry[1].gas > 0n) {
+      activityStatistics.totalGasSpent.tableData.push({ wallet: entry[0], gasSpent: entry[1].gas });
+      // activityStatistics.totalGasSpent.chartData[0].data.push(entry[1].gas);
+    }
   }
 
   return activityStatistics;
