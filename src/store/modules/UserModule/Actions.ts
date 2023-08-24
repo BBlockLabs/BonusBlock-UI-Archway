@@ -105,6 +105,7 @@ export default class Actions implements ActionsInterface {
     user.userId = loginResponse.account.userId;
     user.invitedCount = loginResponse.account.invitedCount;
     user.twitter = loginResponse.account.twitter;
+    user.discord = loginResponse.account.discord;
     user.createdOn = moment(loginResponse.account.createdOn);
     user.modifiedOn = moment(loginResponse.account.modifiedOn);
 

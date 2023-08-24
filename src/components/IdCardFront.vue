@@ -27,7 +27,7 @@
     <el-row class="my-small">
       <el-col>
         <box class="id-card-social fs-small px-base py-small">
-          <el-row justify="space-between" class="is-align-middle flex-row pointer" :gutter="5" @click="linkTwitter()" v-if="twitterId === ''">
+          <el-row justify="space-between" class="is-align-middle flex-row pointer" :gutter="5" @click="linkSocial('Twitter')" v-if="twitterId === ''">
             <el-col :span="-1" class="fs-base flex-noshrink">
               Connect Twitter
             </el-col>
@@ -36,7 +36,7 @@
             </el-col>
           </el-row>
           <el-col v-else>
-            <el-row justify="space-between" class="is-align-middle flex-row" @click="unlinkTwitter()" :gutter="5" style="opacity:.7">
+            <el-row justify="space-between" class="is-align-middle flex-row" @click="unlinkSocial('Twitter')" :gutter="5" style="opacity:.7">
               <el-col :span="-1">
                 <el-tooltip content="Unlink" placement="top">
                   <SvgUnlink style="margin-right: 0.5em" class="pointer" />
@@ -71,18 +71,29 @@
 
     <el-row class="my-small">
       <el-col>
-        <el-tooltip content="Coming soon" placement="right">
-          <box disabled class="id-card-social fs-small px-base py-small white">
-            <el-row justify="space-between" class="is-align-middle flex-row" :gutter="5">
-              <el-col :span="-1" class="fs-base flex-noshrink">
-                Connect Discord
+        <box class="id-card-social fs-small px-base py-small">
+          <el-row justify="space-between" class="is-align-middle flex-row pointer" :gutter="5" @click="linkSocial('Discord')" v-if="discordId === ''">
+            <el-col :span="-1" class="fs-base flex-noshrink">
+              Connect Discord
+            </el-col>
+            <el-col :span="-1">
+              <SvgDiscord class="icon-base"/>
+            </el-col>
+          </el-row>
+          <el-col v-else>
+            <el-row justify="space-between" class="is-align-middle flex-row" @click="unlinkSocial('Discord')" :gutter="5" style="opacity:.7">
+              <el-col :span="-1">
+                <el-tooltip content="Unlink" placement="top">
+                  <SvgUnlink style="margin-right: 0.5em" class="pointer"/>
+                </el-tooltip>
+                ID {{ discordId }}
               </el-col>
               <el-col :span="-1">
                 <SvgDiscord class="icon-base"/>
               </el-col>
             </el-row>
-          </box>
-        </el-tooltip>
+          </el-col>
+        </box>
       </el-col>
     </el-row>
 
@@ -108,22 +119,23 @@
 <script setup lang="ts">
 import Box from "@/components/BoxWrapper.vue";
 import IdCard from "@/components/IdCard.vue";
-import type { ComputedRef, Ref } from "vue";
-import { computed, ref} from "vue";
-import { StoreType, useStore } from "@/store";
-import { renderDiscs } from "@whi/identicons";
+import type {ComputedRef, Ref} from "vue";
+import {computed, ref} from "vue";
+import {StoreType, useStore} from "@/store";
+import {renderDiscs} from "@whi/identicons";
 import SvgUnlink from "@/assets/icons/unlink.svg";
 import SvgTwitter from "@/assets/icons/twitter.svg";
 import SvgTelegram from "@/assets/icons/telegram.svg";
 import SvgDiscord from "@/assets/icons/discord.svg";
 import SvgReddit from "@/assets/icons/reddit.svg";
-import { ElMessageBox } from "element-plus";
+import {ElMessageBox} from "element-plus";
 import HttpResponse from "@/common/api/HttpResponse";
 import Toast from "@/common/Toast";
 
 const store: StoreType = useStore();
 
 let twitterIdRemoved: Ref<boolean> = ref(false);
+let discordIdRemoved: Ref<boolean> = ref(false);
 
 const url = computed(() => {
   const result = renderDiscs({
@@ -141,17 +153,21 @@ const twitterId: ComputedRef<string> = computed(
   () => twitterIdRemoved.value ? "" : (store.state.UserModule?.user?.twitter || "")
 );
 
+const discordId: ComputedRef<string> = computed(
+  () => discordIdRemoved.value ? "" : (store.state.UserModule?.user?.discord || "")
+);
+
 const walletAddress: ComputedRef<string> = computed(
   () => store.state.UserModule?.activeWallet?.address || ""
 );
 
 
-async function linkTwitter(): Promise<void> {
+async function linkSocial(name: String): Promise<void> {
   const response: Response = await fetch(
     `${import.meta.env.VITE_BACKEND_URL}/auth/social-link`,
     {
       body: JSON.stringify({
-        social: "twitter",
+        social: name.toLowerCase(),
         returnTo: window.location.href,
       }),
       headers: {
@@ -167,11 +183,11 @@ async function linkTwitter(): Promise<void> {
   }
 }
 
-async function unlinkTwitter(): Promise<void> {
+async function unlinkSocial(name: String): Promise<void> {
   try {
     await ElMessageBox.confirm(
-      "Are you sure you want unlink Twitter account?",
-      "Twitter Account",
+      "Are you sure you want unlink " + name + " account?",
+      name + " Account",
       {
         confirmButtonText: "Unlink",
         cancelButtonText: "Cancel",
@@ -183,7 +199,7 @@ async function unlinkTwitter(): Promise<void> {
   const response: Response = await fetch(
     `${import.meta.env.VITE_BACKEND_URL}/auth/social-unlink`,
     {
-      body: JSON.stringify({social: "twitter"}),
+      body: JSON.stringify({social: name.toLowerCase()}),
       headers: {
         "Content-Type": "application/json",
         "X-Auth-Token": store.state.UserModule?.token || "",
@@ -194,13 +210,20 @@ async function unlinkTwitter(): Promise<void> {
   const responseData = await HttpResponse.fromResponse<void>(response);
   if (responseData.success) {
     Toast.make(
-      "Twitter unlinked",
-      "Your Twitter account successfully unlinked",
+      name + " unlinked",
+      "Your " + name + " account successfully unlinked",
       "success",
       true,
       3000
     );
-    twitterIdRemoved.value = true;
+    switch (name) {
+      case "Twitter":
+        twitterIdRemoved.value = true;
+        return;
+      case "Discord":
+        discordIdRemoved.value = true;
+        return;
+    }
   }
 }
 

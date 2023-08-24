@@ -5,6 +5,7 @@ export default class UserDto {
   createdOn: string = "";
   modifiedOn: string = "";
   twitter: string = "";
+  discord: string = "";
   invitedCount: number = 0;
   wallets: Array<WalletDto> = [];
 }
