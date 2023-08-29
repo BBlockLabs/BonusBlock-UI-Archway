@@ -213,17 +213,29 @@
             </el-row>
           </el-col>
           <el-col
-            v-if="
-              leaderboard.myLeaderboardSpot &&
-              leaderboard.myLeaderboardSpot.position.score >= BADGE_XP[0] &&
-              !leaderboard.myLeaderboardSpot.badgeClaimed
-            "
             :span="-1"
           >
             <!--            <el-button class="mr-small is-link" type="primary"
               >Share badge</el-button
             >-->
+<!--            <el-button
+              v-if="
+                leaderboard.myLeaderboardSpot &&
+                leaderboard.myLeaderboardSpot.canGetDiscordRole &&
+                !roleClaimed
+              "
+              :loading="mintBadgeLoading"
+              :disabled="mintBadgeLoading"
+              type="primary"
+              @click="claimDiscordRole"
+            >Claim Discord Role</el-button>-->
+
             <el-button
+              v-if="
+                leaderboard.myLeaderboardSpot &&
+                leaderboard.myLeaderboardSpot.position.score >= BADGE_XP[0] &&
+                !leaderboard.myLeaderboardSpot.badgeClaimed
+              "
               :loading="mintBadgeLoading"
               :disabled="mintBadgeLoading"
               type="primary"
@@ -391,6 +403,7 @@ import Toast from "@/common/Toast";
 import { ArchwayLeapClient } from "@/common/ArchwayLeapClient";
 import CosmostationWalletClient from "@/common/CosmostationWalletClient";
 
+let roleClaimed = ref(false);
 let calculationDialog = ref(false);
 let newBadgeDialog = ref(false);
 let badgeShowcaseDialog: Ref<number | null> = ref(null);
@@ -484,6 +497,12 @@ async function newBadgeMint() {
   mintBadgeLoading.value = false;
 
   await store.dispatch("ArchwayHttpModule/mintBadgeOk");
+}
+
+async function claimDiscordRole(){
+  await store.dispatch("ArchwayHttpModule/claimDiscordRole");
+  roleClaimed.value = true;
+  Toast.make("Success!", "You claimed a new discord role!", "success", true, 3000);
 }
 
 const walletAddress: ComputedRef<string> = computed(

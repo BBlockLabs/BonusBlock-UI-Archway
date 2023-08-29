@@ -4,4 +4,5 @@ export default class MyLeaderBoardSpotDto {
   position: ArchwayLeaderboardRecordDto = new ArchwayLeaderboardRecordDto();
   badgeClaimed: boolean = false;
   newBadgePopup: boolean = false;
+  canGetDiscordRole: boolean = false;
 }

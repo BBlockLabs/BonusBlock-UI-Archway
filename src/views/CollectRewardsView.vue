@@ -63,6 +63,20 @@
       <el-row>
         <h2>Collect Rewards</h2>
       </el-row>
+      <el-row class="mb-small" justify="center">
+        <box-wrapper
+          type="white"
+          style="
+            border-radius: 1em;
+            justify-content: center;
+            align-items: center;
+          "
+          class="d-flex mb-small py-extra-small archway-orange w-100"
+        >
+          <SvgInfo class="mr-extra-small" style="width: 24px"></SvgInfo>
+          <span>Failed (for any reason) claims can be re-claimed again in 1.5 mins</span>
+        </box-wrapper>
+      </el-row>
       <div
         v-if="campaigns.length < 1"
         class="fullscreen-empty-list text-muted-more"
@@ -186,6 +200,8 @@ import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 import Toast from "@/common/Toast";
 import { ArchwayLeapClient } from "@/common/ArchwayLeapClient";
 import CosmostationWalletClient from "@/common/CosmostationWalletClient";
+import SvgInfo from "@/assets/icons/info.svg";
+import BoxWrapper from "@/components/BoxWrapper.vue";
 
 let localTimeOffsetMs: number = 0;
 const now = ref(Math.ceil((new Date().valueOf() - localTimeOffsetMs) / 1000));
@@ -458,7 +474,7 @@ function generateAndCopyClaimImage(campaign: CampaignWithRewardDto): void {
       )
         .replace(
           /\{campaign_week}/g,
-          "Week " + (getCampaignWeekNumber(campaign) + 1)
+          "Week " + (getCampaignWeekNumber(campaign))
         )
         .replace(/\{currency}/g, campaign.currency)
         .replace(/\{amount}/g, getHumanAmount(campaign).substring(0, 9))

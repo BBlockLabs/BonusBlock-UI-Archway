@@ -49,6 +49,9 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
 
   mintBadgeOk: HttpAction &
     ((this: Store<RootStateInterface>, context: Context) => Promise<void>);
+
+  claimDiscordRole: HttpAction &
+    ((this: Store<RootStateInterface>, context: Context) => Promise<void>);
 }
 
 export default class Actions implements ActionsInterface {
@@ -183,6 +186,16 @@ export default class Actions implements ActionsInterface {
 
   mintBadgeOk = async (context: Context): Promise<void> => {
     await fetch(`${import.meta.env.VITE_BACKEND_URL}/archway/mint/ok`, {
+      headers: {
+        "Content-Type": "application/json",
+        "X-Auth-Token": context.rootState.UserModule?.token || "",
+      },
+      method: "POST",
+    });
+  };
+
+  claimDiscordRole = async (context: Context): Promise<void> => {
+    await fetch(`${import.meta.env.VITE_BACKEND_URL}/archway/claim-discord-role`, {
       headers: {
         "Content-Type": "application/json",
         "X-Auth-Token": context.rootState.UserModule?.token || "",

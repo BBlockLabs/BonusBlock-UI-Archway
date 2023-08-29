@@ -54,23 +54,6 @@
 
     <el-row class="my-small">
       <el-col>
-        <el-tooltip content="Coming soon" placement="right">
-          <box disabled class="id-card-social fs-small px-base py-small white">
-            <el-row justify="space-between" class="is-align-middle flex-row" :gutter="5">
-              <el-col :span="-1" class="fs-base flex-noshrink">
-                Connect Telegram
-              </el-col>
-              <el-col :span="-1">
-                <SvgTelegram class="icon-base"/>
-              </el-col>
-            </el-row>
-          </box>
-        </el-tooltip>
-      </el-col>
-    </el-row>
-
-    <el-row class="my-small">
-      <el-col>
         <box class="id-card-social fs-small px-base py-small">
           <el-row justify="space-between" class="is-align-middle flex-row pointer" :gutter="5" @click="linkSocial('Discord')" v-if="discordId === ''">
             <el-col :span="-1" class="fs-base flex-noshrink">
@@ -94,6 +77,23 @@
             </el-row>
           </el-col>
         </box>
+      </el-col>
+    </el-row>
+
+    <el-row class="my-small">
+      <el-col>
+        <el-tooltip content="Coming soon" placement="right">
+          <box disabled class="id-card-social fs-small px-base py-small white">
+            <el-row justify="space-between" class="is-align-middle flex-row" :gutter="5">
+              <el-col :span="-1" class="fs-base flex-noshrink">
+                Connect Telegram
+              </el-col>
+              <el-col :span="-1">
+                <SvgTelegram class="icon-base"/>
+              </el-col>
+            </el-row>
+          </box>
+        </el-tooltip>
       </el-col>
     </el-row>
 

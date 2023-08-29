@@ -12,8 +12,7 @@
 
         <p>
           <b>
-            Once a new user signs-up and adds at least one wallet, it will be
-            counted towards a bigger reward.
+            You will receive 150XP if your 5 or more referrals will finish at least one mission each
           </b>
         </p>
 

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import AuthNavigationGuard from "@/router/AuthNavigationGuard";
+import Toast from "@/common/Toast";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -52,5 +53,15 @@ const router = createRouter({
 });
 
 router.beforeEach(AuthNavigationGuard);
+
+router.beforeEach((to, from, next) => {
+  if (to.query.why == "already_linked") {
+    Toast.make("Already linked!", "Requested social profile is already linked to another account", "error", false, 3000);
+    delete to.query.why;
+    next({ path: to.path, query: to.query });
+  } else {
+    next();
+  }
+});
 
 export default router;
