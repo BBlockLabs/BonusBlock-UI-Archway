@@ -119,6 +119,7 @@
               style="display: flex"
             >
               <el-row
+                v-if="mission.imageUrl"
                 class="mission-image"
                 :style="{
                   backgroundImage: 'url(' + mission.imageUrl + ')',
