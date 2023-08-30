@@ -35,61 +35,66 @@
                   </el-col>
                 </el-row>
 
-                <el-row align="middle">
-                  <el-col class="mr-small" :span="-1">
-                    <h3 class="mb-small">Tags</h3>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col>
-                    <el-tag
-                      v-for="tag in selectedProduct.tags"
-                      :key="tag"
-                      size="large"
-                      round
-                      class="mr-auto fs-base"
-                      type="info"
+                <template v-if="selectedProduct.tags">
+                  <el-row align="middle">
+                    <el-col class="mr-small" :span="-1">
+                      <h3 class="mb-small">Tags</h3>
+                    </el-col>
+                  </el-row>
+                  <el-row>
+                    <el-col>
+                      <el-tag
+                        v-for="tag in selectedProduct.tags"
+                        :key="tag"
+                        size="large"
+                        round
+                        class="mr-auto fs-base"
+                        type="info"
+                      >
+                        <strong>{{ tag }}</strong>
+                      </el-tag>
+                    </el-col>
+                  </el-row>
+                </template>
+
+                <div class="mt-auto">
+                  <el-row>
+                    <el-col :span="-1">
+                      <h3 class="mb-small">Website</h3>
+                    </el-col>
+                    <el-col class="mb-small archway-orange">
+                      <el-link
+                        :href="getMainLink(selectedProduct.socials).link"
+                        target="_blank"
+                        :underline="false"
+                        class="orange-link fs-slightly-larger mr-small"
+                      >{{ getMainLink(selectedProduct.socials).link }}</el-link
+                      >
+                    </el-col>
+                  </el-row>
+                  <el-row align="middle">
+                    <el-col :span="-1">
+                      <h3 class="mb-0">Join our community</h3>
+                    </el-col>
+                  </el-row>
+                  <el-row class="mt-auto">
+                    <el-col
+                      v-for="social in selectedProduct.socials"
+                      :key="social.type"
+                      :span="-1"
                     >
-                      <strong>{{ tag }}</strong>
-                    </el-tag>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="-1">
-                    <h3 class="mb-small">Website</h3>
-                  </el-col>
-                  <el-col class="mb-small archway-orange">
-                    <el-link
-                      :href="getMainLink(selectedProduct.socials).link"
-                      target="_blank"
-                      :underline="false"
-                      class="orange-link fs-slightly-larger mr-small"
-                    >{{ getMainLink(selectedProduct.socials).link }}</el-link
-                    >
-                  </el-col>
-                </el-row>
-                <el-row align="middle">
-                  <el-col :span="-1">
-                    <h3 class="mb-0">Join our community</h3>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col
-                    v-for="social in selectedProduct.socials"
-                    :key="social.type"
-                    :span="-1"
-                  >
-                    <el-link
-                      v-if="social.type !== 'main-link' && social.type !== 'main-label'"
-                      :href="social.link || social.url"
-                      target="_blank"
-                      :underline="false"
-                      class="orange-link mr-small mt-small"
-                    >
-                      <social-icon :type="social.type" />
-                    </el-link>
-                  </el-col>
-                </el-row>
+                      <el-link
+                        v-if="social.type !== 'main-link' && social.type !== 'main-label'"
+                        :href="social.link || social.url"
+                        target="_blank"
+                        :underline="false"
+                        class="orange-link mr-small mt-small"
+                      >
+                        <social-icon :type="social.type" />
+                      </el-link>
+                    </el-col>
+                  </el-row>
+                </div>
               </div>
             </el-row>
           </box-wrapper>

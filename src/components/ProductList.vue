@@ -21,7 +21,7 @@
             <el-row class="mb-small">
               <strong>{{ product.name }}</strong>
             </el-row>
-            <el-row>
+            <el-row style="height: 2em">
               <el-tag
                 v-for="tag in product.tags"
                 :key="tag"

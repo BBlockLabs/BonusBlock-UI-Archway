@@ -127,6 +127,8 @@ button.archway:hover {
   }
 
   .product-description {
+    display: flex;
+    flex-direction: column;
     flex-basis: 25em;
     flex-grow: 1;
   }
