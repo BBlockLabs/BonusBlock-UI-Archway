@@ -7,7 +7,7 @@
         class="project-card py-medium"
         style="display: flex"
       >
-        <el-row class="mb-medium px-medium is-align-middle">
+        <el-row class="mb-medium flex-nowrap px-medium is-align-middle">
           <el-col :span="-1">
             <img
               v-if="product.icon"
