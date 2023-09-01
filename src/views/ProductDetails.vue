@@ -35,7 +35,7 @@
                   </el-col>
                 </el-row>
 
-                <template v-if="selectedProduct.tags">
+                <template v-if="selectedProduct.tags && selectedProduct.tags.length">
                   <el-row align="middle">
                     <el-col class="mr-small" :span="-1">
                       <h3 class="mb-small">Tags</h3>
@@ -57,7 +57,7 @@
                   </el-row>
                 </template>
 
-                <div class="mt-auto">
+                <div class="mt-auto" v-if="selectedProduct.socials.length > 0">
                   <el-row>
                     <el-col :span="-1">
                       <h3 class="mb-small">Website</h3>
