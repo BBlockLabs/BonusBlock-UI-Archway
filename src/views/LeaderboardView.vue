@@ -278,6 +278,25 @@
         </box-wrapper>
       </el-row>
 
+      <el-row justify="end">
+        <el-col :span="-1">
+          <el-button-group>
+            <el-button
+              :type="leaderboardPeriod === LeaderboardPeriod.ALL_TIME ? 'primary' : ''"
+              @click="leaderboardPeriod = LeaderboardPeriod.ALL_TIME"
+            >
+              All time
+            </el-button>
+            <el-button
+              :type="leaderboardPeriod === LeaderboardPeriod.WEEK ? 'primary' : ''"
+              @click="leaderboardPeriod = LeaderboardPeriod.WEEK"
+            >
+              This week
+            </el-button>
+          </el-button-group>
+        </el-col>
+      </el-row>
+
       <div class="leaderboard-table">
         <div class="leaderboard-header">Rank</div>
         <div class="leaderboard-header">User</div>
@@ -375,12 +394,12 @@
 <script setup lang="ts">
 import PageWrapper from "@/components/PageWrapper.vue";
 import SvgChevronUp from "@/assets/icons/nav-arrow-up.svg?component";
-import { store } from "@/store";
+import {store} from "@/store";
 import PaginationRequest from "@/common/api/PaginationRequest";
 import ArchwayLeaderboardResponse from "@/common/api/archway/ArchwayLeaderboardResponse";
 import BoxWrapper from "@/components/BoxWrapper.vue";
-import { computed, ComputedRef, onMounted, Ref, ref } from "vue";
-import { renderDiscs } from "@whi/identicons";
+import {computed, ComputedRef, onMounted, Ref, ref, watch} from "vue";
+import {renderDiscs} from "@whi/identicons";
 import SvgTwitter from "@/assets/icons/twitter.svg";
 import SvgBadge1000 from "@/assets/badges/1000.svg";
 import SvgBadge1000Lock from "@/assets/badges/1000-locked.svg";
@@ -400,8 +419,9 @@ import SvgInfo from "@/assets/icons/info.svg";
 import SvgMissionCardSample from "@/assets/images/mission-card-sample.svg";
 import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
 import Toast from "@/common/Toast";
-import { ArchwayLeapClient } from "@/common/ArchwayLeapClient";
+import {ArchwayLeapClient} from "@/common/ArchwayLeapClient";
 import CosmostationWalletClient from "@/common/CosmostationWalletClient";
+import LeaderboardPeriod from "@/common/api/archway/LeaderboardPeriod";
 
 let roleClaimed = ref(false);
 let calculationDialog = ref(false);
@@ -413,8 +433,13 @@ let perPage = ref(15);
 let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
   new ArchwayLeaderboardResponse()
 );
+const leaderboardPeriod: Ref<LeaderboardPeriod> = ref(
+  LeaderboardPeriod.ALL_TIME
+);
 
 const BADGE_XP: number[] = [1000, 2000, 5000, 10000];
+
+watch(leaderboardPeriod, () => getLeaderboard());
 
 const shareProgressLink: ComputedRef<string> = computed((): string => {
   const referral: string = store.getters["UserModule/refLink"];
@@ -433,7 +458,8 @@ const shareProgressLink: ComputedRef<string> = computed((): string => {
 async function getLeaderboard() {
   let pagination: PaginationRequest = new PaginationRequest(
     page.value,
-    perPage.value
+    perPage.value,
+    leaderboardPeriod.value
   );
   leaderboard.value = await store.dispatch(
     "ArchwayHttpModule/getLeaderboard",
