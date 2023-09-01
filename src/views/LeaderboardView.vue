@@ -278,22 +278,29 @@
         </box-wrapper>
       </el-row>
 
-      <el-row justify="end">
+      <el-row>
         <el-col :span="-1">
-          <el-button-group>
-            <el-button
-              :type="leaderboardPeriod === LeaderboardPeriod.ALL_TIME ? 'primary' : ''"
-              @click="leaderboardPeriod = LeaderboardPeriod.ALL_TIME"
-            >
-              All time
-            </el-button>
-            <el-button
-              :type="leaderboardPeriod === LeaderboardPeriod.WEEK ? 'primary' : ''"
-              @click="leaderboardPeriod = LeaderboardPeriod.WEEK"
-            >
-              This week
-            </el-button>
-          </el-button-group>
+          <el-tabs
+            v-model="leaderboardTab"
+            @tab-change="
+              (name) => {
+                leaderboardPeriod =
+                  name === LeaderboardPeriod.ALL_TIME.toString()
+                    ? LeaderboardPeriod.ALL_TIME
+                    : LeaderboardPeriod.WEEK;
+              }
+            "
+          >
+            <el-tab-pane
+              label="All time"
+              :name="LeaderboardPeriod.ALL_TIME.toString()"
+            />
+
+            <el-tab-pane
+              label="This week"
+              :name="LeaderboardPeriod.WEEK.toString()"
+            />
+          </el-tabs>
         </el-col>
       </el-row>
 
@@ -436,6 +443,7 @@ let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
 const leaderboardPeriod: Ref<LeaderboardPeriod> = ref(
   LeaderboardPeriod.ALL_TIME
 );
+const leaderboardTab: Ref<string> = ref(LeaderboardPeriod.ALL_TIME.toString());
 
 const BADGE_XP: number[] = [1000, 2000, 5000, 10000];
 
