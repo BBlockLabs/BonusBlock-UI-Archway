@@ -360,6 +360,7 @@
               layout="prev, pager, next"
               :total="leaderboard.totalRows"
               :page-size="perPage"
+              :current-page="page"
               @current-change="currentPageChange"
             />
           </el-col>
@@ -447,7 +448,10 @@ const leaderboardTab: Ref<string> = ref(LeaderboardPeriod.ALL_TIME.toString());
 
 const BADGE_XP: number[] = [1000, 2000, 5000, 10000];
 
-watch(leaderboardPeriod, () => getLeaderboard());
+watch(leaderboardPeriod, () => {
+  page.value = 1;
+  getLeaderboard();
+});
 
 const shareProgressLink: ComputedRef<string> = computed((): string => {
   const referral: string = store.getters["UserModule/refLink"];
@@ -557,6 +561,7 @@ function currentPageChange(newVal: number) {
 
 function perPageChange(newVal: number) {
   perPage.value = newVal;
+  page.value = 1
   getLeaderboard();
 }
 
