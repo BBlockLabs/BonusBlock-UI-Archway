@@ -38,37 +38,30 @@
       </el-col>
     </el-row>
     <div class="leaderboard-table">
-      <div class="leaderboard-header">User</div>
-      <div class="leaderboard-header"></div>
-      <div class="leaderboard-header">Total on-chain</div>
-      <div class="leaderboard-header">Top dApp</div>
-      <div class="leaderboard-header">Community XP</div>
+      <div class="leaderboard-header">1</div>
+      <div class="leaderboard-header">2</div>
+      <div class="leaderboard-header">3</div>
       <template v-if="leaderboard.searchResults.length > 0">
         <template
           v-for="leaderboardItem in leaderboard.searchResults"
           :key="leaderboardItem.walletAddress"
         >
-          <div class="leaderboard-element fs-medium bold">
+          <div class="leaderboard-element first fs-medium bold">
             <el-avatar
               :src="getAvatar(leaderboardItem.walletAddress)"
               class="mr-small"
             >
             </el-avatar>
-            <span style="width: 16em">
+            <span style="width:75%">
               {{ leaderboardItem.walletAddress }}
               <span class="joined-text">has joined archway missions.</span>
             </span>
           </div>
-          <div class="leaderboard-element">
-</div>
           <div class="leaderboard-element fs-medium">
             {{ leaderboardItem.totalOnChain }}
           </div>
-          <div class="leaderboard-element fs-medium">
+          <div class="leaderboard-element last fs-medium">
             {{ leaderboardItem.topDapp }}
-          </div>
-          <div class="leaderboard-element last fs-medium bold archway-orange">
-            {{ leaderboardItem.score }}
           </div>
         </template>
       </template>
@@ -107,9 +100,9 @@
             </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item :command="15">15</el-dropdown-item>
+                <el-dropdown-item :command="10">10</el-dropdown-item>
+                <el-dropdown-item :command="25">25</el-dropdown-item>
                 <el-dropdown-item :command="50">50</el-dropdown-item>
-                <el-dropdown-item :command="75">75</el-dropdown-item>
                 <el-dropdown-item :command="100">100</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -139,11 +132,11 @@ import SvgChevronUp from "@/assets/icons/nav-arrow-up.svg?component";
 import {store} from "@/store";
 import PaginationRequest from "@/common/api/PaginationRequest";
 import ArchwayLeaderboardResponse from "@/common/api/archway/ArchwayLeaderboardResponse";
-import {computed, ComputedRef, onMounted, Ref, ref, watch} from "vue";
+import {onMounted, Ref, ref, watch} from "vue";
 import {renderDiscs} from "@whi/identicons";
 import LeaderboardPeriod from "@/common/api/archway/LeaderboardPeriod";
 let page = ref(1);
-let perPage = ref(15);
+let perPage = ref(10);
 let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
   new ArchwayLeaderboardResponse()
 );
@@ -204,7 +197,7 @@ onMounted(async () => {
 
 .leaderboard-table {
   display: grid;
-  grid-template-columns: 1.5fr 6fr 1fr 3fr 3fr 3fr;
+  grid-template-columns: 6fr 3fr 3fr;
   row-gap: 1em;
 
   .el-avatar {
@@ -233,8 +226,10 @@ onMounted(async () => {
   }
 
   .leaderboard-element {
+    padding-top: 0.6em;
+    padding-bottom: 0.6em;
     background: #fff;
-    box-shadow: 0px 4px 50px -21px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 4px 50px -31px rgba(0, 0, 0, 0.5);
   }
 }
 
