@@ -38,7 +38,6 @@
       </el-col>
     </el-row>
     <div class="leaderboard-table">
-      <div class="leaderboard-header">Rank</div>
       <div class="leaderboard-header">User</div>
       <div class="leaderboard-header"></div>
       <div class="leaderboard-header">Total on-chain</div>
@@ -49,19 +48,15 @@
           v-for="leaderboardItem in leaderboard.searchResults"
           :key="leaderboardItem.walletAddress"
         >
-          <div class="leaderboard-element first">
-            <strong class="fs-large bold archway-orange">
-              {{ leaderboardItem.rank }}
-            </strong>
-          </div>
           <div class="leaderboard-element fs-medium bold">
             <el-avatar
               :src="getAvatar(leaderboardItem.walletAddress)"
               class="mr-small"
             >
             </el-avatar>
-            <span style="width: 8em">
+            <span style="width: 16em">
               {{ leaderboardItem.walletAddress }}
+              <span class="joined-text">has joined archway missions.</span>
             </span>
           </div>
           <div class="leaderboard-element">
@@ -140,52 +135,13 @@ import { useStore, StoreType } from "@/store";
 
 const store: StoreType = useStore();
 
-
-
-
-
-
-
-
-
-
-
-
 import SvgChevronUp from "@/assets/icons/nav-arrow-up.svg?component";
 import {store} from "@/store";
 import PaginationRequest from "@/common/api/PaginationRequest";
 import ArchwayLeaderboardResponse from "@/common/api/archway/ArchwayLeaderboardResponse";
-import BoxWrapper from "@/components/BoxWrapper.vue";
 import {computed, ComputedRef, onMounted, Ref, ref, watch} from "vue";
 import {renderDiscs} from "@whi/identicons";
-import SvgTwitter from "@/assets/icons/twitter.svg";
-import SvgBadge1000 from "@/assets/badges/1000.svg";
-import SvgBadge1000Lock from "@/assets/badges/1000-locked.svg";
-import SvgBadge2000 from "@/assets/badges/2000.svg";
-import SvgBadge2000Lock from "@/assets/badges/2000-locked.svg";
-import SvgBadge5000 from "@/assets/badges/5000.svg";
-import SvgBadge5000Lock from "@/assets/badges/5000-locked.svg";
-import SvgBadge10000 from "@/assets/badges/10000.svg";
-import SvgBadge10000Lock from "@/assets/badges/10000-locked.svg";
-import SvgNewBadge1 from "@/assets/badges/new-badge-1.svg";
-import SvgNewBadge2 from "@/assets/badges/new-badge-2.svg";
-import SvgNewBadge3 from "@/assets/badges/new-badge-3.svg";
-import SvgNewBadge4 from "@/assets/badges/new-badge-4.svg";
-
-import SvgCircle from "@/assets/icons/circle.svg";
-import SvgInfo from "@/assets/icons/info.svg";
-import SvgMissionCardSample from "@/assets/images/mission-card-sample.svg";
-import ArchwayKeplrClient from "@/common/ArchwayKeplrClient";
-import Toast from "@/common/Toast";
-import {ArchwayLeapClient} from "@/common/ArchwayLeapClient";
-import CosmostationWalletClient from "@/common/CosmostationWalletClient";
 import LeaderboardPeriod from "@/common/api/archway/LeaderboardPeriod";
-
-let roleClaimed = ref(false);
-let calculationDialog = ref(false);
-let newBadgeDialog = ref(false);
-let badgeShowcaseDialog: Ref<number | null> = ref(null);
-let mintBadgeLoading = ref(false);
 let page = ref(1);
 let perPage = ref(15);
 let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
@@ -194,25 +150,8 @@ let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
 const leaderboardPeriod: Ref<LeaderboardPeriod> = ref(
   LeaderboardPeriod.ALL_TIME
 );
-const leaderboardTab: Ref<string> = ref(LeaderboardPeriod.ALL_TIME.toString());
-
-const BADGE_XP: number[] = [1000, 2000, 5000, 10000];
 
 watch(leaderboardPeriod, () => getLeaderboard());
-
-const shareProgressLink: ComputedRef<string> = computed((): string => {
-  const referral: string = store.getters["UserModule/refLink"];
-  let message: string;
-
-  if (leaderboard.value.myLeaderboardSpot) {
-    message = `Just hit Rank ${leaderboard.value.myLeaderboardSpot.position.rank} with ${leaderboard.value.myLeaderboardSpot.position.score} XP on Archway community missions! Join me and let’s climb the ranks together! ${referral}`;
-  } else {
-    message = `Just started ranking on Archway community missions! Join me and let’s climb the ranks together! ${referral}`;
-  }
-  const plainLink: string = `https://twitter.com/intent/tweet?text=${message}`;
-
-  return encodeURI(plainLink);
-});
 
 async function getLeaderboard() {
   let pagination: PaginationRequest = new PaginationRequest(
@@ -227,79 +166,6 @@ async function getLeaderboard() {
   newBadgeDialog.value = leaderboard.value.myLeaderboardSpot?.newBadgePopup || false;
 }
 
-async function newBadgeAcknowledge() {
-  if (leaderboard.value.myLeaderboardSpot && leaderboard.value.myLeaderboardSpot.newBadgePopup) {
-    await store.dispatch("ArchwayHttpModule/badgeAcknowledge");
-    leaderboard.value.myLeaderboardSpot.newBadgePopup = false;
-  }
-
-  newBadgeDialog.value = false;
-}
-
-async function newBadgeMint() {
-  const loggedInWith = store.state.UserModule?.loggedInWith;
-  let client;
-  switch (loggedInWith) {
-    case "keplr":
-      client = ArchwayKeplrClient;
-      break;
-    case "leap":
-      client = ArchwayLeapClient;
-      break;
-    case "cosmostation":
-      client = await CosmostationWalletClient.create();
-      break;
-    default: {
-      throw new Error("Unknown wallet: " + loggedInWith);
-    }
-  }
-
-  newBadgeDialog.value = false;
-  mintBadgeLoading.value = true;
-
-  try {
-    let mintFee = await client.getMintBadgeFee();
-
-    await store.dispatch("ArchwayHttpModule/mintBadgeInit");
-
-    await client.mintBadge(mintFee);
-
-    Toast.make("Mint success!", "You have minted a new badge", "success", true, 3000);
-  } catch (e: any) {
-    if (e.toString().includes("Already Minted")) {
-      Toast.make("Badge already claimed", "You have already claimed this badge", "warning", true, 5000);
-    } else {
-      Toast.make("Mint failure", e.toString(), "error", false, 0);
-      mintBadgeLoading.value = false;
-      return;
-    }
-  }
-
-  if (leaderboard.value.myLeaderboardSpot) {
-    leaderboard.value.myLeaderboardSpot.badgeClaimed = true;
-  }
-
-  mintBadgeLoading.value = false;
-
-  await store.dispatch("ArchwayHttpModule/mintBadgeOk");
-}
-
-async function claimDiscordRole(){
-  await store.dispatch("ArchwayHttpModule/claimDiscordRole");
-  roleClaimed.value = true;
-  Toast.make("Success!", "You claimed a new discord role!", "success", true, 3000);
-}
-
-const walletAddress: ComputedRef<string> = computed(
-  () => store.state.UserModule?.activeWallet?.address || ""
-);
-
-function shortWallet(str: any) {
-  if (typeof str !== "string" || str.length < 15) {
-    return str;
-  }
-  return str.substring(0, 10) + "..." + str.substring(str.length - 2);
-}
 
 function currentPageChange(newVal: number) {
   page.value = newVal;
@@ -311,75 +177,6 @@ function perPageChange(newVal: number) {
   getLeaderboard();
 }
 
-function getClosestNextBadgeXp(currentXp: number | undefined) {
-  if (currentXp == undefined || currentXp <= BADGE_XP[0]) {
-    return BADGE_XP[0];
-  }
-  if (currentXp <= BADGE_XP[1]) {
-    return BADGE_XP[1];
-  }
-  if (currentXp <= BADGE_XP[2]) {
-    return BADGE_XP[2];
-  }
-  if (currentXp <= BADGE_XP[3]) {
-    return BADGE_XP[3];
-  }
-}
-
-function getXpPercentage(givenXp: number): number {
-  let maxXp = BADGE_XP[BADGE_XP.length - 1];
-  if (givenXp >= maxXp) {
-    return 100;
-  }
-  return Math.floor(100 - (maxXp - givenXp) / 100);
-}
-
-function getBadgeForXp(givenXp: number){
-  let currentXp: number = leaderboard.value.myLeaderboardSpot
-    ? leaderboard.value.myLeaderboardSpot.position.score
-    : 0;
-  switch (givenXp) {
-    case 1000:
-      return currentXp >= givenXp ? SvgBadge1000 : SvgBadge1000Lock;
-    case 2000:
-      return currentXp >= givenXp ? SvgBadge2000 : SvgBadge2000Lock;
-    case 5000:
-      return currentXp >= givenXp ? SvgBadge5000 : SvgBadge5000Lock;
-    case 10000:
-      return currentXp >= givenXp ? SvgBadge10000 : SvgBadge10000Lock;
-  }
-}
-
-function getNewBadgeImage(){
-  let currentXp: number = leaderboard.value.myLeaderboardSpot
-    ? leaderboard.value.myLeaderboardSpot.position.score
-    : 0;
-
-  return getBadgeImageForXp(currentXp);
-}
-
-function getBadgeImageForXp(givenXp: number){
-  if (givenXp >= BADGE_XP[3]) {
-    return SvgNewBadge4;
-  }
-  if (givenXp >= BADGE_XP[2]) {
-    return SvgNewBadge3;
-  }
-  if (givenXp >= BADGE_XP[1]) {
-    return SvgNewBadge2;
-  }
-  if (givenXp >= BADGE_XP[0]) {
-    return SvgNewBadge1;
-  }
-  return SvgNewBadge1;
-}
-
-function badgeActive(givenXp: number): boolean {
-  let currentXp: number = leaderboard.value.myLeaderboardSpot
-    ? leaderboard.value.myLeaderboardSpot.position.score
-    : 0;
-  return currentXp >= givenXp;
-}
 
 function getAvatar(userWallet: string) {
   return renderDiscs({
@@ -491,4 +288,7 @@ onMounted(async () => {
   border-radius: 32px;
 }
 
+.joined-text{
+  font-weight: 400;
+}
 </style>
