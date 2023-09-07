@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper class="fs-slightly-larger w-100">
+  <PageWrapper class="fs-slightly-larger w-100 h-100 mt-extra-large">
     <el-row justify="space-between" :gutter="24" class="w-100 my-extra-large referral-info">
       <el-col :md="16" :lg="17">
         <h3 class="fs-large mb-large">
