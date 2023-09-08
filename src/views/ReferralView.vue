@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper class="fs-slightly-larger w-100 h-100 mt-extra-large">
+  <PageWrapper class="fs-slightly-larger w-100 mt-extra-large">
     <el-row justify="space-between" :gutter="24" class="w-100 my-extra-large referral-info">
       <el-col :md="16" :lg="17">
         <h3 class="fs-large mb-large">
@@ -37,49 +37,56 @@
         <!--/remove-on-prod-->
       </el-col>
     </el-row>
-    <div class="leaderboard-table">
-      <div class="leaderboard-header">1</div>
-      <div class="leaderboard-header">2</div>
-      <div class="leaderboard-header">3</div>
-      <template v-if="leaderboard.searchResults.length > 0">
+
+    <div style="justify-content: space-between" class="mb-medium d-flex">
+      <h2 class="m-0">Invitation history</h2>
+      <div class="d-flex"><SvgInfo class="mr-small icon-small" /> New wallets without any activity will not be considered as a new user.</div>
+    </div>
+
+    <div class="referrals-table">
+      <div class="referrals-header">User</div>
+      <div class="referrals-header">Completed missions</div>
+      <div class="referrals-header">Registration date</div>
+      <template v-if="referrals.searchResults.length > 0">
         <template
-          v-for="leaderboardItem in leaderboard.searchResults"
-          :key="leaderboardItem.walletAddress"
+          v-for="referralsItem in referrals.searchResults"
+          :key="referralsItem.username"
         >
-          <div class="leaderboard-element first fs-medium bold">
+          <div class="referrals-element first fs-medium bold">
             <el-avatar
-              :src="getAvatar(leaderboardItem.walletAddress)"
+              :src="getAvatar(referralsItem.username)"
               class="mr-small"
             >
             </el-avatar>
             <span style="width:75%">
-              {{ leaderboardItem.walletAddress }}
+              {{ referralsItem.username }}
               <span class="joined-text">has joined archway missions.</span>
             </span>
           </div>
-          <div class="leaderboard-element fs-medium">
-            {{ leaderboardItem.totalOnChain }}
+          <div class="referrals-element fs-medium">
+            {{ referralsItem.missionCount }}
           </div>
-          <div class="leaderboard-element last fs-medium">
-            {{ leaderboardItem.topDapp }}
+          <div class="referrals-element last fs-medium">
+            {{ moment(referralsItem.registrationDate).format('LLL') }}
           </div>
+
         </template>
       </template>
     </div>
-    <template v-if="leaderboard.searchResults.length > 0">
+    <template v-if="referrals.searchResults.length > 0">
       <el-row justify="space-between" align="middle" class="px-large my-large">
         <el-col :span="-1" class="bold">
           showing
           <span class="archway-orange">
-            {{ page * perPage - perPage + 1 }}-{{ page * perPage - perPage + leaderboard.searchResults.length }}
+            {{ page * perPage - perPage + 1 }}-{{ page * perPage - perPage + referrals.searchResults.length }}
           </span>
-          of {{ leaderboard.totalRows }} results
+          of {{ referrals.totalRows }} results
         </el-col>
         <el-col :span="-1">
           <el-pagination
             class="fs-extra-large"
             layout="prev, pager, next"
-            :total="leaderboard.totalRows"
+            :total="referrals.totalRows"
             :page-size="perPage"
             @current-change="currentPageChange"
           />
@@ -110,7 +117,7 @@
         </el-col>
       </el-row>
     </template>
-    <template v-if="leaderboard.searchResults.length < 1">
+    <template v-if="referrals.searchResults.length < 1">
       <el-row class="fs-large mt-extra-large" justify="center">
         No data
       </el-row>
@@ -120,56 +127,47 @@
 
 <script setup lang="ts">
 import PageWrapper from "@/components/PageWrapper.vue";
-// import ColoredCard from "@/components/ColoredCard.vue";
 import CopyBox from "@/components/CopyBox.vue";
-// import BoxWrapper from "@/components/BoxWrapper.vue";
 import InvitationCountCard from "@/components/InvitationCountCard.vue";
-import { useStore, StoreType } from "@/store";
-
-const store: StoreType = useStore();
-
 import SvgChevronUp from "@/assets/icons/nav-arrow-up.svg?component";
+import SvgInfo from "@/assets/icons/info.svg?component";
 import {store} from "@/store";
-import PaginationRequest from "@/common/api/PaginationRequest";
-import ArchwayLeaderboardResponse from "@/common/api/archway/ArchwayLeaderboardResponse";
-import {onMounted, Ref, ref, watch} from "vue";
+import {onMounted, Ref, ref} from "vue";
 import {renderDiscs} from "@whi/identicons";
-import LeaderboardPeriod from "@/common/api/archway/LeaderboardPeriod";
+import ReferralListResponse from "@/common/api/archway/ReferralListResponse";
+import ReferralListRequest from "@/common/api/archway/ReferralListRequest";
+import moment from "moment/moment";
+
+moment.locale("en-gb");
+
 let page = ref(1);
 let perPage = ref(10);
-let leaderboard: Ref<ArchwayLeaderboardResponse> = ref(
-  new ArchwayLeaderboardResponse()
-);
-const leaderboardPeriod: Ref<LeaderboardPeriod> = ref(
-  LeaderboardPeriod.ALL_TIME
+let referrals: Ref<ReferralListResponse> = ref(
+  new ReferralListResponse()
 );
 
-watch(leaderboardPeriod, () => getLeaderboard());
-
-async function getLeaderboard() {
-  let pagination: PaginationRequest = new PaginationRequest(
+async function getreferrals() {
+  let referralListRequest: ReferralListRequest = new ReferralListRequest(
     page.value,
     perPage.value,
-    leaderboardPeriod.value
+    "registrationDate"
   );
-  leaderboard.value = await store.dispatch(
-    "ArchwayHttpModule/getLeaderboard",
-    pagination
-  );
-  newBadgeDialog.value = leaderboard.value.myLeaderboardSpot?.newBadgePopup || false;
-}
 
+  referrals.value = await store.dispatch(
+    "HttpModule/getReferrals",
+    referralListRequest
+  );
+}
 
 function currentPageChange(newVal: number) {
   page.value = newVal;
-  getLeaderboard();
+  getreferrals();
 }
 
 function perPageChange(newVal: number) {
   perPage.value = newVal;
-  getLeaderboard();
+  getreferrals();
 }
-
 
 function getAvatar(userWallet: string) {
   return renderDiscs({
@@ -182,7 +180,7 @@ function getAvatar(userWallet: string) {
 }
 
 onMounted(async () => {
-  await getLeaderboard();
+  await getreferrals();
 });
 
 
@@ -191,11 +189,11 @@ onMounted(async () => {
 <style lang="scss">
 @use "@/design/vars.scss";
 
-.limit-width.leaderboard {
+.limit-width.referrals {
   max-width: 1000px;
 }
 
-.leaderboard-table {
+.referrals-table {
   display: grid;
   grid-template-columns: 6fr 3fr 3fr;
   row-gap: 1em;
@@ -221,11 +219,11 @@ onMounted(async () => {
     }
   }
 
-  .leaderboard-header {
+  .referrals-header {
     font-weight: bold;
   }
 
-  .leaderboard-element {
+  .referrals-element {
     padding-top: 0.6em;
     padding-bottom: 0.6em;
     background: #fff;
@@ -251,15 +249,6 @@ onMounted(async () => {
   background-color: vars.$archway-warm-grey;
   max-width: 18em;
 }
-
-
-
-
-
-
-
-
-
 
 .referral-info{
   padding: 2em 4em 3em 4em;

@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper>
+  <PageWrapper style="margin-top: 0">
     <el-row class="w-auto archway-orange my-medium" :span="-1">
       <el-col class="d-flex flex-center-y pointer" span="-1" @click="$router.push('/explore')">
         <SvgChevronLeft class="icon" />
