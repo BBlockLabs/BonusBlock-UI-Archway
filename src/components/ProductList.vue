@@ -52,7 +52,7 @@
               >
                 <img
                   v-if="product.featuredMission && product.featuredMission.imageUrl"
-                  style="border-radius: 4px; aspect-ratio: 1.7"
+                  style="border-radius: 4px; aspect-ratio: 1.7; object-fit: cover;"
                   :src="product.featuredMission.imageUrl"
                   alt="Product"
                 />
