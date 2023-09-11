@@ -182,8 +182,6 @@ function getAvatar(userWallet: string) {
 onMounted(async () => {
   await getreferrals();
 });
-
-
 </script>
 
 <style lang="scss">
