@@ -4,6 +4,7 @@ export default class CampaignWithRewardDto {
   networkName: string = "";
   smartContractAddress: string = "";
   amount: string = "";
+  status: string = "";
   decimal: number = NaN;
   currency: string = "";
   periodFrom: any;

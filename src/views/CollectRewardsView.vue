@@ -71,10 +71,17 @@
             justify-content: center;
             align-items: center;
           "
-          class="d-flex mb-small py-extra-small archway-orange w-100"
+          class="d-flex flex-column mb-small py-extra-small archway-orange w-100"
         >
-          <SvgInfo class="mr-extra-small" style="width: 24px"></SvgInfo>
-          <span>Failed (for any reason) claims can be re-claimed again in 1.5 mins</span>
+
+          <el-row class="flex-center">
+            <SvgInfo class="mr-extra-small" style="width: 24px"></SvgInfo>
+            <span>Failed (for any reason) claims can be re-claimed again in 1.5 mins</span>
+          </el-row>
+          <el-row class="flex-center mt-small">
+            <SvgInfo class="mr-extra-small" style="width: 24px"></SvgInfo>
+            <span>Claiming the reward requires a fee of 1ARCH</span>
+          </el-row>
         </box-wrapper>
       </el-row>
       <div
@@ -146,9 +153,20 @@
               <el-col :span="-1">
                 <el-row align="middle">
                   <SvgArch class="currency-icon" />
-                  <span v-if="campaign.amount" class="bold ml-small">
-                  {{ getHumanAmount(campaign).substring(0, 17) }}
-                  {{ campaign.currency }}
+                  <span
+                    v-if="campaign.amount"
+                    class="bold ml-small"
+                    :class="campaign.status == 'CREATED' ? 'text-muted' : ''"
+                  >
+                    <el-tooltip
+                      :disabled="campaign.status == 'SUBMITTED'"
+                      content="Reward has been calculated but not yet assigned in the smart contract"
+                      placement="top"
+                    >
+                      {{ getHumanAmount(campaign).substring(0, 17) }}
+                      {{ campaign.currency }}
+                    </el-tooltip>
+
                 </span>
                   <span v-else class="flex-grow ml-small text-muted">
                   Unlocks on {{ nextCampaignCalculationDate(campaign) }}
@@ -157,9 +175,15 @@
               </el-col>
 
               <el-col :span="-1">
-                <el-button :loading="claimModal.loading" @click="claimCampaign(campaign)" type="primary">
-                  Claim
-                </el-button>
+                <el-tooltip
+                  :disabled="campaign.status == 'SUBMITTED'"
+                  content="Reward has been calculated but not yet assigned in the smart contract"
+                  placement="top"
+                >
+                  <el-button type="primary" :disabled="campaign.status == 'CREATED'" :loading="claimModal.loading" @click="claimCampaign(campaign)">
+                    Claim
+                  </el-button>
+                </el-tooltip>
               </el-col>
             </el-row>
           </div>
