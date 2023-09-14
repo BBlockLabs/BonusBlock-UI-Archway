@@ -1,5 +1,5 @@
 <template>
-  <PageWrapper>
+  <PageWrapper style="margin-top: 0 !important">
     <el-row class="w-auto archway-orange my-medium" :span="-1">
       <el-col class="d-flex flex-center-y pointer" span="-1" @click="$router.push('/explore')">
         <SvgChevronLeft class="icon" />
@@ -146,7 +146,7 @@
                     </el-row>
                   </el-col>
 
-                  <el-col class="ml-auto" :span="-1">
+                  <el-col v-if="getMainLink(mission.socials)" class="ml-auto" :span="-1">
                     <el-link
                       class=""
                       target="_blank"
