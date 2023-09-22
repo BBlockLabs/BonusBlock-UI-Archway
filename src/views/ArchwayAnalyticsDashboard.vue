@@ -6,9 +6,9 @@
           <el-form-item label="dApp">
             <el-select v-model="productId" clearable>
               <el-option
-                v-for="id in products.keys()"
+                v-for="id in productNames.keys()"
                 :key="id"
-                :label="products.get(id)"
+                :label="productNames.get(id)"
                 :value="id"
               />
             </el-select>
@@ -144,45 +144,31 @@
     </el-row>
 
     <el-row :gutter="20">
-      <el-col :lg="12">
-        <el-row>
-          <el-col><h1>Total gas fee spent from the wallets</h1></el-col>
+<!--      <el-col :lg="12">-->
+<!--        <el-row>-->
+<!--          <el-col><h1>Total gas fee spent from the wallets</h1></el-col>-->
 
-          <el-col>
-            <el-table
-              :data="activityStatistics.totalGasSpent.tableData"
-              fixed
-              :summary-method="gasSum"
-              max-height="500"
-              :default-sort="{ prop: 'gasSpent', order: 'descending' }"
-              show-summary
-            >
-              <el-table-column prop="wallet" label="Wallet" />
-              <el-table-column prop="gasSpent" sortable label="Gas spent">
-                <template #default="scope">
-                  {{ Formatter.bigIntToPrecision(scope.row.gasSpent, 18, 18) }}
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-col>
-
-<!--          commented out since its broken due to too many walles-->
-<!--          <el-col v-if="activityStatistics.walletCategories.length">-->
-<!--            <statistics-chart-->
-<!--              :series="activityStatistics.totalGasSpent.chartData"-->
-<!--              :options="-->
-<!--                Chart.getBarChartOptions({-->
-<!--                  xaxis: {-->
-<!--                    categories: activityStatistics.walletCategories,-->
-<!--                  },-->
-<!--                })-->
-<!--              "-->
-<!--            />-->
+<!--          <el-col>-->
+<!--            <el-table-->
+<!--              :data="activityStatistics.totalGasSpent.tableData"-->
+<!--              fixed-->
+<!--              :summary-method="gasSum"-->
+<!--              max-height="500"-->
+<!--              :default-sort="{ prop: 'gasSpent', order: 'descending' }"-->
+<!--              show-summary-->
+<!--            >-->
+<!--              <el-table-column prop="wallet" label="Wallet" />-->
+<!--              <el-table-column prop="gasSpent" sortable label="Gas spent">-->
+<!--                <template #default="scope">-->
+<!--                  {{ Formatter.bigIntToPrecision(scope.row.gasSpent, 18, 18) }}-->
+<!--                </template>-->
+<!--              </el-table-column>-->
+<!--            </el-table>-->
 <!--          </el-col>-->
-        </el-row>
-      </el-col>
+<!--        </el-row>-->
+<!--      </el-col>-->
 
-      <el-col :lg="12">
+      <el-col>
         <el-row>
           <el-col><h1>Total interaction per wallet</h1></el-col>
 
@@ -202,20 +188,6 @@
               />
             </el-table>
           </el-col>
-
-<!--          commented out since its broken due to too many walles-->
-<!--          <el-col v-if="activityStatistics.walletCategories.length">-->
-<!--            <statistics-chart-->
-<!--              :series="activityStatistics.totalInteractions.chartData"-->
-<!--              :options="-->
-<!--                Chart.getBarChartOptions({-->
-<!--                  xaxis: {-->
-<!--                    categories: activityStatistics.walletCategories,-->
-<!--                  },-->
-<!--                })-->
-<!--              "-->
-<!--            />-->
-<!--          </el-col>-->
         </el-row>
       </el-col>
     </el-row>
@@ -227,7 +199,7 @@ import { StoreType, useStore } from "@/store";
 const store: StoreType = useStore();
 import { computed, ref } from "vue";
 import HttpResponse from "@/common/api/HttpResponse";
-import type StatisticsActivity from "@/common/api/archway/StatisticsActivity";
+import type StatisticsRecord from "@/common/api/archway/StatisticsRecord";
 import type {
   ArchwayStatisticsResponsePayloadDto,
   CampaignActivities,
@@ -238,11 +210,16 @@ import PageWrapper from "@/components/PageWrapper.vue";
 import { Formatter } from "@/common/formatter";
 import StatisticsChart from "@/components/StatisticsChart.vue";
 import Chart from "@/common/Chart";
+import type MissionDto from "@/common/api/dto/MissionDto";
+import type ProductDto from "@/common/api/dto/ProductDto";
 
 type TimeUnit = "month" | "week" | "day";
 
-const activities: Ref<StatisticsActivity[]> = ref([]);
-const missions: Ref<CampaignActivities[]> = ref([]);
+class Product {}
+
+const activities: Ref<StatisticsRecord[]> = ref([]);
+const missions: Ref<MissionDto[]> = ref([]);
+const products: Ref<ProductDto[]> = ref([]);
 const productId: Ref<string | null> = ref(null);
 
 const dateFilterPeriod: Ref<TimeUnit> = ref("day");
@@ -276,7 +253,11 @@ const missionAddresses: ComputedRef<Map<string, string>> = computed(() => {
   const response: Map<string, string> = new Map<string, string>();
 
   for (const mission of missions.value) {
-    response.set(mission.id, mission.address);
+    const missionData: {
+      address: string | undefined;
+    } = JSON.parse(mission.data);
+
+    response.set(mission.id, missionData.address || "--");
   }
 
   return response;
@@ -286,21 +267,26 @@ const missionNames: ComputedRef<Map<string, string>> = computed(() => {
   const response: Map<string, string> = new Map<string, string>();
 
   for (const mission of missions.value) {
-    response.set(mission.id, `${mission.product.name} - ${mission.action}`);
+    const missionData: {
+      address: string | undefined;
+      action: string | undefined;
+    } = JSON.parse(mission.data);
+
+    response.set(mission.id, mission.title || `${missionData.address || "-"} - ${missionData.action || "-"}`);
   }
 
   return response;
 });
 
-const products = computed(() => {
+const productNames = computed(() => {
   const result: Map<string, string> = new Map<string, string>();
 
-  for (const campaignActivity of missions.value) {
-    if (result.has(campaignActivity.product.id)) {
+  for (const product of products.value) {
+    if (result.has(product.id)) {
       continue;
     }
 
-    result.set(campaignActivity.product.id, campaignActivity.product.name);
+    result.set(product.id, product.name);
   }
 
   return result;
@@ -309,23 +295,35 @@ const products = computed(() => {
 const campaignMissionIds: ComputedRef<string[]> = computed(() => {
   return missions.value
     .filter(
-      (campaignActivity) =>
-        !productId.value || campaignActivity.product.id === productId.value
+      (mission) =>
+        !productId.value || mission.productId === productId.value
     )
-    .map((campaignActivity) => campaignActivity.id);
+    .map((mission) => mission.id);
 });
 
-const missionActivities: ComputedRef<StatisticsActivity[]> = computed(() => {
+const missionActivities: ComputedRef<StatisticsRecord[]> = computed(() => {
   return activities.value.filter((activity) =>
-    campaignMissionIds.value.includes(activity.campaignActivityId)
+    campaignMissionIds.value.includes(activity.mission)
   );
 });
 
-const activeWalletsTransactions: ComputedRef<StatisticsActivity[]> = computed(
+const activeWalletsTransactions: ComputedRef<{hash: string; wallet: string; date: string}[]> = computed(
   () =>
     missionActivities.value.filter(
-      (activity) => activity.campaignActivityId === activeWalletsFilter.value
-    )
+      (activity) => activity.mission === activeWalletsFilter.value
+    ).map(action => {
+      const data: {
+        senderWallet: string | undefined;
+        trxHash: string | undefined;
+        gas: string | undefined;
+      } = JSON.parse(action.data);
+
+      return {
+        hash: data.trxHash || "--",
+        wallet: data.senderWallet || "--",
+        date: action.date,
+      };
+    })
 );
 
 type ActivityStatistics = {
@@ -348,10 +346,10 @@ type ActivityStatistics = {
     tableData: Array<{ mission: string; count: number; increase: number }>;
     chartData: Array<{ name: string; data: Array<number> }>;
   };
-  totalGasSpent: {
-    tableData: Array<{ wallet: string; gasSpent: bigint }>;
-    chartData: Array<{ name: string; data: Array<number> }>;
-  };
+  // totalGasSpent: {
+  //   tableData: Array<{ wallet: string; gasSpent: bigint }>;
+  //   chartData: Array<{ name: string; data: Array<number> }>;
+  // };
   totalInteractions: {
     tableData: Array<{ wallet: string; interactions: number }>;
     chartData: Array<{ name: string; data: Array<bigint> }>;
@@ -393,10 +391,10 @@ const activityStatistics: ComputedRef<ActivityStatistics> = computed(() => {
         },
       ],
     },
-    totalGasSpent: {
-      tableData: [],
-      chartData: [{ name: "Gas", data: [] }],
-    },
+    // totalGasSpent: {
+    //   tableData: [],
+    //   chartData: [{ name: "Gas", data: [] }],
+    // },
     totalInteractions: {
       tableData: [],
       chartData: [{ name: "Count", data: [] }],
@@ -421,46 +419,53 @@ const activityStatistics: ComputedRef<ActivityStatistics> = computed(() => {
   > = new Map();
 
   for (const activity of missionActivities.value) {
+    const data: {
+      senderWallet: string | undefined;
+      gas: string | undefined;
+    } = JSON.parse(activity.data);
+
+    const senderWallet: string = data.senderWallet || "--";
+
     const dateBefore: boolean = moment(activity.date).isBefore(dateFilter);
 
-    const mission = missionData.get(activity.campaignActivityId);
+    const mission = missionData.get(activity.mission);
 
     if (mission === undefined) {
-      missionData.set(activity.campaignActivityId, {
+      missionData.set(activity.mission, {
         activities: [1, dateBefore ? 0 : 1],
-        wallets: new Map([[activity.wallet, [1, dateBefore ? 0 : 1]]]),
-        activeWallets: new Map([[activity.wallet, moment(activity.date)]]),
+        wallets: new Map([[senderWallet, [1, dateBefore ? 0 : 1]]]),
+        activeWallets: new Map([[senderWallet, moment(activity.date)]]),
       });
     } else {
       mission.activities[0]++;
       mission.activities[1] += (dateBefore ? 0 : 1);
 
-      const wallet = mission.wallets.get(activity.wallet);
+      const wallet = mission.wallets.get(senderWallet);
 
       if (wallet === undefined) {
-        mission.wallets.set(activity.wallet, [1, dateBefore ? 0 : 1]);
+        mission.wallets.set(senderWallet, [1, dateBefore ? 0 : 1]);
       } else {
         wallet[0]++;
         wallet[1] += (dateBefore ? 0 : 1);
       }
 
-      const activeWallet = mission.activeWallets.get(activity.wallet);
+      const activeWallet = mission.activeWallets.get(senderWallet);
 
       if (activeWallet === undefined) {
-        mission.activeWallets.set(activity.wallet, moment(activity.date));
+        mission.activeWallets.set(senderWallet, moment(activity.date));
       } else {
         mission.activeWallets.set(
-          activity.wallet,
+          senderWallet,
           moment.min(activeWallet, moment(activity.date))
         );
       }
     }
 
-    const wallet = walletData.get(activity.wallet);
-    const gas = activity.gas ? BigInt(activity.gas) : 0n;
+    const wallet = walletData.get(senderWallet);
+    const gas: bigint = BigInt(data.gas || "0");
 
     if (wallet === undefined) {
-      walletData.set(activity.wallet, {gas: gas, interactions: 1})
+      walletData.set(senderWallet, {gas: gas, interactions: 1})
     } else {
       wallet.gas += gas;
       wallet.interactions ++;
@@ -509,8 +514,7 @@ const activityStatistics: ComputedRef<ActivityStatistics> = computed(() => {
     // activityStatistics.totalInteractions.chartData[0].data.push(entry[1].interactions);
 
     if (entry[1].gas > 0n) {
-      activityStatistics.totalGasSpent.tableData.push({ wallet: entry[0], gasSpent: entry[1].gas });
-      // activityStatistics.totalGasSpent.chartData[0].data.push(entry[1].gas);
+      // activityStatistics.totalGasSpent.tableData.push({ wallet: entry[0], gasSpent: entry[1].gas });
     }
   }
 
@@ -538,10 +542,9 @@ async function loadData(): Promise<void> {
       })
     );
 
-  activities.value = response.payload.activity;
-  missions.value = response.payload.campaignActivities.filter(
-    (mission) => mission.network.network == "ARCHWAY_TRIOMPHE"
-  );
+  activities.value = response.payload.actions;
+  missions.value = response.payload.missions;
+  products.value = response.payload.products;
 }
 
 loadData();
