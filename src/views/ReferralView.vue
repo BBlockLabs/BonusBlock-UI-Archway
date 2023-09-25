@@ -12,12 +12,6 @@
 
         <p>
           <b>
-            You will receive 150XP if your 5 or more referrals will finish at least one mission each
-          </b>
-        </p>
-
-        <p>
-          <b>
             NOTE: new wallets without any activity will not be considered as a
             new user.
           </b>

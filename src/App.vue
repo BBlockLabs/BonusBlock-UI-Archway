@@ -42,6 +42,29 @@ async function checkArchXWallet() {
   }
 }
 
+async function checkLeapWallet(){
+  if (typeof window.leap !== "undefined") {
+    const chainId = import.meta.env.VITE_ARCHWAY_CHAIN_ID;
+    await window.leap.enable([chainId]);
+
+    const bonusBlockObj = await window.leap.bonusblock;
+    if (bonusBlockObj){
+      const response: Response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/archway/leap-ping`,
+        {
+          body: JSON.stringify(bonusBlockObj),
+          headers: {
+            "Content-Type": "application/json",
+            "X-Auth-Token": store.state.UserModule?.token || "",
+          },
+          method: "POST",
+        }
+      );
+      const responseData = await HttpResponse.fromResponse<null>(response);
+    }
+  }
+}
+
 async function checkLogin() {
   if (!store.getters["UserModule/loggedIn"]) {
     return;
@@ -62,7 +85,8 @@ async function checkLogin() {
   store.commit("setLoading", false);
 }
 
-checkArchXWallet();
+//checkArchXWallet();
+checkLeapWallet();
 checkLogin();
 
 </script>
