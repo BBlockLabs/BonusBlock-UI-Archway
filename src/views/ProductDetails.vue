@@ -20,12 +20,12 @@
               <div
                 class="p-large product-banner"
                 :style="{
-                  backgroundImage: 'url(' + selectedProduct.bannerUrl + ')',
+                  backgroundImage: 'url(' + selectedProduct.banner + ')',
                 }"
               ></div>
               <div class="p-large product-description">
                 <el-row>
-                  <h2 class="mt-0 mb-extra-small">{{ selectedProduct.title }}</h2>
+                  <h2 class="mt-0 mb-extra-small">{{ selectedProduct.name }}</h2>
                 </el-row>
                 <hr />
 
