@@ -111,7 +111,7 @@
               <span>Missions can be repeatedly completed in order to earn Community XP. Token rewards can only be earned once per mission per week.</span>
             </box-wrapper>
           </el-row>
-          <el-row v-if="selectedProduct.missions.length > 0" class="products-container mb-base">
+          <el-row v-if="selectedProduct.missions && selectedProduct.missions.length > 0" class="products-container mb-base">
             <el-col
               v-for="mission in selectedProduct.missions"
               :key="mission.id"

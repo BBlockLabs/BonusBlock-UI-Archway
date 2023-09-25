@@ -19,7 +19,7 @@
           You have claimed
           <b
             >{{ getHumanAmount(claimModal.campaign) }}
-            {{ claimModal.campaign.currency }}!</b
+            {{ getHumanDenom(claimModal.campaign.currency) }}!</b
           >
         </div>
 
@@ -156,15 +156,15 @@
                   <span
                     v-if="campaign.amount"
                     class="bold ml-small"
-                    :class="campaign.status == 'CREATED' ? 'text-muted' : ''"
+                    :class="campaign.status == 'CALCULATED' ? 'text-muted' : ''"
                   >
                     <el-tooltip
-                      :disabled="campaign.status == 'SUBMITTED'"
+                      :disabled="campaign.status == 'ASSIGNED'"
                       content="Reward has been calculated but not yet assigned in the smart contract"
                       placement="top"
                     >
                       {{ getHumanAmount(campaign).substring(0, 17) }}
-                      {{ campaign.currency }}
+                      {{ getHumanDenom(campaign.currency) }}
                     </el-tooltip>
 
                 </span>
@@ -176,11 +176,11 @@
 
               <el-col :span="-1">
                 <el-tooltip
-                  :disabled="campaign.status == 'SUBMITTED'"
+                  :disabled="campaign.status == 'ASSIGNED'"
                   content="Reward has been calculated but not yet assigned in the smart contract"
                   placement="top"
                 >
-                  <el-button type="primary" :disabled="campaign.status == 'CREATED'" :loading="claimModal.loading" @click="claimCampaign(campaign)">
+                  <el-button type="primary" :disabled="campaign.status == 'CALCULATED'" :loading="claimModal.loading" @click="claimCampaign(campaign)">
                     Claim
                   </el-button>
                 </el-tooltip>
@@ -321,22 +321,18 @@ async function claimCampaign(campaign: CampaignWithRewardDto): Promise<void> {
     });
     await client.claimArchwayReward(campaign.smartContractAddress, campaign.id, claimFee);
 
-    campaigns.splice(index, 1);
-
     claimModal.open = true;
   } catch (e: any) {
     Toast.make("Claim failure!", e.message, "error", false, 3000);
     if (e.toString().includes("User pool does not exist")) {
       campaigns.splice(index, 1);
+    } else {
+      claimModal.loading = false;
+      return;
     }
   }
-
+  campaigns.splice(index, 1);
   claimModal.loading = false;
-  try {
-    await store.dispatch("HttpModule/claimRewardCheck", {});
-  } catch (ignoredError: any) {
-    /* empty */
-  }
 }
 
 function getHumanAmount(campaign: CampaignWithRewardDto): string {
@@ -357,6 +353,15 @@ function getHumanAmount(campaign: CampaignWithRewardDto): string {
   return fractionalPart === ""
     ? integerPart
     : integerPart + "." + fractionalPart;
+}
+
+function getHumanDenom(unformattedDenom: string): string {
+  switch (unformattedDenom) {
+    case "aarch": return "ARCH";
+    case "aconst": return "CONST";
+    case undefined: return "";
+    default: return unformattedDenom;
+  }
 }
 
 function getCampaignWeekNumber(campaign: CampaignWithRewardDto): number {
@@ -500,7 +505,7 @@ function generateAndCopyClaimImage(campaign: CampaignWithRewardDto): void {
           /\{campaign_week}/g,
           "Week " + (getCampaignWeekNumber(campaign))
         )
-        .replace(/\{currency}/g, campaign.currency)
+        .replace(/\{currency}/g, getHumanDenom(campaign.currency) )
         .replace(/\{amount}/g, getHumanAmount(campaign).substring(0, 9))
         .replace(/\{network}/g, campaign.networkName)
         .replace(/\{qr_data}/g, qrData);
