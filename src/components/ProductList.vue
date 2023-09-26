@@ -27,6 +27,7 @@
                 :key="tag"
                 round
                 class="mr-auto"
+                :class="tag === 'Staking' ? 'staking-tag' : ''"
                 type="info"
               >
                 <strong>{{ tag }}</strong>
@@ -103,6 +104,12 @@
     </div>
   </div>
 </template>
+<style scoped lang="scss">
+.staking-tag {
+  background: orange !important;
+  color: white !important;
+}
+</style>
 <script>
 import RawCubeLeft from "@/assets/icons/cube-left.svg?raw";
 import RawCubeRight from "@/assets/icons/cube-right.svg?raw";
