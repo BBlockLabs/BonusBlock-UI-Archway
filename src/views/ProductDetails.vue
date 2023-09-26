@@ -49,6 +49,7 @@
                         size="large"
                         round
                         class="mr-auto fs-base"
+                        :class="tag === 'Staking' ? 'staking-tag' : ''"
                         type="info"
                       >
                         <strong>{{ tag }}</strong>
@@ -214,4 +215,9 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.staking-tag {
+  background: orange !important;
+  color: white !important;
+}
+</style>
