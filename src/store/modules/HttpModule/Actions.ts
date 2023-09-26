@@ -68,9 +68,6 @@ export interface ActionsInterface extends ActionTree<{}, RootStateInterface> {
       payload: { campaignId: string }
     ) => Promise<null>);
 
-  claimRewardCheck: HttpAction &
-    ((this: Store<RootStateInterface>, context: Context) => Promise<null>);
-
   loadAnalytics: HttpAction &
     ((
       this: Store<RootStateInterface>,

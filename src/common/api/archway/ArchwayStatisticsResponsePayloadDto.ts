@@ -1,4 +1,8 @@
 import type StatisticsActivity from "@/common/api/archway/StatisticsActivity";
+import type StatisticsRecord from "@/common/api/archway/StatisticsRecord";
+import type ArchwayMissionDto from "@/common/api/archway/ArchwayMissionDto";
+import type MissionDto from "@/common/api/dto/MissionDto";
+import type ProductDto from "@/common/api/dto/ProductDto";
 
 export interface CampaignActivities {
   id: string;
@@ -45,6 +49,7 @@ export interface CampaignActivities {
 }
 
 export interface ArchwayStatisticsResponsePayloadDto {
-  activity: Array<StatisticsActivity>;
-  campaignActivities: Array<CampaignActivities>;
+  actions: Array<StatisticsRecord>;
+  missions: Array<MissionDto>;
+  products: Array<ProductDto>;
 }

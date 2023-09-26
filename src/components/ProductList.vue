@@ -35,8 +35,8 @@
             </el-row>
           </el-col>
         </el-row>
-        <el-row class="px-medium mb-large">
-          <el-col style="word-break: break-word; height: 3.5em">
+        <el-row class="px-medium mb-small">
+          <el-col style="word-break: break-word; height: 4.5em; overflow: auto;">
             <span v-html="product.shortDescription"></span>
           </el-col>
         </el-row>

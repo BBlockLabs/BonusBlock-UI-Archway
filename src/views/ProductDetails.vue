@@ -20,12 +20,12 @@
               <div
                 class="p-large product-banner"
                 :style="{
-                  backgroundImage: 'url(' + selectedProduct.bannerUrl + ')',
+                  backgroundImage: 'url(' + selectedProduct.banner + ')',
                 }"
               ></div>
               <div class="p-large product-description">
                 <el-row>
-                  <h2 class="mt-0 mb-extra-small">{{ selectedProduct.title }}</h2>
+                  <h2 class="mt-0 mb-extra-small">{{ selectedProduct.name }}</h2>
                 </el-row>
                 <hr />
 
@@ -112,7 +112,7 @@
               <span>Missions can be repeatedly completed in order to earn Community XP. Token rewards can only be earned once per mission per week.</span>
             </box-wrapper>
           </el-row>
-          <el-row v-if="selectedProduct.missions.length > 0" class="products-container mb-base">
+          <el-row v-if="selectedProduct.missions && selectedProduct.missions.length > 0" class="products-container mb-base">
             <el-col
               v-for="mission in selectedProduct.missions"
               :key="mission.id"
