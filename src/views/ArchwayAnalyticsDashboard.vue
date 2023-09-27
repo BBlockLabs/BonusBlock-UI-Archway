@@ -424,7 +424,16 @@ const activityStatistics: ComputedRef<ActivityStatistics> = computed(() => {
       gas: string | undefined;
     } = JSON.parse(activity.data);
 
-    const senderWallet: string = data.senderWallet || "--";
+    let senderWallet: string;
+    let gas: bigint;
+
+    if (data === null) {
+      senderWallet = "--";
+      gas = BigInt(0);
+    } else {
+      senderWallet = data.senderWallet || "--";
+      gas = BigInt(data.gas || "0");
+    }
 
     const dateBefore: boolean = moment(activity.date).isBefore(dateFilter);
 
@@ -462,7 +471,6 @@ const activityStatistics: ComputedRef<ActivityStatistics> = computed(() => {
     }
 
     const wallet = walletData.get(senderWallet);
-    const gas: bigint = BigInt(data.gas || "0");
 
     if (wallet === undefined) {
       walletData.set(senderWallet, {gas: gas, interactions: 1})
