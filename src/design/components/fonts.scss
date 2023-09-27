@@ -14,6 +14,10 @@
   text-align: center;
 }
 
+.t-end {
+  text-align: end;
+}
+
 :root {
   font-family: 'Helvetica', sans-serif;
   font-size: EPFunctions.getCssVar('font-size', 'base');
