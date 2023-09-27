@@ -131,7 +131,7 @@
           </el-col>
           <el-col style="align-items: flex-end;" class="d-flex flex-basis-0 flex-column flex-grow" :span="-1">
             <el-row> Your top dApp </el-row>
-            <el-row class="fs-extra-large">
+            <el-row class="t-end fs-extra-large">
               {{
                 leaderboard.myLeaderboardSpot
                   ? leaderboard.myLeaderboardSpot.position.topDapp
@@ -337,7 +337,10 @@
               {{ leaderboardItem.totalOnChain }}
             </div>
             <div class="leaderboard-element fs-medium">
-              {{ leaderboardItem.topDapp }}
+              <div style="text-wrap: nowrap">
+                {{ leaderboardItem.topDapp }}
+              </div>
+
             </div>
             <div class="leaderboard-element last fs-medium bold archway-orange">
               {{ leaderboardItem.score }}
@@ -659,7 +662,7 @@ onMounted(async () => {
 
 .leaderboard-table {
   display: grid;
-  grid-template-columns: 1.5fr 6fr 1fr 3fr 3fr 3fr;
+  grid-template-columns: 1.5fr 6fr 1fr 3fr 6fr 3fr;
   row-gap: 1em;
 
   .el-avatar {
